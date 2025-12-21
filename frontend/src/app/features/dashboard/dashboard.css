@@ -1,0 +1,20 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Spazio tra le card */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Due colonne uguali */
+  gap: 25px;
+}
+
+/* Su schermi piccoli (cellulari), metti tutto in una colonna */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
