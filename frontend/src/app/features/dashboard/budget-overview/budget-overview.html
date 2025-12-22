@@ -1,0 +1,40 @@
+<div class="budget-card glass-panel">
+  <div class="card-header">
+    <div class="glass-card">
+      <div class="header-section">
+        <h3>Dettaglio Budget</h3>
+        <p class="subtitle">Analisi categorie Entrate vs Uscite</p>
+      </div>
+
+      <div class="charts-row">
+
+        <div class="chart-wrapper">
+          <h4 class="income-title">Entrate</h4>
+          <div class="canvas-container">
+            <canvas baseChart
+                    [data]="incomeData"
+                    [options]="chartOptions"
+                    [type]="chartType">
+            </canvas>
+          </div>
+          <p class="total">Totale: <strong>+3.350€</strong></p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="chart-wrapper">
+          <h4 class="expense-title">Uscite</h4>
+          <div class="canvas-container">
+            <canvas baseChart
+                    [data]="expenseData"
+                    [options]="chartOptions"
+                    [type]="chartType">
+            </canvas>
+          </div>
+          <p class="total">Totale: <strong>-2.200€</strong></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
