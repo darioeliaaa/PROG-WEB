@@ -1,20 +1,50 @@
+/* Container principale */
 .dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Spazio tra le card */
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 20px; /* Ho ridotto anche il gap da 30 a 20 per compattare */
 }
 
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Due colonne uguali */
-  gap: 25px;
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-/* Su schermi piccoli (cellulari), metti tutto in una colonna */
+h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0;
+  font-weight: 700;
+}
+
+.date-badge {
+  background: #e0f7fa;
+  color: #006064;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* --- LE FASCE ORIZZONTALI --- */
+.horizontal-strip {
+  width: 100%;
+  display: block; /* Assicura che occupi lo spazio necessario ma non di più */
+}
+
+/* Media Query per cellulari: riduciamo solo i margini */
 @media (max-width: 768px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
+  .dashboard-container {
+    padding: 15px;
+    gap: 20px;
   }
+
+  h1 { font-size: 1.5rem; }
 }
