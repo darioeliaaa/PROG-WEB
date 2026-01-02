@@ -5,10 +5,7 @@ import { Movimenti } from './features/movimenti/movimenti';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-
   { path: 'dashboard', component: Dashboard },
-
   { path: 'market', component: Market },
-
   { path: 'movimenti', component: Movimenti }
 ];
