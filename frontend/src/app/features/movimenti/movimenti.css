@@ -1,0 +1,185 @@
+/* --- SFONDO E LAYOUT --- */
+.dashboard-container {
+  background-color: #f8fafc; /* Grigio chiarissimo, quasi bianco "freddo" */
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; /* Font moderno */
+}
+
+.dashboard-header h1 {
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+}
+
+/* --- LA CARD PREMIUM --- */
+.form-container.glass-panel {
+  background: #ffffff;
+  border-radius: 32px; /* Molto stondato */
+  padding: 45px;
+
+  /* Questa è l'ombra "Expensive": diffusa e leggermente bluastra */
+  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  max-width: 500px; /* Più stretto per sembrare più mobile-app */
+  width: 100%;
+  position: relative;
+  overflow: hidden; /* Per eventuali effetti glow interni */
+}
+
+/* --- LABELS --- */
+.form-group {
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  color: #64748b; /* Grigio ardesia */
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 5px;
+}
+
+/* --- TOGGLE BUTTONS (VIBRANTI) --- */
+.toggle-buttons {
+  display: flex;
+  background: #f1f5f9; /* Sfondo grigio della barra */
+  padding: 6px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.btn-toggle {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background: transparent;
+  color: #94a3b8; /* Testo inattivo */
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ENTRATA ATTIVA: Verde Smeraldo Vibrante */
+.btn-toggle.active.income {
+  background: #fff;
+  color: #10b981; /* Smeraldo */
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); /* Ombra verde */
+}
+
+/* USCITA ATTIVA: Rosso Corallo Vibrante */
+.btn-toggle.active.expense {
+  background: #fff;
+  color: #ef4444; /* Rosso acceso */
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); /* Ombra rossa */
+}
+
+/* --- IMPORTO GIGANTE DINAMICO --- */
+.big-input {
+  font-size: 3.5rem; /* Enorme */
+  font-weight: 900;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #e2e8f0;
+  border-radius: 0;
+  padding: 10px;
+  width: 100%;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.big-input:focus {
+  border-bottom-width: 3px;
+}
+
+/* Colori dinamici del testo quando scrivi */
+.big-input.text-green { color: #10b981; border-color: #10b981; }
+.big-input.text-red   { color: #ef4444; border-color: #ef4444; }
+
+.big-input::placeholder { color: #cbd5e1; font-weight: 400; }
+
+/* --- INPUT NORMALI (PULITI) --- */
+.glass-input {
+  background: #f8fafc; /* Grigio chiarissimo */
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px;
+  color: #334155;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.glass-input:focus {
+  background: #fff;
+  border-color: #6366f1; /* Viola primario */
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); /* Alone viola */
+}
+
+/* --- GRIGLIA --- */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* --- BOTTONI AZIONI --- */
+.form-actions {
+  margin-top: 40px;
+  display: flex;
+  gap: 15px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 18px;
+  border-radius: 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s;
+}
+
+/* BOTTONE SALVA: Gradiente Viola/Blu Elettrico */
+.btn-primary {
+  flex: 2; /* Più largo */
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4); /* Glow viola */
+}
+
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-secondary {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* Fix icone */
+option { color: #333; }
