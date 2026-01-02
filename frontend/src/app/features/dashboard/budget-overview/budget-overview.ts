@@ -14,7 +14,6 @@ export class BudgetOverview implements OnChanges {
 
   @Input() currentDate!: Date;
 
-  // 1. Variabili per salvare i totali
   public totaleEntrate: number = 0;
   public totaleUscite: number = 0;
 
@@ -60,21 +59,16 @@ export class BudgetOverview implements OnChanges {
   simulaDatiDinamici() {
     const random = () => Math.floor(Math.random() * 500) + 100;
 
-    // Aggiorniamo i dati
     this.incomeData.datasets[0].data = [2500, random(), random(), 100];
     this.expenseData.datasets[0].data = [1200, random(), random(), 300, 100];
 
-    // Forziamo l'aggiornamento grafico
     this.incomeData = { ...this.incomeData };
     this.expenseData = { ...this.expenseData };
 
-    // 2. Chiamiamo il calcolo dei totali subito dopo aver aggiornato i dati
     this.calcolaTotali();
   }
 
-  // 3. Funzione che somma i numeri nell'array
   calcolaTotali() {
-    // Somma Entrate (reduce scorre l'array e somma tutto)
     this.totaleEntrate = this.incomeData.datasets[0].data.reduce((acc, curr) => Number(acc) + Number(curr), 0) as number;
 
     // Somma Uscite
