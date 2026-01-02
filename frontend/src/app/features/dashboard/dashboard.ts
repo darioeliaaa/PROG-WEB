@@ -15,7 +15,6 @@ import { YearlyHistory } from './yearly-history/yearly-history';
 })
 export class Dashboard {
 
-  // 1. Inizializziamo con la data di OGGI (Tempo reale)
   dataCorrente: Date = new Date();
 
   // 2. Funzione per formattare il testo (es. "Gennaio 2026")
