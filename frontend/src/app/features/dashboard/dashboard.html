@@ -2,19 +2,26 @@
 
   <header class="dashboard-header">
     <h1>Dashboard Finanziaria</h1>
-    <span class="date-badge">Dicembre 2025</span>
+
+    <div class="month-selector">
+      <button class="nav-arrow" (click)="cambiaMese(-1)">❮</button>
+
+      <span class="date-badge">{{ titoloMese | titlecase }}</span>
+
+      <button class="nav-arrow" (click)="cambiaMese(1)">❯</button>
+    </div>
   </header>
 
   <section class="horizontal-strip">
-    <app-investment-summary></app-investment-summary>
+    <app-investment-summary [currentDate]="dataCorrente"></app-investment-summary>
   </section>
 
   <section class="horizontal-strip">
-    <app-budget-overview></app-budget-overview>
+    <app-budget-overview [currentDate]="dataCorrente"></app-budget-overview>
   </section>
 
   <section class="horizontal-strip">
-    <app-yearly-history></app-yearly-history>
+    <app-yearly-history [currentDate]="dataCorrente"></app-yearly-history>
   </section>
 
 </div>
