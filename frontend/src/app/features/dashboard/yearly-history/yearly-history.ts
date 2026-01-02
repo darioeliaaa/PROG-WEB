@@ -12,10 +12,8 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 })
 export class YearlyHistory implements OnChanges {
 
-  // 1. Aggiunto l'Input per risolvere l'errore della Dashboard
   @Input() currentDate!: Date;
 
-  // Accesso al grafico per forzare l'aggiornamento se serve
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   public barChartType: ChartType = 'bar';
@@ -69,7 +67,6 @@ export class YearlyHistory implements OnChanges {
     }
   };
 
-  // 2. Intercettiamo il cambio data
   ngOnChanges(changes: SimpleChanges) {
     if (changes['currentDate']) {
       console.log('YearlyHistory: Nuova data ricevuta ->', this.currentDate);
