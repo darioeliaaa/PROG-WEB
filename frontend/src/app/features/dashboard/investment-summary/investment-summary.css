@@ -1,0 +1,67 @@
+.summary-card {
+  /* Gradiente viola/blu come il tuo screenshot */
+  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgb(125, 125, 250)); /* Leggermente azzurrino */  border-radius: 24px;
+  padding: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(142, 197, 252, 0.4);
+  color: #333;
+  min-height: 140px;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #555;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* IL NUMERO GIGANTE */
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin: 5px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Badge piccolo */
+.performance-badge {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.performance-badge small {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+/* Mini Chart a destra */
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 60px;
+}
+
+.bar {
+  width: 10px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+}
+
+.bar.active {
+  background-color: #fff; /* La barra attiva bianca */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}

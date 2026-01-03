@@ -1,1 +1,36 @@
-<p>investment-summary works!</p>
+<div class="glass-card summary-card">
+
+  <div class="info-group">
+    <h3>Patrimonio Netto</h3>
+
+    <div class="balance-amount" [class.negative-balance]="saldoAttuale < 0">
+      {{ saldoAttuale | currency:'EUR':'symbol':'1.2-2' }}
+    </div>
+
+    <div class="stats-row" style="margin-top: 15px; display: flex; gap: 15px;">
+
+      <span class="performance-badge positive">
+        <i class="fa fa-arrow-up"></i>
+        {{ totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}
+        <small> Tot. Entrate</small>
+      </span>
+
+      <span class="performance-badge negative">
+        <i class="fa fa-arrow-down"></i>
+        {{ totaleUscite | currency:'EUR':'symbol':'1.0-0' }}
+        <small> Tot. Uscite</small>
+      </span>
+
+    </div>
+  </div>
+
+  <div class="mini-chart">
+    <div class="bar" style="height: 40%"></div>
+    <div class="bar" style="height: 60%"></div>
+    <div class="bar" style="height: 50%"></div>
+    <div class="bar" style="height: 80%"></div>
+    <div class="bar" style="height: 65%"></div>
+    <div class="bar active" style="height: 90%"></div>
+  </div>
+
+</div>

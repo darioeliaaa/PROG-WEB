@@ -1,1 +1,14 @@
-<p>yearly-history works!</p>
+<div class="glass-card">
+  <div class="header-section">
+    <h3>Andamento Semestrale</h3>
+    <p class="subtitle">Confronto Entrate vs Uscite</p>
+  </div>
+
+  <div class="chart-container">
+    <canvas baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [type]="barChartType">
+    </canvas>
+  </div>
+</div>

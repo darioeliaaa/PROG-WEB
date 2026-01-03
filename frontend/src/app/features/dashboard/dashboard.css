@@ -1,0 +1,72 @@
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0;
+  font-weight: 700;
+}
+
+.date-badge {
+  background: #e0f7fa;
+  color: #006064;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  min-width: 140px;
+  text-align: center;
+}
+
+.horizontal-strip {
+  width: 100%;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 15px;
+    gap: 20px;
+  }
+
+  h1 { font-size: 1.5rem; }
+}
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-arrow {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 5px;
+  transition: transform 0.2s ease;
+}
+
+.nav-arrow:hover {
+  transform: scale(1.3);
+}
