@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
@@ -13,6 +13,9 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 export class BudgetOverview implements OnChanges {
 
   @Input() currentDate!: Date;
+  @Input() datiReali: any;
+
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   public totaleEntrate: number = 0;
   public totaleUscite: number = 0;
@@ -20,58 +23,86 @@ export class BudgetOverview implements OnChanges {
   public chartType: ChartType = 'doughnut';
 
   public incomeData: ChartData<'doughnut'> = {
-    labels: ['Stipendio', 'Freelance', 'Dividendi', 'Altro'],
-    datasets: [{
-      data: [2500, 600, 150, 100],
-      backgroundColor: ['#2ecc71', '#3498db', '#1abc9c', '#27ae60'],
-      borderColor: '#ffffff',
-      borderWidth: 2
-    }]
+    labels: [],
+    datasets: [{ data: [], backgroundColor: [], borderWidth: 0 }]
   };
 
   public expenseData: ChartData<'doughnut'> = {
-    labels: ['Casa & Bollette', 'Spesa', 'Auto/Trasporti', 'Svago', 'Salute'],
-    datasets: [{
-      data: [1200, 400, 200, 300, 100],
-      backgroundColor: ['#e74c3c', '#f1c40f', '#e67e22', '#9b59b6', '#95a5a6'],
-      borderColor: '#ffffff',
-      borderWidth: 2
-    }]
+    labels: [],
+    datasets: [{ data: [], backgroundColor: [], borderWidth: 0 }]
   };
 
   public chartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'bottom',
-        labels: { usePointStyle: true, font: { size: 11 } }
-      }
+      legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } }
     }
   };
 
+  private coloriCategorie: { [key: string]: string } = {
+    // ENTRATE
+    'stipendio': '#2ecc71',
+    'investimenti': '#3498db',
+    'altro': '#95a5a6',
+
+    // USCITE
+    'casa': '#e74c3c',
+    'spesa': '#f1c40f',
+    'svago': '#9b59b6',
+    'salute': '#e67e22',
+    'trasporti': '#1abc9c',
+    'default': '#bdc3c7'
+  };
+
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentDate']) {
-      this.simulaDatiDinamici();
+    if (changes['datiReali'] && this.datiReali) {
+
+      this.totaleEntrate = this.datiReali.totaleEntrate;
+      this.totaleUscite = this.datiReali.totaleUscite;
+
+      this.elaboraDati(this.datiReali.transactions);
     }
   }
 
-  simulaDatiDinamici() {
-    const random = () => Math.floor(Math.random() * 500) + 100;
+  private elaboraDati(transazioni: any[]) {
+    if (!transazioni) return;
 
-    this.incomeData.datasets[0].data = [2500, random(), random(), 100];
-    this.expenseData.datasets[0].data = [1200, random(), random(), 300, 100];
+    const entrateMap = new Map<string, number>();
+    const usciteMap = new Map<string, number>();
 
-    this.incomeData = { ...this.incomeData };
-    this.expenseData = { ...this.expenseData };
+    transazioni.forEach(t => {
+      const valore = Number(t.importo);
+      const categoria = t.categoria;
 
-    this.calcolaTotali();
-  }
+      if (t.tipo === 'entrata') {
+        const attuale = entrateMap.get(categoria) || 0;
+        entrateMap.set(categoria, attuale + valore);
+      } else {
+        const attuale = usciteMap.get(categoria) || 0;
+        usciteMap.set(categoria, attuale + valore);
+      }
+    });
 
-  calcolaTotali() {
-    this.totaleEntrate = this.incomeData.datasets[0].data.reduce((acc, curr) => Number(acc) + Number(curr), 0) as number;
+    this.incomeData = {
+      labels: Array.from(entrateMap.keys()).map(k => k.toUpperCase()),
+      datasets: [{
+        data: Array.from(entrateMap.values()),
+        backgroundColor: Array.from(entrateMap.keys()).map(k => this.coloriCategorie[k] || this.coloriCategorie['default']),
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }]
+    };
 
-    // Somma Uscite
-    this.totaleUscite = this.expenseData.datasets[0].data.reduce((acc, curr) => Number(acc) + Number(curr), 0) as number;
+    this.expenseData = {
+      labels: Array.from(usciteMap.keys()).map(k => k.toUpperCase()),
+      datasets: [{
+        data: Array.from(usciteMap.values()),
+        backgroundColor: Array.from(usciteMap.keys()).map(k => this.coloriCategorie[k] || this.coloriCategorie['default']),
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }]
+    };
+    this.chart?.update();
   }
 }
