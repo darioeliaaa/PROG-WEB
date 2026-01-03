@@ -3,25 +3,35 @@
   <header class="dashboard-header">
     <h1>Dashboard Finanziaria</h1>
 
-    <div class="month-selector">
-      <button class="nav-arrow" (click)="cambiaMese(-1)">❮</button>
+    <div class="header-controls">
+      <div class="month-selector">
+        <button class="nav-arrow" (click)="cambiaMese(-1)">❮</button>
+        <span class="date-badge">{{ titoloMese | titlecase }}</span>
+        <button class="nav-arrow" (click)="cambiaMese(1)">❯</button>
+      </div>
 
-      <span class="date-badge">{{ titoloMese | titlecase }}</span>
-
-      <button class="nav-arrow" (click)="cambiaMese(1)">❯</button>
+      <a routerLink="/movimenti" class="btn-add-movimento">+</a>
     </div>
   </header>
 
   <section class="horizontal-strip">
-    <app-investment-summary [currentDate]="dataCorrente"></app-investment-summary>
+    <app-investment-summary
+      [currentDate]="dataCorrente"
+      [transazioniAnno]="transazioniAnnuali">
+    </app-investment-summary>
   </section>
 
   <section class="horizontal-strip">
-    <app-budget-overview [currentDate]="dataCorrente"></app-budget-overview>
+    <app-budget-overview
+      [currentDate]="dataCorrente"
+      [datiReali]="datiMensili">
+    </app-budget-overview>
   </section>
 
   <section class="horizontal-strip">
-    <app-yearly-history [currentDate]="dataCorrente"></app-yearly-history>
+    <app-yearly-history
+      [currentDate]="dataCorrente">
+    </app-yearly-history>
   </section>
 
 </div>
