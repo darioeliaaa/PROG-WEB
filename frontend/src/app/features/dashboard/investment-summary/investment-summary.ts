@@ -11,20 +11,40 @@ import { CommonModule } from '@angular/common';
 export class InvestmentSummary implements OnChanges {
 
   @Input() currentDate!: Date;
+  @Input() transazioniAnno: any[] = [];
+
+  totalBalance: number = 0;
+  monthlyInvested: number = 0;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentDate']) {
-      const nuovoMese = this.currentDate;
-
-      console.log('InvestmentSummary ha ricevuto il nuovo mese:', nuovoMese);
-
-      // QUI SOTTO devi chiamare la tua logica per aggiornare i numeri.
-      // Esempio: this.calcolaInvestimenti(nuovoMese);
+    if (changes['currentDate'] || changes['transazioniAnno']) {
+      this.calcolaPatrimonio();
     }
   }
-  calcolaInvestimenti(data: Date) {
-    // Logica finta per ora
-    console.log(`Sto scaricando gli investimenti di ${data.getMonth() + 1}/${data.getFullYear()}...`);
-  }
 
+  calcolaPatrimonio() {
+    if (!this.transazioniAnno) return;
+
+    const meseCorrenteIdx = this.currentDate.getMonth();
+
+    const investimenti = this.transazioniAnno.filter(t =>
+      t.categoria === 'investimenti' && t.tipo === 'uscita'
+    );
+
+    this.totalBalance = investimenti
+      .filter(t => {
+        const parts = t.data.split('-');
+        const tMese = Number(parts[1]) - 1;
+        return tMese <= meseCorrenteIdx;
+      })
+      .reduce((acc, curr) => acc + curr.importo, 0);
+
+    this.monthlyInvested = investimenti
+      .filter(t => {
+        const parts = t.data.split('-');
+        const tMese = Number(parts[1]) - 1;
+        return tMese === meseCorrenteIdx;
+      })
+      .reduce((acc, curr) => acc + curr.importo, 0);
+  }
 }
