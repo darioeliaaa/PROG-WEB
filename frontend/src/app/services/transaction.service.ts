@@ -6,7 +6,7 @@ export interface Transaction {
   importo: number;
   descrizione: string;
   categoria: string;
-  data: string; // "YYYY-MM-DD"
+  data: string;
 }
 
 @Injectable({
@@ -22,7 +22,6 @@ export class TransactionService {
     return data ? JSON.parse(data) : [];
   }
 
-  // NOTA: Il metodo si chiama 'add'
   add(t: Omit<Transaction, 'id'>) {
     const transactions = this.load();
     const newTransaction: Transaction = {
@@ -34,7 +33,6 @@ export class TransactionService {
     localStorage.setItem(this.key, JSON.stringify(transactions));
   }
 
-  // Per il Budget (Mese specifico)
   getDataByMonth(meseIdx: number, anno: number) {
     const all = this.load();
     const filtered = all.filter(t => {
@@ -52,9 +50,11 @@ export class TransactionService {
     return { transactions: filtered, totaleEntrate, totaleUscite, saldo: totaleEntrate - totaleUscite };
   }
 
-  // Per Investimenti e Storico (Tutto l'anno)
   getDataByYear(anno: number): Transaction[] {
     const all = this.load();
     return all.filter(t => Number(t.data.split('-')[0]) === anno);
+  }
+  getAllTransactions(): Transaction[] {
+    return this.load();
   }
 }
