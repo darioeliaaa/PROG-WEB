@@ -1,37 +1,52 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Serve per gli input
-import { Router, RouterModule } from '@angular/router'; // Serve per navigare
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { TransactionService } from '../../services/transaction.service';
 
 @Component({
   selector: 'app-movimenti',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './movimenti.html',
   styleUrl: './movimenti.css'
 })
 export class Movimenti {
 
-  // I dati che l'utente sta inserendo
-  nuovoMovimento = {
-    tipo: 'uscita', // Di default è un'uscita
-    descrizione: '',
+  nuovoMovimento: any = {
+    tipo: 'uscita',
     importo: null,
-    data: new Date().toISOString().split('T')[0], // Mette la data di oggi in automatico
-    categoria: ''
+    descrizione: '',
+    categoria: '',
+    data: new Date().toISOString().split('T')[0]
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private service: TransactionService
+  ) {}
 
   salva() {
-    console.log('Sto salvando:', this.nuovoMovimento);
-    // Qui in futuro metterai la chiamata al server/database
 
-    // Dopo aver salvato, torna alla dashboard
+    if (!this.nuovoMovimento.importo || !this.nuovoMovimento.descrizione || !this.nuovoMovimento.categoria) {
+      alert('Per favore compila tutti i campi obbligatori!');
+      return;
+    }
+
+
+    const movimentoDaSalvare = {
+      ...this.nuovoMovimento,
+      importo: Number(this.nuovoMovimento.importo)
+    };
+
+    console.log('Sto salvando:', movimentoDaSalvare);
+
+    this.service.add(movimentoDaSalvare);
+
     this.router.navigate(['/']);
   }
 
   annulla() {
-    this.router.navigate(['/']); // Torna indietro senza salvare
+    this.router.navigate(['/']);
   }
 }
