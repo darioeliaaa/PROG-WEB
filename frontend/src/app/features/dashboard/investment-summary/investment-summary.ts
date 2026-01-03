@@ -11,40 +11,56 @@ import { CommonModule } from '@angular/common';
 export class InvestmentSummary implements OnChanges {
 
   @Input() currentDate!: Date;
-  @Input() transazioniAnno: any[] = [];
 
-  totalBalance: number = 0;
-  monthlyInvested: number = 0;
+  @Input() tutteLeTransazioni: any[] = [];
+
+  totaleEntrate: number = 0;
+  totaleUscite: number = 0;
+  saldoAttuale: number = 0;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentDate'] || changes['transazioniAnno']) {
-      this.calcolaPatrimonio();
+    if (changes['currentDate'] || changes['tutteLeTransazioni']) {
+      this.calcoloPatrimonio();
     }
   }
 
-  calcolaPatrimonio() {
-    if (!this.transazioniAnno) return;
+  calcoloPatrimonio(): void {
+    if (!this.tutteLeTransazioni) return;
 
-    const meseCorrenteIdx = this.currentDate.getMonth();
+    let tempEntrate = 0;
+    let tempUscite = 0;
 
-    const investimenti = this.transazioniAnno.filter(t =>
-      t.categoria === 'investimenti' && t.tipo === 'uscita'
-    );
+    const dataLimite = new Date(this.currentDate);
 
-    this.totalBalance = investimenti
-      .filter(t => {
-        const parts = t.data.split('-');
-        const tMese = Number(parts[1]) - 1;
-        return tMese <= meseCorrenteIdx;
-      })
-      .reduce((acc, curr) => acc + curr.importo, 0);
+    this.tutteLeTransazioni.forEach(transazione => {
 
-    this.monthlyInvested = investimenti
-      .filter(t => {
-        const parts = t.data.split('-');
-        const tMese = Number(parts[1]) - 1;
-        return tMese === meseCorrenteIdx;
-      })
-      .reduce((acc, curr) => acc + curr.importo, 0);
+      const dataTransazione = new Date(transazione.data);
+
+      if (dataTransazione > dataLimite) {
+        return;
+      }
+
+      const importo = Number(transazione.importo);
+      if (isNaN(importo)) return;
+
+      const tipo = (transazione.tipo || '').toLowerCase();
+
+      if (tipo === 'entrata') {
+        tempEntrate += importo;
+      }
+      else if (tipo === 'uscita') {
+        tempUscite += importo;
+      }
+    });
+
+    this.totaleEntrate = tempEntrate;
+    this.totaleUscite = tempUscite;
+
+    // Il saldo ora conterrà i 100.000€ del 2025 anche se siamo nel 2026
+    this.saldoAttuale = this.totaleEntrate - this.totaleUscite;
+
+    console.log('--- PATRIMONIO AGGIORNATO ---');
+    console.log('Data riferimento:', dataLimite.toLocaleDateString());
+    console.log('Saldo Totale:', this.saldoAttuale);
   }
 }
