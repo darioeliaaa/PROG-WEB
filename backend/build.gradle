@@ -10,7 +10,7 @@ description = 'Demo project for Spring Boot'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17) // Usa Java 17 o 21 (LTS). La 25 non esiste ancora.
+    languageVersion = JavaLanguageVersion.of(21) // Usa Java 17 o 21 (LTS). La 25 non esiste ancora.
   }
 }
 

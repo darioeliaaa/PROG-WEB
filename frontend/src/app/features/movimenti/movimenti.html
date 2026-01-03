@@ -1,1 +1,77 @@
-<p>movimenti works!</p>
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <h1>Nuovo Movimento</h1>
+  </header>
+
+  <div class="form-container glass-panel">
+
+    <form (ngSubmit)="salva()">
+
+      <div class="form-group">
+        <div class="toggle-buttons">
+          <button type="button"
+                  [class.active]="nuovoMovimento.tipo === 'entrata'"
+                  (click)="nuovoMovimento.tipo = 'entrata'"
+                  class="btn-toggle income">
+            <span style="font-size: 1.2rem;">↗</span> Entrata
+          </button>
+          <button type="button"
+                  [class.active]="nuovoMovimento.tipo === 'uscita'"
+                  (click)="nuovoMovimento.tipo = 'uscita'"
+                  class="btn-toggle expense">
+            <span style="font-size: 1.2rem;">↘</span> Uscita
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="text-align: center; margin-bottom: 0;">Importo</label>
+
+        <input type="number"
+               [(ngModel)]="nuovoMovimento.importo"
+               name="importo"
+               class="big-input"
+               [ngClass]="{'text-green': nuovoMovimento.tipo === 'entrata', 'text-red': nuovoMovimento.tipo === 'uscita'}"
+               placeholder="0.00"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label>Descrizione</label>
+        <input type="text"
+               [(ngModel)]="nuovoMovimento.descrizione"
+               name="descrizione"
+               class="glass-input"
+               placeholder="Es. Spesa settimanale"
+               required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoria</label>
+          <select [(ngModel)]="nuovoMovimento.categoria" name="categoria" class="glass-input" required>
+            <option value="" disabled selected>Seleziona...</option>
+            <option value="casa">🏠 Casa</option>
+            <option value="spesa">🛒 Spesa</option>
+            <option value="svago">🎉 Svago</option>
+            <option value="salute">❤️ Salute</option>
+            <option value="stipendio">💼 Stipendio</option>
+            <option value="investimenti">📈 Investimenti</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" [(ngModel)]="nuovoMovimento.data" name="data" class="glass-input">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="annulla()" class="btn-secondary">Annulla</button>
+        <button type="submit" class="btn-primary">Salva Movimento</button>
+      </div>
+
+    </form>
+  </div>
+</div>

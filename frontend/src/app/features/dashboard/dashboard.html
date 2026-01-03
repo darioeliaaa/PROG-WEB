@@ -1,1 +1,34 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <h1>Dashboard Finanziaria</h1>
+
+    <div class="header-controls">
+      <div class="month-selector">
+        <button class="nav-arrow" (click)="cambiaMese(-1)">❮</button>
+        <span class="date-badge">{{ titoloMese | titlecase }}</span>
+        <button class="nav-arrow" (click)="cambiaMese(1)">❯</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="horizontal-strip">
+    <app-investment-summary
+      [currentDate]="currentDate"
+      [tutteLeTransazioni]="transazioniTotali"> </app-investment-summary>
+  </section>
+
+  <section class="horizontal-strip">
+    <app-budget-overview
+      [currentDate]="currentDate"
+      [datiReali]="datiMensili">
+    </app-budget-overview>
+  </section>
+
+  <section class="horizontal-strip">
+    <app-yearly-history
+      [currentDate]="currentDate">
+    </app-yearly-history>
+  </section>
+
+</div>
