@@ -1,8 +1,18 @@
 <div class="glass-card summary-card">
+
   <div class="info-group">
     <h3>Patrimonio Totale</h3>
-    <h1 class="balance">€ 4.450,00</h1>
-    <span class="badge positive">+2.5% questo mese 📈</span>
+
+    <div class="balance-amount">
+      {{ totalBalance | currency:'EUR':'symbol':'1.0-0' }}
+    </div>
+
+    <span class="performance-badge"
+          [ngClass]="{'positive': monthlyInvested > 0, 'negative': monthlyInvested === 0}">
+
+      {{ monthlyInvested > 0 ? '+' : '' }}{{ monthlyInvested | currency:'EUR':'symbol':'1.0-0' }}
+      <small> questo mese</small>
+    </span>
   </div>
 
   <div class="mini-chart">
@@ -13,4 +23,5 @@
     <div class="bar" style="height: 65%"></div>
     <div class="bar active" style="height: 90%"></div>
   </div>
+
 </div>
