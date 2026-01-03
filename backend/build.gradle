@@ -1,7 +1,7 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '4.0.1'
-	id 'io.spring.dependency-management' version '1.1.7'
+  id 'java'
+  id 'org.springframework.boot' version '3.4.1' // Metti una versione stabile (3.x)
+  id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
@@ -9,22 +9,34 @@ version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17) // Usa Java 17 o 21 (LTS). La 25 non esiste ancora.
+  }
 }
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  // 1. Questa serve per far funzionare il Backend (REST API)
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+
+  // 2. QUESTA è quella che ti mancava per risolvere l'errore 'persistence'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  // 3. Questa serve per @Data (Lombok)
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
+
+  // Database
   implementation 'org.postgresql:postgresql'
+
+  // Testing
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+  useJUnitPlatform()
 }

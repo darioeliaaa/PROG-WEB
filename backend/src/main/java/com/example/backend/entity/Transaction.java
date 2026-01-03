@@ -22,8 +22,9 @@ public class Transaction {
   private LocalDate date;
 
   @Enumerated(EnumType.STRING)
-  private TransactionType type; // Ricorda di creare l'Enum!
+  private TransactionType type;
 
+  // Relazione con l'utente: Ogni transazione appartiene a UN utente
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;

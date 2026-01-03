@@ -2,29 +2,26 @@ package com.example.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDate;
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Data
-@Table(name = "transactions")
-public class Transaction {
+@Table(name = "users") // "users" plurale per evitare conflitti con parole chiave SQL
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String description;
+  @Column(unique = true, nullable = false)
+  private String username;
 
-  @Column(nullable = false)
-  private BigDecimal amount;
+  @Column(unique = true, nullable = false)
+  private String email;
 
-  private LocalDate date;
+  private String password;
 
-  @Enumerated(EnumType.STRING)
-  private TransactionType type; // Ricorda di creare l'Enum!
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  // Opzionale: relazione inversa per vedere le transazioni dell'utente
+  // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  // private List<Transaction> transactions;
 }
