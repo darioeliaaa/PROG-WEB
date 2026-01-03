@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+// Importiamo il service
+import { TransactionService, Transaction } from '../../../services/transaction.service';
 
 @Component({
   selector: 'app-yearly-history',
@@ -13,29 +15,27 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 export class YearlyHistory implements OnChanges {
 
   @Input() currentDate!: Date;
-
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   public barChartType: ChartType = 'bar';
-
   public barChartData: ChartData<'bar'> = {
-    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', "Lug", "Aug", "Set", "Ott", "Nov", "Dic"],
+    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
     datasets: [
       {
-        data: [2500, 3000, 2800, 3200, 4000, 3500, 2500, 3000, 2800, 3200, 4000, 3500],
+        data: [],
         label: 'Entrate',
         backgroundColor: '#2ecc71',
         hoverBackgroundColor: '#27ae60',
-        borderRadius: 5,
+        borderRadius: 4,
         barPercentage: 0.6,
         categoryPercentage: 0.8
       },
       {
-        data: [1800, 2200, 2900, 1500, 2000, 2100, 1800, 2200, 2900, 1500, 2000, 2100],
+        data: [],
         label: 'Uscite',
-        backgroundColor: '#e74c3c',
+        backgroundColor: '#ef4444',
         hoverBackgroundColor: '#c0392b',
-        borderRadius: 5,
+        borderRadius: 4,
         barPercentage: 0.6,
         categoryPercentage: 0.8
       }
@@ -46,45 +46,45 @@ export class YearlyHistory implements OnChanges {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-      tooltip: {
-        enabled: true,
-        mode: 'index',
-        intersect: false
-      }
+      legend: { display: true, position: 'top' },
+      tooltip: { enabled: true, mode: 'index', intersect: false }
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: { color: 'rgba(0,0,0,0.05)' }
-      },
-      x: {
-        grid: { display: false }
-      }
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+      x: { grid: { display: false } }
     }
   };
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentDate']) {
-      console.log('YearlyHistory: Nuova data ricevuta ->', this.currentDate);
+  constructor(private service: TransactionService) {}
 
-      // Qui simuliamo un cambio dati per farti vedere che funziona
-      this.randomizeData();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentDate'] && this.currentDate) {
+      this.caricaDatiAnnuali();
     }
   }
 
-  // Funzione per generare dati casuali (da sostituire con chiamata API in futuro)
-  randomizeData() {
-    // Genera 12 numeri casuali per le Entrate
-    this.barChartData.datasets[0].data = Array.from({ length: 12 }, () => Math.floor(Math.random() * 5000) + 1000);
+  caricaDatiAnnuali() {
+    const anno = this.currentDate.getFullYear();
 
-    // Genera 12 numeri casuali per le Uscite
-    this.barChartData.datasets[1].data = Array.from({ length: 12 }, () => Math.floor(Math.random() * 3000) + 500);
+    const transazioni = this.service.getDataByYear(anno);
 
-    // Forza l'aggiornamento del grafico
+    const entrateMensili = new Array(12).fill(0);
+    const usciteMensili = new Array(12).fill(0);
+
+    // 3. Riempiamo gli slot
+    transazioni.forEach(t => {
+      const mese = new Date(t.data).getMonth();
+
+      if (t.tipo === 'entrata') {
+        entrateMensili[mese] += t.importo;
+      } else {
+        usciteMensili[mese] += t.importo;
+      }
+    });
+
+    this.barChartData.datasets[0].data = entrateMensili;
+    this.barChartData.datasets[1].data = usciteMensili;
+
     this.chart?.update();
   }
 }
