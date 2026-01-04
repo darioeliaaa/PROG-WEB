@@ -1,0 +1,20 @@
+### 1. PROVA REGISTRAZIONE (Nuovo utente)
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "username": "MarioBros",
+  "email": "mario@nintendo.com",
+  "password": "123"
+}
+
+###
+
+### 2. PROVA LOGIN (Verifica se la password è giusta)
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "matteo@prova.it",
+  "password": "123"
+}

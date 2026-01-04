@@ -62,4 +62,17 @@ export class TransactionService {
       })
     );
   }
+  // ... altri metodi ...
+
+  // 4. NUOVO METODO: Filtra per Anno (serve al componente YearlyHistory)
+  getDataByYear(userId: number, anno: number): Observable<Transaction[]> {
+    return this.getAllTransactions(userId).pipe(
+      map(transactions => {
+        return transactions.filter(t => {
+          const tAnno = Number(t.date.split('-')[0]); // "2025-01-03" -> 2025
+          return tAnno === anno;
+        });
+      })
+    );
+  }
 }

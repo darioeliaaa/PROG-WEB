@@ -1,9 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseChartDirective } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts'; // Assicurati di avere ng2-charts installato
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-// Importiamo il service
-import { TransactionService, Transaction } from '../../../services/transaction.service';
+
+// IMPORT CORRETTI
+import { TransactionService } from '../../../services/transaction.service';
+import { Transaction } from '../../../models/transaction.model'; // <--- Controlla che questo percorso sia giusto!
 
 @Component({
   selector: 'app-yearly-history',
@@ -65,26 +67,35 @@ export class YearlyHistory implements OnChanges {
 
   caricaDatiAnnuali() {
     const anno = this.currentDate.getFullYear();
+    const userId = 1; // ID utente fisso per ora
 
-    const transazioni = this.service.getDataByYear(anno);
+    // 1. CHIAMATA ASINCRONA AL BACKEND
+    this.service.getDataByYear(userId, anno).subscribe({
+      next: (transazioni: Transaction[]) => {
 
-    const entrateMensili = new Array(12).fill(0);
-    const usciteMensili = new Array(12).fill(0);
+        const entrateMensili = new Array(12).fill(0);
+        const usciteMensili = new Array(12).fill(0);
 
-    // 3. Riempiamo gli slot
-    transazioni.forEach(t => {
-      const mese = new Date(t.data).getMonth();
+        // 2. CICLO SUI DATI (IN INGLESE)
+        transazioni.forEach(t => {
+          // 'date' (inglese) invece di 'data'
+          const mese = new Date(t.date).getMonth();
 
-      if (t.tipo === 'entrata') {
-        entrateMensili[mese] += t.importo;
-      } else {
-        usciteMensili[mese] += t.importo;
-      }
+          // 'type' e 'INCOME' invece di 'tipo' ed 'entrata'
+          if (t.type === 'INCOME') {
+            entrateMensili[mese] += t.amount; // 'amount' invece di 'importo'
+          } else {
+            usciteMensili[mese] += t.amount;
+          }
+        });
+
+        // 3. AGGIORNAMENTO GRAFICO
+        this.barChartData.datasets[0].data = entrateMensili;
+        this.barChartData.datasets[1].data = usciteMensili;
+
+        this.chart?.update();
+      },
+      error: (err) => console.error("Errore caricamento grafico annuale:", err)
     });
-
-    this.barChartData.datasets[0].data = entrateMensili;
-    this.barChartData.datasets[1].data = usciteMensili;
-
-    this.chart?.update();
   }
 }
