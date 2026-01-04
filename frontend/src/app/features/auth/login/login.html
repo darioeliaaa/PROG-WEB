@@ -15,22 +15,35 @@
   <input type="checkbox" id="chk" aria-hidden="true">
 
   <div class="signup">
-    <form>
+    <form (ngSubmit)="onRegister()">
       <label for="chk" aria-hidden="true">Sign up</label>
-      <input type="text" name="txt" placeholder="User name" required="">
-      <input type="email" name="email" placeholder="Email" required="">
-      <input type="number" name="broj" placeholder="BrojTelefona" required="">
-      <input type="password" name="pswd" placeholder="Password" required="">
-      <button>Sign up</button>
+
+      <input type="text" name="username" [(ngModel)]="registerObj.username" placeholder="User name" required>
+      <input type="email" name="email" [(ngModel)]="registerObj.email" placeholder="Email" required>
+      <input type="password" name="pswd" [(ngModel)]="registerObj.password" placeholder="Password" required>
+
+      <div *ngIf="registerMessage"
+           class="register-label">
+        {{ registerMessage }}
+      </div>
+
+      <button type="submit">Sign up</button>
     </form>
   </div>
 
   <div class="login">
-    <form>
+    <form (ngSubmit)="onLogin()">
       <label for="chk" aria-hidden="true">Login</label>
-      <input type="email" name="email" placeholder="Email" required="">
-      <input type="password" name="pswd" placeholder="Password" required="">
-      <button>Login</button>
+
+      <input type="email" name="loginEmail" [(ngModel)]="loginObj.email" placeholder="Email" required>
+      <input type="password" name="loginPass" [(ngModel)]="loginObj.password" placeholder="Password" required>
+
+
+      <div *ngIf="errorMessage" class="error-label">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit">Login</button>
     </form>
   </div>
 </div>
