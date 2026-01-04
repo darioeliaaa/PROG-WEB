@@ -12,7 +12,7 @@ body {
 
 .main {
   /* DIMENSIONI AUMENTATE QUI */
-  width: 400px;  /* Più largo */
+  width: 900px;  /* Più largo */
   height: 600px; /* Più alto */
   overflow: hidden;
 
@@ -105,4 +105,58 @@ button:hover {
 
 #chk:checked ~ .signup label {
   transform: scale(.6);
+}
+
+/* Stile per il messaggio di errore */
+.error-label {
+  color: #ff4d4d; /* Rosso acceso */
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(255, 0, 0, 0.1); /* Sfondo rossiccio leggero */
+  padding: 5px;
+  border-radius: 4px;
+  align-items: center;
+  display: block;
+}
+
+/* Stile per il contenitore Ricordami */
+.remember-me-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 8px; /* Spazio tra checkbox e testo */
+}
+
+/* Forziamo la checkbox ad essere piccola (a volte i CSS globali le ingrandiscono) */
+.remember-me-container input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  height: 15px;
+  cursor: pointer;
+}
+
+.remember-label {
+  font-size: 14px;
+  color: #573b8a; /* Colore simile al tema viola */
+  cursor: pointer;
+  /* Rimuoviamo stili che potrebbero venire dalla label del titolo "Login" */
+  transform: none;
+  font-weight: normal;
+}
+
+.register-label {
+  color: #0df548; /* Rosso acceso */
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(17, 255, 0, 0.1); /* Sfondo rossiccio leggero */
+  padding: 5px;
+  border-radius: 4px;
+  align-items: center;
 }
