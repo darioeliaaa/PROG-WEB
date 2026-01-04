@@ -18,3 +18,31 @@ Content-Type: application/json
   "email": "matteo@prova.it",
   "password": "123"
 }
+### 3. AGGIUNGI UN MOVIMENTO (Stipendio per Mario, ID 2)
+POST http://localhost:8080/api/transactions/user/2
+Content-Type: application/json
+
+{
+  "description": "Stipendio Gennaio",
+  "amount": 1500.50,
+  "date": "2026-01-27",
+  "type": "ENTRATA"
+}
+
+###
+
+### 4. AGGIUNGI UNA SPESA (Pizza per Mario, ID 2)
+POST http://localhost:8080/api/transactions/user/2
+Content-Type: application/json
+
+{
+  "description": "Pizza con amici",
+  "amount": 25.00,
+  "date": "2026-01-04",
+  "type": "USCITA"
+}
+
+###
+
+### 5. LEGGI TUTTI I MOVIMENTI DI MARIO (ID 2)
+GET http://localhost:8080/api/transactions/user/2
