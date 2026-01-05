@@ -14,12 +14,22 @@
        class="toggle-btn">
       Investimenti
     </a>
-
   </nav>
 
   <div class="user-profile">
-    <a routerLink="/login" class="avatar-circle">
+    <span *ngIf="!isLoggedIn" class="login-label">Accedi</span>
+
+    <a routerLink="/login" *ngIf="!isLoggedIn" class="avatar-circle">
       <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Login" width="24">
     </a>
+
+    <div class="avatar-circle-dropdown" *ngIf="isLoggedIn">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Avatar" width="24">
+
+      <div class="dropdown-menu">
+        <a routerLink="/profile">Dati Personali</a>
+        <a (click)="logout()">Logout</a>
+      </div>
+    </div>
   </div>
 </header>
