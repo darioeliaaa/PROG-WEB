@@ -79,7 +79,18 @@
 
 /* Icona utente a destra */
 .user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
+  position: relative;
+}
+
+.logout-btn {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
 }
 
 .avatar-circle {
@@ -91,8 +102,42 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.2s;
+  position: relative;
 }
 
 .avatar-circle:hover {
   transform: scale(1.1);
+}
+
+.avatar-circle .dropdown-menu{
+  display: none;
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  border-radius: 8px;
+  min-width: 160px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  padding: 8px 0;
+}
+
+.avatar-circle .dropdown-menu a{
+  display: block;
+  padding: 10px 16px;
+  color: #333333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.avatar-circle .dropdown-menu a:hover{
+  background-color: rgba(125, 125, 250, 0.1);
+  color: #7D7DFAFF;
+}
+
+.avatar-circle:hover .dropdown-menu{
+  display: block;
 }
