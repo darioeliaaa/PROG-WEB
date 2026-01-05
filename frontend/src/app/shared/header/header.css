@@ -4,7 +4,7 @@
   justify-content: space-between; /* Distribuisce gli elementi: sinistra, centro, destra */
   align-items: center;
   padding: 15px 30px;
-  background-color: #5555ff; /* Stesso blu della sidebar */
+  background-color:#7D7DFAFF;; /* Stesso blu della sidebar */
   color: white;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

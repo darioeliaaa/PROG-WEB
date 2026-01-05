@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TransactionService } from '../../services/transaction.service';
+import { Transaction } from '../../models/transaction.model';
 
 @Component({
   selector: 'app-movimenti',
@@ -13,11 +14,12 @@ import { TransactionService } from '../../services/transaction.service';
 })
 export class Movimenti {
 
-  nuovoMovimento: any = {
-    tipo: 'uscita',
+  // Manteniamo l'oggetto del form in ITALIANO per compatibilità con il tuo HTML
+  nuovoMovimento = {
+    tipo: 'uscita',      // 'entrata' o 'uscita'
     importo: null,
     descrizione: '',
-    categoria: '',
+    categoria: '',       // <--- Aggiunto questo campo che mancava!
     data: new Date().toISOString().split('T')[0]
   };
 
@@ -27,23 +29,39 @@ export class Movimenti {
   ) {}
 
   salva() {
-
+    // Validazione base
     if (!this.nuovoMovimento.importo || !this.nuovoMovimento.descrizione || !this.nuovoMovimento.categoria) {
       alert('Per favore compila tutti i campi obbligatori!');
       return;
     }
 
+    // TRUCCO: Siccome il DB non ha la colonna "categoria", la aggiungiamo alla descrizione
+    // Esempio risultato: "[Casa] Bolletta Luce"
+    const descrizioneCompleta = `[${this.nuovoMovimento.categoria}] ${this.nuovoMovimento.descrizione}`;
 
-    const movimentoDaSalvare = {
-      ...this.nuovoMovimento,
-      importo: Number(this.nuovoMovimento.importo)
+    // 1. TRADUZIONE: Mappiamo i dati dal Form (Italiano) al Backend (Inglese)
+    const movimentoDaSalvare: Transaction = {
+      description: descrizioneCompleta,
+      amount: Number(this.nuovoMovimento.importo),
+      date: this.nuovoMovimento.data,
+      // Convertiamo 'entrata'/'uscita' in 'INCOME'/'EXPENSE'
+      type: this.nuovoMovimento.tipo === 'entrata' ? 'INCOME' : 'EXPENSE'
     };
 
-    console.log('Sto salvando:', movimentoDaSalvare);
+    console.log('Sto inviando al server:', movimentoDaSalvare);
 
-    this.service.add(movimentoDaSalvare);
-
-    this.router.navigate(['/']);
+    // 2. INVIO AL BACKEND
+    // Nota: userId è fisso a 1 per ora
+    this.service.add(1, movimentoDaSalvare).subscribe({
+      next: (res) => {
+        console.log("Salvato con successo!", res);
+        this.router.navigate(['/']); // Torna alla dashboard
+      },
+      error: (err) => {
+        console.error("Errore nel salvataggio:", err);
+        alert("Errore nel salvataggio dei dati. Il backend è acceso?");
+      }
+    });
   }
 
   annulla() {

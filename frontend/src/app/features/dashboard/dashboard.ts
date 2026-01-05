@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InvestmentSummary } from './investment-summary/investment-summary';
 import { BudgetOverview } from './budget-overview/budget-overview';
@@ -12,13 +12,18 @@ import { TransactionService } from '../../services/transaction.service';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
 
   currentDate: Date = new Date();
-  datiMensili: any = null;
+
+  // Inizializziamo a null o oggetti vuoti per evitare errori nell'HTML mentre carica
+  datiMensili: any = { transactions: [], totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
   transazioniTotali: any[] = [];
 
-  constructor(private service: TransactionService) {
+  constructor(private service: TransactionService) {}
+
+  // Usiamo ngOnInit per caricare i dati all'avvio
+  ngOnInit() {
     this.aggiornaDati();
   }
 
@@ -36,9 +41,23 @@ export class Dashboard {
   aggiornaDati() {
     const mese = this.currentDate.getMonth();
     const anno = this.currentDate.getFullYear();
+    const userId = 1; // ID fisso per ora
 
-    this.datiMensili = this.service.getDataByMonth(mese, anno);
+    // CHIAMATA ASINCRONA 1: Dati del mese
+    this.service.getDataByMonth(userId, mese, anno).subscribe({
+      next: (data) => {
+        this.datiMensili = data;
+        console.log("Dati mensili caricati:", data);
+      },
+      error: (err) => console.error("Errore caricamento mese:", err)
+    });
 
-    this.transazioniTotali = this.service.getAllTransactions();
+    // CHIAMATA ASINCRONA 2: Tutto lo storico
+    this.service.getAllTransactions(userId).subscribe({
+      next: (data) => {
+        this.transazioniTotali = data;
+      },
+      error: (err) => console.error("Errore storico:", err)
+    });
   }
 }

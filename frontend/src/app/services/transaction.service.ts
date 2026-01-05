@@ -1,60 +1,78 @@
-import { Injectable } from '@angular/core';
-
-export interface Transaction {
-  id: number;
-  tipo: 'entrata' | 'uscita';
-  importo: number;
-  descrizione: string;
-  categoria: string;
-  data: string;
-}
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { Transaction } from '../models/transaction.model'; // Assicurati che il percorso sia giusto
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService {
-  private key = 'money_mind_db';
+
+  // URL del tuo Backend Spring Boot
+  private apiUrl = 'http://localhost:8080/api/transactions';
+
+  // Iniezione del client HTTP
+  private http = inject(HttpClient);
 
   constructor() {}
 
-  private load(): Transaction[] {
-    const data = localStorage.getItem(this.key);
-    return data ? JSON.parse(data) : [];
+  // 1. Aggiungi Transazione (chiama POST su Spring)
+  add(userId: number, t: Transaction): Observable<Transaction> {
+    // Ci assicuriamo che l'amount sia un numero e non una stringa
+    const payload = { ...t, amount: Number(t.amount) };
+    return this.http.post<Transaction>(`${this.apiUrl}/user/${userId}`, payload);
   }
 
-  add(t: Omit<Transaction, 'id'>) {
-    const transactions = this.load();
-    const newTransaction: Transaction = {
-      ...t,
-      id: Date.now(),
-      importo: Number(t.importo)
-    };
-    transactions.push(newTransaction);
-    localStorage.setItem(this.key, JSON.stringify(transactions));
+  // 2. Prendi tutte le transazioni (chiama GET su Spring)
+  getAllTransactions(userId: number): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.apiUrl}/user/${userId}`);
   }
 
-  getDataByMonth(meseIdx: number, anno: number) {
-    const all = this.load();
-    const filtered = all.filter(t => {
-      const parts = t.data.split('-');
-      const tAnno = Number(parts[0]);
-      const tMese = Number(parts[1]) - 1;
-      return tAnno === anno && tMese === meseIdx;
-    });
+  // 3. Logica complessa del tuo collega (adattata al backend)
+  getDataByMonth(userId: number, meseIdx: number, anno: number): Observable<any> {
 
-    const totaleEntrate = filtered
-      .filter(t => t.tipo === 'entrata').reduce((acc, curr) => acc + curr.importo, 0);
-    const totaleUscite = filtered
-      .filter(t => t.tipo === 'uscita').reduce((acc, curr) => acc + curr.importo, 0);
+    // Scarichiamo i dati dal server...
+    return this.getAllTransactions(userId).pipe(
+      map(transactions => {
 
-    return { transactions: filtered, totaleEntrate, totaleUscite, saldo: totaleEntrate - totaleUscite };
+        // ...e poi li filtriamo qui nel frontend come faceva lui
+        const filtered = transactions.filter(t => {
+          const parts = t.date.split('-'); // La data è "2025-01-03"
+          const tAnno = Number(parts[0]);
+          const tMese = Number(parts[1]) - 1; // I mesi in JS vanno da 0 a 11
+          return tAnno === anno && tMese === meseIdx;
+        });
+
+        // Calcolo totali (adattato ai nomi inglesi)
+        const totaleEntrate = filtered
+          .filter(t => t.type === 'INCOME')
+          .reduce((acc, curr) => acc + curr.amount, 0);
+
+        const totaleUscite = filtered
+          .filter(t => t.type === 'EXPENSE')
+          .reduce((acc, curr) => acc + curr.amount, 0);
+
+        // Restituisce lo stesso oggetto che il frontend si aspetta
+        return {
+          transactions: filtered,
+          totaleEntrate,
+          totaleUscite,
+          saldo: totaleEntrate - totaleUscite
+        };
+      })
+    );
   }
+  // ... altri metodi ...
 
-  getDataByYear(anno: number): Transaction[] {
-    const all = this.load();
-    return all.filter(t => Number(t.data.split('-')[0]) === anno);
-  }
-  getAllTransactions(): Transaction[] {
-    return this.load();
+  // 4. NUOVO METODO: Filtra per Anno (serve al componente YearlyHistory)
+  getDataByYear(userId: number, anno: number): Observable<Transaction[]> {
+    return this.getAllTransactions(userId).pipe(
+      map(transactions => {
+        return transactions.filter(t => {
+          const tAnno = Number(t.date.split('-')[0]); // "2025-01-03" -> 2025
+          return tAnno === anno;
+        });
+      })
+    );
   }
 }
