@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,7 @@ export class Login {
 
   isRegisterError: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private userService: UserService) {}
 
   onLogin() {
     this.errorMessage = '';
@@ -41,15 +42,15 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
       next: (res: any) => {
-        console.log('Login riuscito!', res);
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        if (err.status === 401) {
-          this.errorMessage = 'Email o Password errati';
+        if (res) {
+          this.userService.login(res.email); // salviamo email come "token fittizio"
+          this.router.navigate(['/dashboard']);
         } else {
-          this.errorMessage = 'Errore di connessione.';
+          this.errorMessage = 'Email o password errati';
         }
+      },
+      error: () => {
+        this.errorMessage = 'Errore di connessione.';
       }
     });
   }
