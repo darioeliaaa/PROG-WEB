@@ -82,7 +82,7 @@ export class YearlyHistory implements OnChanges {
           const mese = new Date(t.date).getMonth();
 
           // 'type' e 'INCOME' invece di 'tipo' ed 'entrata'
-          if (t.type === 'INCOME') {
+          if (t.type === 'ENTRATA') {
             entrateMensili[mese] += t.amount; // 'amount' invece di 'importo'
           } else {
             usciteMensili[mese] += t.amount;

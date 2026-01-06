@@ -45,11 +45,11 @@ export class TransactionService {
 
         // Calcolo totali (adattato ai nomi inglesi)
         const totaleEntrate = filtered
-          .filter(t => t.type === 'INCOME')
+          .filter(t => t.type === 'ENTRATA')
           .reduce((acc, curr) => acc + curr.amount, 0);
 
         const totaleUscite = filtered
-          .filter(t => t.type === 'EXPENSE')
+          .filter(t => t.type === 'USCITA')
           .reduce((acc, curr) => acc + curr.amount, 0);
 
         // Restituisce lo stesso oggetto che il frontend si aspetta

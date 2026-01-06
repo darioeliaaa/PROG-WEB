@@ -37,15 +37,16 @@ export class Movimenti {
 
     // TRUCCO: Siccome il DB non ha la colonna "categoria", la aggiungiamo alla descrizione
     // Esempio risultato: "[Casa] Bolletta Luce"
-    const descrizioneCompleta = `[${this.nuovoMovimento.categoria}] ${this.nuovoMovimento.descrizione}`;
-
+    const descrizioneCompleta = this.nuovoMovimento.descrizione;
+    const categoria = this.nuovoMovimento.categoria;
     // 1. TRADUZIONE: Mappiamo i dati dal Form (Italiano) al Backend (Inglese)
     const movimentoDaSalvare: Transaction = {
       description: descrizioneCompleta,
+      category: categoria,
       amount: Number(this.nuovoMovimento.importo),
       date: this.nuovoMovimento.data,
       // Convertiamo 'entrata'/'uscita' in 'INCOME'/'EXPENSE'
-      type: this.nuovoMovimento.tipo === 'entrata' ? 'INCOME' : 'EXPENSE'
+      type: this.nuovoMovimento.tipo === 'entrata' ? 'ENTRATA' : 'USCITA'
     };
 
     console.log('Sto inviando al server:', movimentoDaSalvare);

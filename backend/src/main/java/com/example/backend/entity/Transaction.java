@@ -15,10 +15,9 @@ public class Transaction {
   private Long id;
 
   private String description;
-
+  private String category;
   @Column(nullable = false)
   private BigDecimal amount;
-
   private LocalDate date;
 
   @Enumerated(EnumType.STRING)

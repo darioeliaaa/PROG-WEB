@@ -1,7 +1,8 @@
 export interface Transaction {
   id?: number;
+  category: string;
   description: string;  // NON descrizione
   amount: number;       // NON importo
   date: string;
-  type: 'INCOME' | 'EXPENSE'; // NON 'entrata' | 'uscita'
+  type: 'ENTRATA' | 'USCITA'; // NON 'entrata' | 'uscita'
 }
