@@ -46,3 +46,30 @@ Content-Type: application/json
 
 ### 5. LEGGI TUTTI I MOVIMENTI DI MARIO (ID 2)
 GET http://localhost:8080/api/transactions/user/2
+### 6. COMPRA AZIONI (Mario compra 2 azioni Apple a 180$)
+POST http://localhost:8080/api/investments/buy/2
+Content-Type: application/json
+
+{
+  "symbol": "AAPL",
+  "name": "Apple Inc.",
+  "quantity": 2.5,
+  "buyPrice": 180.00
+}
+
+###
+
+### 7. VEDI PORTAFOGLIO DI MARIO
+GET http://localhost:8080/api/investments/portfolio/2
+### 6. COMPRA AZIONI (Mario compra 10 Apple a 150$)
+POST http://localhost:8080/api/investments/buy/2
+Content-Type: application/json
+
+{
+  "symbol": "AAPL",
+  "name": "Apple Inc.",
+  "quantity": 10,
+  "buyPrice": 150.00
+}
+### 7. VEDI PORTAFOGLIO LIVE (Con prezzi Finnhub)
+GET http://localhost:8080/api/investments/portfolio/2
