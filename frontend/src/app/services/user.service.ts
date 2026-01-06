@@ -1,21 +1,24 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private loggedIn = new BehaviorSubject<boolean>(false);
+
+  // 🔴 CORREZIONE QUI:
+  // Invece di 'false', controlliamo SUBITO se c'è l'email salvata.
+  // !! serve a convertire la stringa in true/false.
+  // In questo modo l'app nasce già nello stato corretto!
+  private loggedIn = new BehaviorSubject<boolean>(!!localStorage.getItem('email'));
+
   isLoggedIn$ = this.loggedIn.asObservable();
 
-  private currentUserEmail: string | null = null;
+  // Recuperiamo anche l'email subito
+  private currentUserEmail: string | null = localStorage.getItem('email');
 
   constructor() {
-    const email = localStorage.getItem('email');
-    if (email) {
-      this.currentUserEmail = email;
-      this.loggedIn.next(true);
-    }
+    // Il costruttore ora può restare vuoto perché abbiamo fatto tutto sopra ^
   }
 
   login(email: string) {
@@ -30,6 +33,7 @@ export class UserService {
     this.loggedIn.next(false);
   }
 
+  // Funzione utile per l'Header
   isLoggedIn(): boolean {
     return this.loggedIn.value;
   }
