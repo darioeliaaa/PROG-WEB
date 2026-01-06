@@ -1,0 +1,29 @@
+<div class="sidebar">
+  <div class="logo">
+    <h1>MoneyMind <small style="font-size: 0.6em; color: #2ecc71">Market</small></h1>
+  </div>
+
+  <nav class="menu">
+
+    <a routerLink="/market/dashboard"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact: true}"
+       class="menu-item">
+      <span class="icon">📈</span> Panoramica
+    </a>
+
+    <a routerLink="/market/wallet"
+       routerLinkActive="active"
+       class="menu-item">
+      <span class="icon">💼</span> Portafoglio
+    </a>
+
+    <a routerLink="/market/crypto"
+       routerLinkActive="active"
+       class="menu-item">
+      <span class="icon">₿</span> Crypto
+    </a>
+
+
+  </nav>
+</div>
