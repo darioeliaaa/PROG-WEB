@@ -2,7 +2,6 @@
   <div class="spacer"></div>
 
   <nav class="toggle-pill">
-
     <a routerLink="/dashboard"
        [class.active]="router.url.includes('/dashboard') || router.url.includes('/movimenti')"
        class="toggle-btn">
@@ -17,19 +16,26 @@
   </nav>
 
   <div class="user-profile">
-    <span *ngIf="!isLoggedIn" class="login-label">Accedi</span>
 
-    <a routerLink="/login" *ngIf="!isLoggedIn" class="avatar-circle">
-      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Login" width="24">
-    </a>
+    <ng-container *ngIf="!isLoggedIn">
+      <span class="login-label">Accedi</span>
+      <a routerLink="/login" class="avatar-circle-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Login">
+      </a>
+    </ng-container>
 
-    <div class="avatar-circle-dropdown" *ngIf="isLoggedIn">
-      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Avatar" width="24">
+    <div class="logged-user-container" *ngIf="isLoggedIn">
 
-      <div class="dropdown-menu">
-        <a routerLink="/profile">Dati Personali</a>
-        <a (click)="logout()">Logout</a>
+      <div class="avatar-circle-btn" (click)="toggleMenu()">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Avatar">
       </div>
+
+      <div class="dropdown-menu" *ngIf="showMenu">
+        <a routerLink="/profile" (click)="closeMenu()">Dati Personali</a>
+        <div class="menu-divider"></div>
+        <a (click)="logout()" class="logout-text">Logout</a>
+      </div>
+
     </div>
   </div>
 </header>
