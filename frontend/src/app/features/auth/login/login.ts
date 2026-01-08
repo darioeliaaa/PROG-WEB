@@ -78,7 +78,7 @@ export class Login {
     // Mappatura oggetto per il backend
     // Verifica nel backend (User.java) se il campo si chiama 'name' o 'username'
     const userToSend = {
-      name: this.registerObj.username, // Spesso in Spring il campo è 'name'
+      username: this.registerObj.username, // Spesso in Spring il campo è 'name'
       email: this.registerObj.email,
       password: this.registerObj.password,
     };
