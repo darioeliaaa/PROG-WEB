@@ -29,38 +29,44 @@ export class Movimenti {
   ) {}
 
   salva() {
-    // Validazione base
+    // 1. Validazione
     if (!this.nuovoMovimento.importo || !this.nuovoMovimento.descrizione || !this.nuovoMovimento.categoria) {
       alert('Per favore compila tutti i campi obbligatori!');
       return;
     }
 
-    // TRUCCO: Siccome il DB non ha la colonna "categoria", la aggiungiamo alla descrizione
-    // Esempio risultato: "[Casa] Bolletta Luce"
-    const descrizioneCompleta = this.nuovoMovimento.descrizione;
-    const categoria = this.nuovoMovimento.categoria;
-    // 1. TRADUZIONE: Mappiamo i dati dal Form (Italiano) al Backend (Inglese)
+    // 2. Preparazione dati
     const movimentoDaSalvare: Transaction = {
-      description: descrizioneCompleta,
-      category: categoria,
+      description: this.nuovoMovimento.descrizione,
+      category: this.nuovoMovimento.categoria,
       amount: Number(this.nuovoMovimento.importo),
       date: this.nuovoMovimento.data,
-      // Convertiamo 'entrata'/'uscita' in 'INCOME'/'EXPENSE'
       type: this.nuovoMovimento.tipo === 'entrata' ? 'ENTRATA' : 'USCITA'
     };
 
-    console.log('Sto inviando al server:', movimentoDaSalvare);
+    // 3. RECUPERO DELL'ID UTENTE (La parte magica ✨)
+    const userString = localStorage.getItem('user');
 
-    // 2. INVIO AL BACKEND
-    // Nota: userId è fisso a 1 per ora
-    this.service.add(1, movimentoDaSalvare).subscribe({
+    if (!userString) {
+      alert("Errore: Non sembri essere loggato!");
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const user = JSON.parse(userString);
+    const userId = user.id; // Qui prende 2, 3, o quello che è!
+
+    console.log(`Sto salvando per l'utente ID: ${userId}`, movimentoDaSalvare);
+
+    // 4. INVIO AL BACKEND (Con l'ID giusto!)
+    this.service.add(userId, movimentoDaSalvare).subscribe({
       next: (res) => {
         console.log("Salvato con successo!", res);
-        this.router.navigate(['/']); // Torna alla dashboard
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error("Errore nel salvataggio:", err);
-        alert("Errore nel salvataggio dei dati. Il backend è acceso?");
+        alert("Errore nel salvataggio. Controlla la console.");
       }
     });
   }
