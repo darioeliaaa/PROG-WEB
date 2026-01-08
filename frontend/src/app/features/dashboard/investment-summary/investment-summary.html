@@ -8,7 +8,6 @@
     </div>
 
     <div class="stats-row" style="margin-top: 15px; display: flex; gap: 15px;">
-
       <span class="performance-badge positive">
         <i class="fa fa-arrow-up"></i>
         {{ totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}
@@ -20,17 +19,20 @@
         {{ totaleUscite | currency:'EUR':'symbol':'1.0-0' }}
         <small> Tot. Uscite</small>
       </span>
-
     </div>
   </div>
 
   <div class="mini-chart">
-    <div class="bar" style="height: 40%"></div>
-    <div class="bar" style="height: 60%"></div>
-    <div class="bar" style="height: 50%"></div>
-    <div class="bar" style="height: 80%"></div>
-    <div class="bar" style="height: 65%"></div>
-    <div class="bar active" style="height: 90%"></div>
+    <div *ngFor="let item of trendData"
+         class="bar-wrapper"
+         [title]="item.label + ': ' + (item.value | currency:'EUR')">
+
+      <div class="bar"
+           [class.active]="item.isCurrent"
+           [style.height.%]="item.heightPercent">
+      </div>
+
+    </div>
   </div>
 
 </div>
