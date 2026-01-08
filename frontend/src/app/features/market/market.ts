@@ -5,7 +5,8 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './market.html',
   styleUrl: './market.css',
+  standalone: true
 })
 export class Market {
-
 }
+
