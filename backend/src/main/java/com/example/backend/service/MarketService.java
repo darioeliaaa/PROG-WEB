@@ -1,35 +1,98 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.AssetQuoteDTO;
+import com.example.backend.entity.MarketAsset;
+import com.example.backend.repository.MarketAssetRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.beans.factory.annotation.Value; // Import corretto di Spring
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class MarketService {
 
-  // 1. Dichiariamo la variabile (Spring inietterà qui il valore dal file properties)
   @Value("${finnhub.api.key}")
   private String API_KEY;
 
-  private final String BASE_URL = "https://finnhub.io/api/v1/quote";
+  // Aggiungiamo il repository per leggere la lista degli asset da mostrare
+  @Autowired
+  private MarketAssetRepository assetRepository;
 
+  // NOTA: Ho tolto "/quote" dalla fine perché ora ci serve chiamare anche "/stock/candle"
+  private final String BASE_URL = "https://finnhub.io/api/v1";
+
+  // ----------------------------------------------------------------
+  // 1. METODO VECCHIO (Serve al tuo Portafoglio Personale)
+  // ----------------------------------------------------------------
   public double getCurrentPrice(String symbol) {
     RestTemplate restTemplate = new RestTemplate();
-
-    // 2. Ora possiamo usare API_KEY perché è dichiarata sopra
-    String url = BASE_URL + "?symbol=" + symbol + "&token=" + API_KEY;
+    // Aggiornato URL perché BASE_URL ora è più corto
+    String url = BASE_URL + "/quote?symbol=" + symbol + "&token=" + API_KEY;
 
     try {
       Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-
       if (response != null && response.get("c") != null) {
         return Double.parseDouble(response.get("c").toString());
       }
     } catch (Exception e) {
       System.out.println("Errore recupero dati per " + symbol + ": " + e.getMessage());
     }
-
     return 0.0;
+  }
+
+  // ----------------------------------------------------------------
+  // 2. METODI NUOVI (Servono per la Dashboard Mercato del tuo collega)
+  // ----------------------------------------------------------------
+
+  // A. Lista per le colonne (Aziende, Crypto, Valute)
+  public List<AssetQuoteDTO> getDashboardAssets() {
+    List<MarketAsset> assets = assetRepository.findAll();
+    List<AssetQuoteDTO> result = new ArrayList<>();
+    RestTemplate restTemplate = new RestTemplate();
+
+    for (MarketAsset asset : assets) {
+      String url = BASE_URL + "/quote?symbol=" + asset.getSymbol() + "&token=" + API_KEY;
+
+      try {
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+        if (response != null && response.get("c") != null) {
+          double price = Double.parseDouble(response.get("c").toString());
+          // 'dp' è la variazione percentuale (Delta Percent)
+          double change = Double.parseDouble(response.get("dp").toString());
+
+          result.add(new AssetQuoteDTO(
+            asset.getSymbol(),
+            asset.getName(),
+            price,
+            change,
+            asset.getType(),
+            asset.getLogoUrl()
+          ));
+        }
+      } catch (Exception e) {
+        System.out.println("Errore dashboard per " + asset.getSymbol());
+      }
+    }
+    return result;
+  }
+
+  // B. Dati storici per il grafico
+  public Map<String, Object> getAssetHistory(String symbol) {
+    RestTemplate restTemplate = new RestTemplate();
+    long to = System.currentTimeMillis() / 1000;
+    long from = to - (86400 * 30); // Ultimi 30 giorni
+
+    String url = BASE_URL + "/stock/candle?symbol=" + symbol + "&resolution=D&from=" + from + "&to=" + to + "&token=" + API_KEY;
+
+    try {
+      return restTemplate.getForObject(url, Map.class);
+    } catch (Exception e) {
+      return null;
+    }
   }
 }
