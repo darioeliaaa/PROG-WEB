@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseChartDirective } from 'ng2-charts'; // Assicurati di avere ng2-charts installato
-import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 
 // IMPORT CORRETTI
 import { TransactionService } from '../../../services/transaction.service';
-import { Transaction } from '../../../models/transaction.model'; // <--- Controlla che questo percorso sia giusto!
+import { UserService } from '../../../services/user.service'; // <--- AGGIUNTO QUESTO
+import { Transaction } from '../../../models/transaction.model';
 
 @Component({
   selector: 'app-yearly-history',
@@ -24,7 +25,7 @@ export class YearlyHistory implements OnChanges {
     labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
     datasets: [
       {
-        data: [],
+        data: [], // Entrate
         label: 'Entrate',
         backgroundColor: '#2ecc71',
         hoverBackgroundColor: '#27ae60',
@@ -33,7 +34,7 @@ export class YearlyHistory implements OnChanges {
         categoryPercentage: 0.8
       },
       {
-        data: [],
+        data: [], // Uscite
         label: 'Uscite',
         backgroundColor: '#ef4444',
         hoverBackgroundColor: '#c0392b',
@@ -52,12 +53,18 @@ export class YearlyHistory implements OnChanges {
       tooltip: { enabled: true, mode: 'index', intersect: false }
     },
     scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-      x: { grid: { display: false } }
+      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#bdc3c7'} },
+      x: { grid: { display: false }, ticks: { color: '#bdc3c7'} }
     }
   };
 
-  constructor(private service: TransactionService) {}
+  constructor(
+    private service: TransactionService,
+    private userService: UserService // <--- INIETTIAMO IL SERVICE UTENTE
+  ) {
+    // Registra i componenti Chart.js per evitare errori
+    Chart.register(...registerables);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['currentDate'] && this.currentDate) {
@@ -66,34 +73,47 @@ export class YearlyHistory implements OnChanges {
   }
 
   caricaDatiAnnuali() {
-    const anno = this.currentDate.getFullYear();
-    const userId = 1; // ID utente fisso per ora
+    // 1. RECUPERA L'ID VERO (Non usare 1 fisso!)
+    const userId = this.userService.getCurrentUserId();
 
-    // 1. CHIAMATA ASINCRONA AL BACKEND
+    if (!userId) return; // Se non sei loggato, esce
+
+    const anno = this.currentDate.getFullYear();
+
+    console.log(`Carico storico annuale ${anno} per User ${userId}...`);
+
+    // 2. CHIAMATA AL SERVICE
     this.service.getDataByYear(userId, anno).subscribe({
       next: (transazioni: Transaction[]) => {
 
+        // Creiamo array vuoti (12 zeri)
         const entrateMensili = new Array(12).fill(0);
         const usciteMensili = new Array(12).fill(0);
 
-        // 2. CICLO SUI DATI (IN INGLESE)
+        // 3. CICLO SUI DATI
         transazioni.forEach(t => {
-          // 'date' (inglese) invece di 'data'
-          const mese = new Date(t.date).getMonth();
+          // Metodo sicuro per la data: "2025-01-15" -> split -> "01" -> index 0
+          const parts = t.date.split('-');
+          const meseIndex = Number(parts[1]) - 1;
 
-          // 'type' e 'INCOME' invece di 'tipo' ed 'entrata'
+          // Se per qualche motivo la data è strana, la saltiamo
+          if (meseIndex < 0 || meseIndex > 11) return;
+
+          const importo = Number(t.amount);
+
           if (t.type === 'ENTRATA') {
-            entrateMensili[mese] += t.amount; // 'amount' invece di 'importo'
+            entrateMensili[meseIndex] += importo;
           } else {
-            usciteMensili[mese] += t.amount;
+            usciteMensili[meseIndex] += importo;
           }
         });
 
-        // 3. AGGIORNAMENTO GRAFICO
+        // 4. AGGIORNAMENTO GRAFICO
         this.barChartData.datasets[0].data = entrateMensili;
         this.barChartData.datasets[1].data = usciteMensili;
 
         this.chart?.update();
+        console.log("Grafico annuale aggiornato!");
       },
       error: (err) => console.error("Errore caricamento grafico annuale:", err)
     });
