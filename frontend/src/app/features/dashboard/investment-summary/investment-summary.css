@@ -47,21 +47,43 @@ h3 {
   opacity: 0.7;
 }
 
-/* Mini Chart a destra */
+/* ... mantieni le regole precedenti per .glass-card, .info-group ecc ... */
+
+/* Modifica la sezione mini-chart */
 .mini-chart {
   display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  height: 60px;
+  align-items: flex-end; /* Allinea in basso */
+  gap: 6px; /* Spazio tra le barre */
+  height: 60px; /* Altezza ridotta perché non c'è testo */
+  opacity: 1;
+  padding-bottom: 5px;
+}
+
+.bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 10px; /* Barre leggermente più snelle */
+  cursor: pointer; /* Fa capire che puoi passarci sopra col mouse */
 }
 
 .bar {
-  width: 10px;
-  background-color: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
   border-radius: 4px;
+  transition: height 0.5s ease-out;
+  min-height: 2px;
 }
 
 .bar.active {
-  background-color: #fff; /* La barra attiva bianca */
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  background-color: rgba(64, 0, 255, 0.4);
+  box-shadow: 0 0 8px rgb(101, 101, 248);
+}
+
+/* HOVER EFFECT: Quando passi sopra una barra, si illumina */
+.bar-wrapper:hover .bar {
+  background-color: #ffffff;
+  opacity: 1;
 }
