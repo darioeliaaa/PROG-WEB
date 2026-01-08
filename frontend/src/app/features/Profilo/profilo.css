@@ -1,0 +1,115 @@
+/* ===== SFONDO PAGINA ===== */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Jost', sans-serif;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8),
+    rgb(125, 125, 250)
+  );
+}
+
+/* ===== CONTENITORE DASHBOARD ===== */
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* ===== CARD PROFILO ===== */
+.dashboard-header {
+  width: 520px;
+  background-color: #7D7DFAFF;
+  padding: 35px 40px;
+  border-radius: 10px;
+  box-shadow: 5px 20px 50px rgba(0,0,0,0.4);
+}
+
+/* ===== TITOLO E SOTTOTITOLO ===== */
+.dashboard-header h1 {
+  text-align: center;
+  color: #ffffff;
+  font-size: 2.2em;
+  margin-bottom: 5px;
+}
+
+.dashboard-header p {
+  text-align: center;
+  color: #e5e7eb;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* ===== FORM ===== */
+form {
+  width: 100%;
+}
+
+/* ===== GRUPPI ===== */
+.form-group {
+  margin-bottom: 18px;
+}
+
+/* ===== LABEL ===== */
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* ===== INPUT & SELECT ===== */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: #e0dede;
+  box-sizing: border-box;
+  height: 45px;
+}
+
+.form-group input::placeholder {
+  color: #6b7280;
+}
+
+/* Focus elegante */
+.form-group input:focus,
+.form-group select:focus {
+  box-shadow: 0 0 0 2px rgba(55, 48, 163, 0.4);
+}
+
+/* ===== BOTTONE ===== */
+.btn-primary {
+  width: 100%;
+  height: 45px;
+  margin-top: 25px;
+  background: #3730a3;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s ease-in;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+  background: #1e1b4b;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .dashboard-header {
+    width: 100%;
+    padding: 30px 25px;
+  }
+}
