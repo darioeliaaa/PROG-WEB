@@ -11,56 +11,83 @@ import { CommonModule } from '@angular/common';
 export class InvestmentSummary implements OnChanges {
 
   @Input() currentDate!: Date;
-
   @Input() tutteLeTransazioni: any[] = [];
 
   totaleEntrate: number = 0;
   totaleUscite: number = 0;
   saldoAttuale: number = 0;
 
+  // NUOVO: Array per contenere i dati degli ultimi 6 mesi
+  trendData: { label: string; value: number; heightPercent: number; isCurrent: boolean }[] = [];
+
   ngOnChanges(changes: SimpleChanges) {
+    // Ricalcola tutto ogni volta che cambiano i dati o la data
     if (changes['currentDate'] || changes['tutteLeTransazioni']) {
-      this.calcoloPatrimonio();
+      this.calcoloPatrimonioAttuale();
+      this.calcoloTrendUltimi6Mesi();
     }
   }
 
-  calcoloPatrimonio(): void {
-    if (!this.tutteLeTransazioni) return;
+  // 1. Calcolo del saldo ad oggi (quello che avevi già)
+  calcoloPatrimonioAttuale(): void {
+    const datiAdOggi = this.calcoloSaldoAllaData(this.currentDate);
+    this.totaleEntrate = datiAdOggi.entrate;
+    this.totaleUscite = datiAdOggi.uscite;
+    this.saldoAttuale = datiAdOggi.saldo;
+  }
 
-    let tempEntrate = 0;
-    let tempUscite = 0;
+  // 2. NUOVO: Calcolo lo storico degli ultimi 6 mesi
+  calcoloTrendUltimi6Mesi(): void {
+    const mesi = 6;
+    const trendTemp = [];
+    let maxSaldo = 0;
 
-    const dataLimite = new Date(this.currentDate);
+    // Ciclo per gli ultimi 6 mesi (da -5 a 0)
+    for (let i = mesi - 1; i >= 0; i--) {
+      const dataTarget = new Date(this.currentDate);
+      dataTarget.setMonth(dataTarget.getMonth() - i);
 
-    this.tutteLeTransazioni.forEach(transazione => {
+      // Impostiamo la data all'ultimo giorno di quel mese per prendere tutte le transazioni
+      // (trick: giorno 0 del mese successivo = ultimo giorno mese corrente)
+      const fineMese = new Date(dataTarget.getFullYear(), dataTarget.getMonth() + 1, 0);
 
-      const dataTransazione = new Date(transazione.data);
+      const risultato = this.calcoloSaldoAllaData(fineMese);
 
-      if (dataTransazione > dataLimite) {
-        return;
-      }
+      // Salviamo il saldo massimo trovato per calcolare le percentuali delle barre
+      if (risultato.saldo > maxSaldo) maxSaldo = risultato.saldo;
 
-      const importo = Number(transazione.importo);
-      if (isNaN(importo)) return;
+      trendTemp.push({
+        label: fineMese.toLocaleString('it-IT', { month: 'short' }), // "gen", "feb"
+        value: risultato.saldo,
+        heightPercent: 0, // Lo calcoliamo dopo
+        isCurrent: i === 0 // L'ultimo è il mese corrente
+      });
+    }
 
-      const tipo = (transazione.tipo || '').toLowerCase();
+    // Normalizziamo le altezze (La barra più alta sarà 100%)
+    this.trendData = trendTemp.map(item => ({
+      ...item,
+      heightPercent: maxSaldo > 0 ? (item.value / maxSaldo) * 100 : 0
+    }));
+  }
 
-      if (tipo === 'entrata') {
-        tempEntrate += importo;
-      }
-      else if (tipo === 'uscita') {
-        tempUscite += importo;
-      }
+  // Funzione Helper: Calcola il saldo accumulato fino a una certa data
+  private calcoloSaldoAllaData(dataLimite: Date) {
+    let entrate = 0;
+    let uscite = 0;
+
+    if (!this.tutteLeTransazioni) return { entrate: 0, uscite: 0, saldo: 0 };
+
+    this.tutteLeTransazioni.forEach(t => {
+      const dataT = new Date(t.date);
+      // Se la transazione è successiva alla data limite, ignorala
+      if (dataT > dataLimite) return;
+
+      const importo = Number(t.amount);
+      if (t.type === 'ENTRATA') entrate += importo;
+      else if (t.type === 'USCITA') uscite += importo;
     });
 
-    this.totaleEntrate = tempEntrate;
-    this.totaleUscite = tempUscite;
-
-    // Il saldo ora conterrà i 100.000€ del 2025 anche se siamo nel 2026
-    this.saldoAttuale = this.totaleEntrate - this.totaleUscite;
-
-    console.log('--- PATRIMONIO AGGIORNATO ---');
-    console.log('Data riferimento:', dataLimite.toLocaleDateString());
-    console.log('Saldo Totale:', this.saldoAttuale);
+    return { entrate, uscite, saldo: entrate - uscite };
   }
 }
