@@ -35,5 +35,27 @@ public class WalletController {
     walletService.inviteByUsername(walletId, username);
     return ResponseEntity.ok("Invitato con successo");
   }
+  @DeleteMapping("/{walletId}/remove-member/{memberId}")
+  public ResponseEntity<?> removeMember(@RequestParam Long adminId, @PathVariable Long walletId, @PathVariable Long memberId) {
+    walletService.removeMember(adminId, walletId, memberId);
+    return ResponseEntity.ok("Membro rimosso");
+  }
+  @DeleteMapping("/{walletId}")
+  public ResponseEntity<?> deleteWallet(@RequestParam Long adminId, @PathVariable Long walletId) {
+    walletService.deleteWallet(adminId, walletId);
+    return ResponseEntity.ok("Wallet eliminato");
+  }
+  // Endpoint per cambiare il budget
+  @PutMapping("/{walletId}/budget")
+  public ResponseEntity<?> updateBudget(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam BigDecimal budget) {
+    walletService.setWalletBudget(adminId, walletId, budget);
+    return ResponseEntity.ok("Budget aggiornato correttamente");
+  }
+  // Endpoint per attivare/disattivare il wallet
+  @PutMapping("/{walletId}/status")
+  public ResponseEntity<?> updateStatus(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam boolean active) {
+    walletService.toggleWalletStatus(adminId, walletId, active);
+    return ResponseEntity.ok("Stato del portafoglio aggiornato");
+  }
 }
 
