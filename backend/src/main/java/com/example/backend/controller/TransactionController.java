@@ -23,7 +23,7 @@ public class TransactionController {
   }
 
   // POST: Aggiunge un movimento
-  @PostMapping("/user/{userId}")
+  @PostMapping("/user/{userId}/wallet/{walletId}")
   public Transaction addTransaction(@PathVariable Long userId,@PathVariable Long walletId, @RequestBody Transaction transaction) {
     return transactionService.saveTransaction(userId, walletId, transaction);
   }
