@@ -1,0 +1,45 @@
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <h1>Profilo Personale</h1>
+    <p>Completa al 100% il tuo profilo</p>
+
+    <form>
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" name="nome" id="nome" placeholder="Mario" required>
+      </div>
+
+      <div class="form-group">
+        <label for="cognome">Cognome</label>
+        <input type="text" name="cognome" id="cognome" placeholder="Rossi" required>
+      </div>
+
+      <div class="form-group">
+        <label for="sesso">Sesso</label>
+        <select name="sesso" id="sesso" required>
+          <option value=" ">Seleziona...</option>
+          <option value="M">Maschio</option>
+          <option value="F">Femmina</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="dataNascita">Data di Nascita</label>
+        <input type="date" name="dataNascita" id="dataNascita" required>
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Numero di Telefono</label>
+        <input type="tel" name="telefono" id="telefono" placeholder="+39 ... ... ...." required>
+      </div>
+
+      <div class="form-group">
+        <label for="Indirizzo">Indirizzo</label>
+        <input type="text" name="indirizzo" id="indirizzo" placeholder="Via Roma 10, Milano">
+      </div>
+
+      <button type="submit" class="btn-primary">Salva e Continua</button>
+    </form>
+  </header>
+</div>

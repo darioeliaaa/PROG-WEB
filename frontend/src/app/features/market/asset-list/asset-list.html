@@ -1,0 +1,39 @@
+<div class="market-container">
+  <header class="market-header">
+    <h2>Mercato {{ currentType === 'STOCK' ? 'Azionario' : currentType }}</h2>
+    <p>Quotazioni in tempo reale</p>
+  </header>
+
+  <div *ngIf="loading" style="text-align: center; padding: 40px; color: #777;">
+    <p>Caricamento dati...</p>
+  </div>
+
+  <div *ngIf="!loading && assets.length === 0" style="text-align: center; padding: 40px;">
+    <p>Nessun asset trovato per questa categoria.</p>
+    <small>(Verifica che nel DB ci siano elementi con type='{{currentType}}')</small>
+  </div>
+
+  <div class="assets-grid" *ngIf="!loading && assets.length > 0">
+    <div *ngFor="let asset of assets" class="asset-card glass-panel">
+
+      <div class="card-top">
+        <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
+             class="asset-logo">
+        <span class="ticker">{{ asset.symbol }}</span>
+      </div>
+
+      <div class="card-name">{{ asset.name }}</div>
+
+      <div class="card-price-row">
+        <span class="price">$ {{ asset.currentPrice | number:'1.2-2' }}</span>
+
+        <span class="change-badge"
+              [class.positive]="asset.changePercent >= 0"
+              [class.negative]="asset.changePercent < 0">
+          {{ asset.changePercent > 0 ? '+' : ''}}{{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+.market-container { padding: 20px; }
+
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.asset-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6); /* Effetto vetro base */
+  transition: transform 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.asset-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.asset-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; background: white; padding: 2px;}
+.ticker { font-weight: bold; color: #555; background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem;}
+
+.card-name { font-size: 0.9rem; color: #777; margin-bottom: 15px; height: 40px; overflow: hidden;}
+
+.card-price-row { display: flex; justify-content: space-between; align-items: center; }
+.price { font-size: 1.2rem; font-weight: bold; color: #333; }
+
+.change-badge { padding: 4px 8px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; }
+.change-badge.positive { background: #d4edda; color: #155724; }
+.change-badge.negative { background: #f8d7da; color: #721c24; }
