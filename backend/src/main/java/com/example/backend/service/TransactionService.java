@@ -28,12 +28,15 @@ public class TransactionService {
   @Transactional
   public Transaction saveTransaction(Long userId, Long walletId, Transaction transaction) {
     // Recuperiamo l'utente che sta spendendo
-    User user = userRepository.findById(userId)
-      .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
     // Recuperiamo il wallet (Personale o Condiviso) da cui escono/entrano i soldi
-    Wallet wallet = walletRepository.findById(walletId)
-      .orElseThrow(() -> new RuntimeException("Portafoglio non trovato"));
+    Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new RuntimeException("Portafoglio non trovato"));
+
+    if (!wallet.isActive()) {
+      throw new RuntimeException("Questo portafoglio è stato congelato dall'admin. Impossibile aggiungere spese.");
+    }
+
 
     // Colleghiamo i pezzi
     transaction.setUser(user);
