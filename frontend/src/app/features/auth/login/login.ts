@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChangeDetectorRef} from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -30,7 +31,7 @@ export class Login {
 
   isRegisterError: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient, private userService: UserService) {}
+  constructor(private router: Router, private http: HttpClient, private userService: UserService, private cdr: ChangeDetectorRef) {}
 
   onLogin() {
     this.errorMessage = '';
@@ -88,11 +89,16 @@ export class Login {
         this.isRegisterError = false;
         this.registerMessage = 'Registrazione avvenuta con successo! Fai il login.';
         // Puliamo i campi
-        this.registerObj = { username: '', email: '', password: '' };
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.registerObj = { username: '', email: '', password: '' };
+        }, 2000);
       },
       error: (err) => {
         this.isRegisterError = true;
         this.registerMessage = 'Errore: email già esistente o dati non validi.';
+        this.cdr.detectChanges();
+
       }
     });
   }
