@@ -1,39 +1,45 @@
 <div class="market-container">
+
   <header class="market-header">
-    <h2>Mercato {{ currentType === 'STOCK' ? 'Azionario' : currentType }}</h2>
-    <p>Quotazioni in tempo reale</p>
+    <h2>Tutti gli asset: {{ currentType === 'STOCK' ? 'Azioni' : currentType }}</h2>
   </header>
 
-  <div *ngIf="loading" style="text-align: center; padding: 40px; color: #777;">
-    <p>Caricamento dati...</p>
-  </div>
+  <div *ngIf="loading" class="loading-state">Caricamento listino...</div>
 
-  <div *ngIf="!loading && assets.length === 0" style="text-align: center; padding: 40px;">
-    <p>Nessun asset trovato per questa categoria.</p>
-    <small>(Verifica che nel DB ci siano elementi con type='{{currentType}}')</small>
-  </div>
+  <div class="tv-list" *ngIf="!loading && assets.length > 0">
 
-  <div class="assets-grid" *ngIf="!loading && assets.length > 0">
-    <div *ngFor="let asset of assets" class="asset-card glass-panel">
+    <div class="tv-row header-row">
+      <div class="col-symbol">Simbolo</div>
+      <div class="col-price">Prezzo</div>
+      <div class="col-change">Variazione</div>
+      <div class="col-action"></div>
+    </div>
 
-      <div class="card-top">
-        <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
-             class="asset-logo">
-        <span class="ticker">{{ asset.symbol }}</span>
+    <div *ngFor="let asset of assets" class="tv-row item-row">
+
+      <div class="col-symbol">
+        <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="small-logo">
+        <div class="symbol-info">
+          <span class="ticker">{{ asset.symbol }}</span>
+          <span class="full-name">{{ asset.name }}</span>
+        </div>
       </div>
 
-      <div class="card-name">{{ asset.name }}</div>
+      <div class="col-price">
+        {{ asset.currentPrice | currency:'USD':'symbol':'1.2-2' }}
+      </div>
 
-      <div class="card-price-row">
-        <span class="price">$ {{ asset.currentPrice | number:'1.2-2' }}</span>
-
-        <span class="change-badge"
-              [class.positive]="asset.changePercent >= 0"
-              [class.negative]="asset.changePercent < 0">
+      <div class="col-change">
+        <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent > 0 ? '+' : ''}}{{ asset.changePercent | number:'1.2-2' }}%
         </span>
       </div>
 
+      <div class="col-action">
+        <button class="btn-trade">Scambia</button>
+      </div>
+
     </div>
   </div>
+
 </div>
