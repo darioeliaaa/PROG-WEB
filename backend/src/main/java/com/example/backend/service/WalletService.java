@@ -28,11 +28,69 @@ public class WalletService {
     Wallet wallet = new Wallet();
     wallet.setName(name);
     wallet.setPersonal(false);
+    wallet.setAdmin(user);
     wallet.getMembers().add(user);
     user.getWallets().add(wallet);
     return walletRepository.save(wallet);
   }
+  // FUNZIONE ADMIN: Rimuovere un membro
+  @Transactional
+  public void removeMember(Long adminId, Long walletId, Long memberToRemoveId) {
+    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
 
+    // Controllo sicurezza: solo l'admin può rimuovere persone
+    if (!wallet.getAdmin().getId().equals(adminId)) {
+      throw new RuntimeException("Non hai i permessi di Admin!");
+    }
+
+    User member = userRepository.findById(memberToRemoveId).orElseThrow();
+    wallet.getMembers().remove(member);
+    member.getWallets().remove(wallet);
+
+    walletRepository.save(wallet);
+  }
+  // Imposta un budget mensile (Solo Admin)
+  @Transactional
+  public void setWalletBudget(Long adminId, Long walletId, BigDecimal budget) {
+    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+
+    if (!wallet.getAdmin().getId().equals(adminId)) {
+      throw new RuntimeException("Solo l'admin può impostare il budget!");
+    }
+
+    wallet.setMonthlyBudget(budget);
+    walletRepository.save(wallet);
+  }
+
+  // Attiva/Disattiva wallet (Solo Admin)
+  @Transactional
+  public void toggleWalletStatus(Long adminId, Long walletId, boolean status) {
+    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+
+    if (!wallet.getAdmin().getId().equals(adminId)) {
+      throw new RuntimeException("Solo l'admin può cambiare lo stato del wallet!");
+    }
+
+    wallet.setActive(status);
+    walletRepository.save(wallet);
+  }
+
+  // FUNZIONE ADMIN: Eliminare l'intero Wallet
+  @Transactional
+  public void deleteWallet(Long adminId, Long walletId) {
+    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+
+    if (!wallet.getAdmin().getId().equals(adminId)) {
+      throw new RuntimeException("Solo l'admin può eliminare il wallet!");
+    }
+
+    // Se è il wallet personale, non si può eliminare!
+    if (wallet.isPersonal()) {
+      throw new RuntimeException("Non puoi eliminare il tuo wallet personale!");
+    }
+
+    walletRepository.delete(wallet);
+  }
   // LOGICA DI TRASFERIMENTO SOLDI
   @Transactional
   public void transferMoney(Long userId, Long fromWalletId, Long toWalletId, BigDecimal amount) {
