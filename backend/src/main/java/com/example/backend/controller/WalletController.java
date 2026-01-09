@@ -1,6 +1,8 @@
 package com.example.backend.controller;
 
+import com.example.backend.entity.User; // <--- AGGIUNTO
 import com.example.backend.entity.Wallet;
+import com.example.backend.repository.UserRepository; // <--- AGGIUNTO
 import com.example.backend.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,27 @@ import java.util.Set;
 @RequestMapping("/api/wallets")
 @CrossOrigin(origins = "http://localhost:4200")
 public class WalletController {
-  @Autowired private WalletService walletService;
+
+  @Autowired
+  private WalletService walletService;
+
+  @Autowired
+  private UserRepository userRepository; // <--- FONDAMENTALE PER TROVARE L'UTENTE
+
+  // --- QUESTO È IL METODO CHE MANCAVA ---
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<?> getUserWallets(@PathVariable Long userId) {
+    // Cerchiamo l'utente nel database
+    User user = userRepository.findById(userId).orElse(null);
+
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    // Restituiamo la lista dei suoi wallet
+    return ResponseEntity.ok(user.getWallets());
+  }
+  // --------------------------------------
 
   // Crea wallet condiviso
   @PostMapping("/user/{userId}/create")
@@ -35,22 +57,26 @@ public class WalletController {
     walletService.inviteByUsername(walletId, username);
     return ResponseEntity.ok("Invitato con successo");
   }
+
   @DeleteMapping("/{walletId}/remove-member/{memberId}")
   public ResponseEntity<?> removeMember(@RequestParam Long adminId, @PathVariable Long walletId, @PathVariable Long memberId) {
     walletService.removeMember(adminId, walletId, memberId);
     return ResponseEntity.ok("Membro rimosso");
   }
+
   @DeleteMapping("/{walletId}")
   public ResponseEntity<?> deleteWallet(@RequestParam Long adminId, @PathVariable Long walletId) {
     walletService.deleteWallet(adminId, walletId);
     return ResponseEntity.ok("Wallet eliminato");
   }
+
   // Endpoint per cambiare il budget
   @PutMapping("/{walletId}/budget")
   public ResponseEntity<?> updateBudget(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam BigDecimal budget) {
     walletService.setWalletBudget(adminId, walletId, budget);
     return ResponseEntity.ok("Budget aggiornato correttamente");
   }
+
   // Endpoint per attivare/disattivare il wallet
   @PutMapping("/{walletId}/status")
   public ResponseEntity<?> updateStatus(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam boolean active) {
@@ -58,4 +84,3 @@ public class WalletController {
     return ResponseEntity.ok("Stato del portafoglio aggiornato");
   }
 }
-
