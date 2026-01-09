@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AssetTable } from './asset-table';
+import { MarketHome } from './market-home';
 
-describe('AssetTable', () => {
-  let component: AssetTable;
-  let fixture: ComponentFixture<AssetTable>;
+describe('MarketHome', () => {
+  let component: MarketHome;
+  let fixture: ComponentFixture<MarketHome>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssetTable]
+      imports: [MarketHome]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AssetTable);
+    fixture = TestBed.createComponent(MarketHome);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

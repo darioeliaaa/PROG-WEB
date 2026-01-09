@@ -3,7 +3,7 @@
 
   <nav class="toggle-pill">
     <a routerLink="/dashboard"
-       [class.active]="router.url.includes('/dashboard') || router.url.includes('/movimenti')"
+       [class.active]="(router.url.includes('/dashboard') && !router.url.includes('/market')) || router.url.includes('/movimenti') || router.url.includes('/groups')"
        class="toggle-btn">
       Gestione Finanze
     </a>

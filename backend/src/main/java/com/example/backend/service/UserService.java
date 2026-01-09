@@ -1,7 +1,9 @@
 package com.example.backend.service;
 
 import com.example.backend.entity.User;
+import com.example.backend.entity.Wallet;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ public class UserService {
   private UserRepository userRepository;
 
   @Autowired
+  private WalletRepository walletRepository;
+
+  @Autowired
   private PasswordEncoder passwordEncoder;
 
   // --- 1. REGISTRAZIONE ---
@@ -24,10 +29,16 @@ public class UserService {
       throw new RuntimeException("Email già registrata!");
     }
     // CRIPTIAMO la password prima di salvarla nel DB
-    String passwordCriptata = passwordEncoder.encode(user.getPassword());
-    user.setPassword(passwordCriptata);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    User savedUser = userRepository.save(user);
+
+    Wallet personalWallet = new Wallet();
+    personalWallet.setName("Mio Portafoglio");
+    personalWallet.setPersonal(true);
+    personalWallet.getMembers().add(savedUser);
+    walletRepository.save(personalWallet);
     // Salviamo l'utente (in un progetto reale qui cripteremmo la password)
-    return userRepository.save(user);
+    return savedUser;
   }
 
   // --- 2. LOGIN ---

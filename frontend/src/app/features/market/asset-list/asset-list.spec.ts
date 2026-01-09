@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AssetFilters } from './asset-filters';
+import { AssetList } from './asset-list';
 
-describe('AssetFilters', () => {
-  let component: AssetFilters;
-  let fixture: ComponentFixture<AssetFilters>;
+describe('AssetList', () => {
+  let component: AssetList;
+  let fixture: ComponentFixture<AssetList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssetFilters]
+      imports: [AssetList]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AssetFilters);
+    fixture = TestBed.createComponent(AssetList);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

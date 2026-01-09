@@ -1,0 +1,64 @@
+<div class="market-home-container">
+
+  <header class="page-header">
+    <h1>Market Home</h1>
+  </header>
+
+  <section class="market-section">
+    <div class="section-header">
+      <h2>Acquisti popolari (Azioni)</h2>
+      <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
+    </div>
+
+    <div class="revolut-grid">
+      <div *ngFor="let asset of topStocks" class="ball-card">
+        <div class="icon-wrapper">
+          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+        </div>
+        <span class="ticker-symbol">{{ asset.symbol }}</span>
+        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="market-section">
+    <div class="section-header">
+      <h2>ETF Principali</h2>
+      <a routerLink="/market/etf" class="see-all-btn">Vedi tutto →</a>
+    </div>
+
+    <div class="revolut-grid">
+      <div *ngFor="let asset of topEtf" class="ball-card">
+        <div class="icon-wrapper">
+          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+        </div>
+        <span class="ticker-symbol">{{ asset.symbol }}</span>
+        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="market-section">
+    <div class="section-header">
+      <h2>Crypto in tendenza</h2>
+      <a routerLink="/market/crypto" class="see-all-btn">Vedi tutto →</a>
+    </div>
+
+    <div class="revolut-grid">
+      <div *ngFor="let asset of topCrypto" class="ball-card">
+        <div class="icon-wrapper">
+          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+        </div>
+        <span class="ticker-symbol">{{ asset.symbol }}</span>
+        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+      </div>
+    </div>
+  </section>
+
+</div>
