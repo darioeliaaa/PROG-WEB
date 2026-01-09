@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Data
 @Table(name = "transactions")
@@ -16,17 +17,24 @@ public class Transaction {
 
   private String description;
   private String category;
+
   @Column(nullable = false)
   private BigDecimal amount;
+
   private LocalDate date;
 
   @Enumerated(EnumType.STRING)
   private TransactionType type;
 
-  // Relazione con l'utente: Ogni transazione appartiene a UN utente
+  // 1. Relazione con l'utente (Chi ha fatto la spesa)
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  // Questa annotazione dice: "Quando stampi l'utente, non stampare password e roba tecnica, o vai in loop"
-  @JsonIgnoreProperties({"password", "email", "hibernateLazyInitializer", "handler"}) // <--- Aggiungi questo
+  @JsonIgnoreProperties({"password", "email", "hibernateLazyInitializer", "handler", "wallets"})
   private User user;
+
+  // 2. AGGIUNTA: Relazione con il Wallet (In quale portafoglio è stata fatta)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "wallet_id", nullable = false) // Ogni spesa DEVE stare in un wallet
+  @JsonIgnoreProperties({"members", "hibernateLazyInitializer", "handler"})
+  private Wallet wallet;
 }
