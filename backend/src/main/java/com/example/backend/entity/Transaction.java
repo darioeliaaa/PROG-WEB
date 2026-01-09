@@ -34,7 +34,9 @@ public class Transaction {
 
   // 2. AGGIUNTA: Relazione con il Wallet (In quale portafoglio è stata fatta)
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "wallet_id", nullable = false) // Ogni spesa DEVE stare in un wallet
-  @JsonIgnoreProperties({"members", "hibernateLazyInitializer", "handler"})
+  @JoinColumn(name = "wallet_id", nullable = false)
+  // --- QUI MANCAVA "transactions" ---
+  // Se non lo metti, il wallet cercherà di ristampare questa transazione -> LOOP -> Errore 500
+  @JsonIgnoreProperties({"members", "transactions", "admin", "hibernateLazyInitializer", "handler"})
   private Wallet wallet;
 }

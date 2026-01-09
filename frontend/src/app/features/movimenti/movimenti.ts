@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
+// IMPORTS DEI SERVICES
 import { TransactionService } from '../../services/transaction.service';
-import { UserService } from '../../services/user.service'; // <--- Importa il tuo service
+import { UserService } from '../../services/user.service';
+import { WalletService } from '../../services/wallet.service'; // <--- FONDAMENTALE
+
 import { Transaction } from '../../models/transaction.model';
 
 @Component({
@@ -13,38 +17,64 @@ import { Transaction } from '../../models/transaction.model';
   templateUrl: './movimenti.html',
   styleUrl: './movimenti.css'
 })
-export class Movimenti {
+export class Movimenti implements OnInit {
 
+  // Oggetto legato al form HTML
   nuovoMovimento = {
     tipo: 'uscita',
     importo: null,
     descrizione: '',
     categoria: '',
+    walletId: null as number | null, // <--- Qui verrà salvato l'ID selezionato
     data: new Date().toISOString().split('T')[0]
   };
+
+  // Lista dove caricheremo i portafogli dal backend
+  userWallets: any[] = [];
 
   constructor(
     private router: Router,
     private transactionService: TransactionService,
-    private userService: UserService // <--- Iniettalo qui
+    private userService: UserService,
+    private walletService: WalletService // <--- Iniettiamo il service
   ) {}
 
-  salva() {
-    if (!this.nuovoMovimento.importo || !this.nuovoMovimento.descrizione || !this.nuovoMovimento.categoria) {
-      alert('Per favore compila tutti i campi obbligatori!');
-      return;
-    }
-
-    // 1. CHIEDIAMO L'ID AL USER SERVICE
+  ngOnInit() {
     const userId = this.userService.getCurrentUserId();
+    console.log("ID Utente trovato:", userId); // <--- CONTROLLO 1
 
-    // Se l'utente non è loggato (userId è null), lo blocchiamo
-    if (!userId) {
-      alert("Errore: Non risulti loggato. Effettua il login.");
-      this.router.navigate(['/login']); // O dove hai la pagina di login
+    if (userId) {
+      this.walletService.getWalletsByUser(userId).subscribe({
+        next: (wallets) => {
+          console.log("RISPOSTA DAL BACKEND:", wallets); // <--- CONTROLLO 2: Cosa arriva qui?
+          this.userWallets = wallets;
+
+          if (this.userWallets.length > 0) {
+            this.nuovoMovimento.walletId = this.userWallets[0].id;
+            console.log("Wallet selezionato ID:", this.nuovoMovimento.walletId);
+          } else {
+            console.warn("Array wallet vuoto! L'utente non ha portafogli collegati nel DB.");
+          }
+        },
+        error: (err) => console.error("ERRORE CHIAMATA:", err) // <--- CONTROLLO 3: È rosso?
+      });
+    }
+  }
+
+  salva() {
+    // Controllo validazione: il walletId è obbligatorio ora!
+    if (!this.nuovoMovimento.importo ||
+      !this.nuovoMovimento.descrizione ||
+      !this.nuovoMovimento.categoria ||
+      !this.nuovoMovimento.walletId) {
+      alert('Per favore compila tutti i campi, incluso il Portafoglio!');
       return;
     }
 
+    const userId = this.userService.getCurrentUserId();
+    if (!userId) return;
+
+    // Prepariamo l'oggetto Transaction (Il backend si aspetta i nomi in inglese)
     const movimentoDaSalvare: Transaction = {
       description: this.nuovoMovimento.descrizione,
       category: this.nuovoMovimento.categoria,
@@ -53,22 +83,23 @@ export class Movimenti {
       type: this.nuovoMovimento.tipo === 'entrata' ? 'ENTRATA' : 'USCITA'
     };
 
-    console.log(`Salvataggio per User ID ${userId}:`, movimentoDaSalvare);
+    console.log(`Salvataggio su Wallet ID: ${this.nuovoMovimento.walletId}`);
 
-    // 2. USIAMO L'ID RECUPERATO
-    this.transactionService.add(userId, movimentoDaSalvare).subscribe({
+    // CHIAMATA AL BACKEND
+    // Passiamo userId, walletId e l'oggetto transazione
+    this.transactionService.add(userId, this.nuovoMovimento.walletId, movimentoDaSalvare).subscribe({
       next: (res) => {
-        console.log("Salvato!", res);
-        this.router.navigate(['/']);
+        console.log("Transazione salvata!", res);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error("Errore:", err);
-        alert("Errore nel salvataggio.");
+        console.error("Errore salvataggio:", err);
+        alert("Errore durante il salvataggio. Controlla che il backend sia attivo.");
       }
     });
   }
 
   annulla() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 }

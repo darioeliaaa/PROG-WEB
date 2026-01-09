@@ -95,4 +95,20 @@ public class MarketService {
       return null;
     }
   }
+  // Metodo per grafico DETTAGLIATO (Intraday - Ultime 24 ore)
+  public Map<String, Object> getIntradayHistory(String symbol) {
+    RestTemplate restTemplate = new RestTemplate();
+
+    long to = System.currentTimeMillis() / 1000; // Adesso
+    long from = to - (86400); // Esattamente 24 ore fa (86400 secondi)
+
+    // CAMBIAMENTO CHIAVE: resolution=15 (dati ogni 15 minuti) invece di D
+    String url = BASE_URL + "/stock/candle?symbol=" + symbol + "&resolution=15&from=" + from + "&to=" + to + "&token=" + API_KEY;
+
+    try {
+      return restTemplate.getForObject(url, Map.class);
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

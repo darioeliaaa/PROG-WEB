@@ -15,7 +15,8 @@
   <section class="horizontal-strip">
     <app-investment-summary
       [currentDate]="currentDate"
-      [tutteLeTransazioni]="transazioniTotali"> </app-investment-summary>
+      [tutteLeTransazioni]="transazioniTotali">
+    </app-investment-summary>
   </section>
 
   <section class="horizontal-strip">
@@ -27,8 +28,8 @@
 
   <section class="horizontal-strip">
     <app-yearly-history
-      [currentDate]="currentDate">
-    </app-yearly-history>
+      [currentDate]="currentDate"
+      [allTransactions]="transazioniTotali"> </app-yearly-history>
   </section>
 
 </div>
