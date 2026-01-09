@@ -1,0 +1,100 @@
+/* --- CONTENITORE PRINCIPALE --- */
+.market-home-container {
+  padding: 20px;
+  /* Sfondo chiaro ma non bianco puro per far risaltare le card */
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  color: #333;
+  font-family: 'Jost', sans-serif;
+}
+
+/* --- TITOLI (Nero Forte) --- */
+.page-header h1 {
+  color: #111; /* Quasi nero */
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.section-header h2 {
+  color: #222;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.see-all-btn {
+  color: #0066cc; /* Blu scuro solido */
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.see-all-btn:hover { text-decoration: underline; }
+
+/* --- GRIGLIA --- */
+.revolut-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 10px;
+  margin-top: 15px;
+}
+
+/* --- CARD PALLINA --- */
+.ball-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  /* Sfondo bianco per la card per massima leggibilità */
+  background: #ffffff;
+  padding: 15px 5px;
+  border-radius: 16px;
+
+  /* Ombra forte per staccare dal fondo */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.2s;
+}
+
+.ball-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* ICONA */
+.icon-wrapper {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background-color: #ffffff; /* Sfondo bianco dietro il logo */
+  border: 1px solid #eee;    /* Bordino grigio chiaro */
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.round-logo { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+
+/* TESTO SIMBOLO (Nero) */
+.ticker-symbol {
+  color: #000000;
+  font-weight: 800; /* Molto grassetto */
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+/* PERCENTUALI (Badge Colorati) */
+.percent-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Colori forti su sfondo chiaro */
+.up {
+  color: #065f24;       /* Verde scuro testo */
+  background: #d1fae5;  /* Verde chiaro sfondo */
+}
+.down {
+  color: #7f1d1d;       /* Rosso scuro testo */
+  background: #fee2e2;  /* Rosso chiaro sfondo */
+}
