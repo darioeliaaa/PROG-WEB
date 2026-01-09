@@ -1,6 +1,10 @@
 package com.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users") // Assicurati che la tabella si chiami 'users'
@@ -17,6 +21,14 @@ public class User {
   private String email;
 
   private String password;
+  @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JoinTable(
+    name = "user_wallets", // Nome della tabella ponte nel DB
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "wallet_id")
+  )
+  @JsonIgnoreProperties("members") // Evita che Jackson entri in un loop infinito
+  private Set<Wallet> wallets = new HashSet<>();
 
   // --- COSTRUTTORI ---
   public User() {}
@@ -39,4 +51,7 @@ public class User {
 
   public String getPassword() { return password; }
   public void setPassword(String password) { this.password = password; }
+
+  public Set<Wallet> getWallets() { return wallets; }
+  public void setWallets(Set<Wallet> wallets) { this.wallets = wallets; }
 }
