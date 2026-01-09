@@ -42,7 +42,6 @@ public class WalletController {
   public Wallet create(@PathVariable Long userId, @RequestParam String name) {
     return walletService.createSharedWallet(userId, name);
   }
-
   // Trasferimento soldi tra wallet
   @PostMapping("/transfer")
   public ResponseEntity<String> transfer(@RequestParam Long userId, @RequestParam Long fromId,
@@ -50,7 +49,6 @@ public class WalletController {
     walletService.transferMoney(userId, fromId, toId, amount);
     return ResponseEntity.ok("Trasferimento completato");
   }
-
   // Invito amico
   @PostMapping("/{walletId}/invite/{username}")
   public ResponseEntity<String> invite(@PathVariable Long walletId, @PathVariable String username) {
