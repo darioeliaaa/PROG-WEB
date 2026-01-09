@@ -5,6 +5,7 @@ import { Dashboard } from './features/dashboard/dashboard';
 import { Movimenti } from './features/movimenti/movimenti';
 import { Login } from './features/auth/login/login';
 import { Profilo } from './features/Profilo/profilo';
+import { MarketHomeComponent } from './features/market/market-home/market-home';
 
 // 1. IMPORTA IL COMPONENTE CHE GESTISCE LA LISTA
 import { AssetListComponent } from './features/market/asset-list/asset-list';
@@ -13,23 +14,24 @@ export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: Dashboard },
 
-  // --- INIZIO NUOVE ROTTE MARKET ---
-  // Queste rotte corrispondono esattamente ai routerLink che hai messo nella sidebarMarket.html
-
   {
-    path: 'market/dashboard',
-    component: AssetListComponent,
-    data: { type: 'STOCK' } // <-- Questo dice alla lista: "Mostra solo le AZIONI"
+    path: 'market',
+    component: MarketHomeComponent // 1. Pagina Principale (Vetrina)
   },
   {
-    path: 'market/wallet',
-    component: AssetListComponent,
-    data: { type: 'ETF' }   // <-- "Mostra solo ETF"
+    path: 'market/azioni',
+    component: AssetListComponent, // 2. Lista Completa Azioni
+    data: { type: 'STOCK' }
+  },
+  {
+    path: 'market/etf',
+    component: AssetListComponent, // 3. Lista Completa ETF
+    data: { type: 'ETF' }
   },
   {
     path: 'market/crypto',
-    component: AssetListComponent,
-    data: { type: 'CRYPTO' } // <-- "Mostra solo CRYPTO"
+    component: AssetListComponent, // 4. Lista Completa Crypto
+    data: { type: 'CRYPTO' }
   },
 
   // Se l'utente scrive solo "localhost:4200/market", lo mandiamo alle azioni di default
