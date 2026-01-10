@@ -185,3 +185,31 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* 1. Rimuoviamo lo sfondo e il padding eccessivo dal container del collega */
+app-profilo .dashboard-container {
+  background: transparent !important; /* Forza lo sfondo trasparente */
+  padding: 0 !important;             /* Rimuove i margini interni giganti */
+  min-height: auto !important;       /* Evita che occupi tutta la pagina verticalmente */
+  width: 100% !important;
+  box-shadow: none !important;       /* Rimuove ombre doppie */
+}
+
+/* 2. Sistemiamo l'header del profilo per non avere titoli doppi */
+app-profilo .page-header {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 3. Nascondiamo il tasto "Torna alla Dashboard" del collega
+      (perché l'utente è già dentro le Impostazioni) */
+app-profilo .back-btn {
+  display: none !important;
+}
+
+/* 4. Armonizziamo i pulsanti del collega con i tuoi arrotondamenti */
+app-profilo .btn-save {
+  background-color: #4f46e5 !important; /* Usiamo il tuo viola per coerenza */
+  border-radius: 8px;
+}
