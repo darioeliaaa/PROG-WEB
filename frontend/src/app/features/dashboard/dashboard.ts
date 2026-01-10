@@ -57,7 +57,7 @@ export class Dashboard implements OnInit {
     if (!userId) return;
 
     // 1. Otteniamo i Wallet dell'utente
-    this.walletService.getWalletsByUser(userId).subscribe({
+    this.walletService.getUserWallets(userId).subscribe({
       next: (wallets) => {
         if (!wallets || wallets.length === 0) {
           console.warn("Nessun wallet trovato.");
@@ -82,7 +82,7 @@ export class Dashboard implements OnInit {
           error: (err) => console.error("Errore download transazioni:", err)
         });
       },
-      error: (err) => console.error("Errore caricamento wallet:", err)
+      error: (err:any) => console.error("Errore caricamento wallet:", err)
     });
   }
 
