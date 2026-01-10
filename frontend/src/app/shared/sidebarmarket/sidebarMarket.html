@@ -5,13 +5,42 @@
 
   <nav class="menu">
 
-    <a routerLink="/market"
+    <a class="menu-item parent-item"
+       routerLink="/market"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{exact: true}"
-       class="menu-item">
-      <span class="icon">🏠</span> Home Market
+       (click)="toggleMarket()">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="icon">🏠</span>
+        <span>Home Market</span>
+      </div>
+
+      <i class="fa fa-chevron-down arrow" [class.rotated]="isMarketOpen"></i>
     </a>
 
+    <div class="sub-menu-container" *ngIf="isMarketOpen">
+
+      <a routerLink="/market/azioni"
+         routerLinkActive="active"
+         class="menu-item sub-item">
+        <span class="dot">●</span> Azioni
+      </a>
+
+      <a routerLink="/market/etf"
+         routerLinkActive="active"
+         class="menu-item sub-item">
+        <span class="dot">●</span> ETF
+      </a>
+
+      <a routerLink="/market/crypto"
+         routerLinkActive="active"
+         class="menu-item sub-item">
+        <span class="dot">●</span> Cripto
+      </a>
+
+    </div>
+
     <div class="menu-divider"></div>
+
   </nav>
 </div>
