@@ -12,6 +12,28 @@
     </div>
   </header>
 
+  <div class="gamification-wrapper" *ngIf="profilePercentage < 100">
+    <div class="gamification-card" (click)="goToProfile()">
+      <div class="gamification-content">
+        <div class="icon-badge">🚀</div>
+
+        <div class="text-content">
+          <div class="text-header">
+            <h3>Completa il tuo profilo!</h3>
+            <span class="percentage-pill">{{ profilePercentage }}%</span>
+          </div>
+          <p>Aumenta la sicurezza del tuo account completando i dati anagrafici.</p>
+
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="profilePercentage"></div>
+          </div>
+        </div>
+
+        <div class="arrow-icon">➜</div>
+      </div>
+    </div>
+  </div>
+
   <section class="horizontal-strip">
     <app-investment-summary
       [currentDate]="currentDate"

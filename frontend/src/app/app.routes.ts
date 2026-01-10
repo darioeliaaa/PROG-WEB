@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './features/dashboard/dashboard';
-// Market non serve più importarlo qui se usiamo AssetListComponent per le liste
-// import { Market } from './features/market/market';
+
 import { Movimenti } from './features/movimenti/movimenti';
 import { Login } from './features/auth/login/login';
 import { Profilo } from './features/Profilo/profilo';

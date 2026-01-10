@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router'; // ✅ Import necessario per la navigazione
 
 // Componenti figli
 import { InvestmentSummary } from './investment-summary/investment-summary';
@@ -28,15 +29,40 @@ export class Dashboard implements OnInit {
   // Dati per lo Storico Annuale (Tutto)
   transazioniTotali: any[] = [];
 
+  // ✅ NUOVO: Variabile per la Gamification
+  profilePercentage: number = 100; // Iniziamo da 100 per non mostrare la barra finché non carica
+
   constructor(
     private transactionService: TransactionService,
     private userService: UserService,
     private walletService: WalletService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router // ✅ Iniettiamo il Router
   ) {}
 
   ngOnInit() {
     this.caricaDati();
+    this.checkProfileStatus(); // ✅ Avviamo il controllo profilo
+  }
+
+  // ✅ NUOVO: Controlla la percentuale di completamento
+  checkProfileStatus() {
+    const userId = this.userService.getCurrentUserId();
+    if (userId) {
+      this.userService.getProfileStatus(userId).subscribe({
+        next: (data) => {
+          this.profilePercentage = data.completionPercentage;
+          // Se la percentuale cambia, forziamo l'aggiornamento UI (utile con OnPush o async)
+          this.cd.detectChanges();
+        },
+        error: (err) => console.error("Errore recupero status profilo:", err)
+      });
+    }
+  }
+
+  // ✅ NUOVO: Naviga alla pagina di modifica
+  goToProfile() {
+    this.router.navigate(['/profilo']);
   }
 
   get titoloMese(): string {
@@ -48,7 +74,6 @@ export class Dashboard implements OnInit {
     nuovaData.setMonth(nuovaData.getMonth() + delta);
     this.currentDate = nuovaData;
 
-    // Ricalcoliamo i dati locali senza richiamare il backend
     this.filtraDatiLocali();
   }
 
@@ -56,7 +81,6 @@ export class Dashboard implements OnInit {
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
 
-    // 1. Otteniamo i Wallet dell'utente
     this.walletService.getWalletsByUser(userId).subscribe({
       next: (wallets) => {
         if (!wallets || wallets.length === 0) {
@@ -64,19 +88,11 @@ export class Dashboard implements OnInit {
           return;
         }
 
-        // Prendiamo il primo wallet (quello personale)
         const mainWalletId = wallets[0].id;
-        console.log(`Caricamento dati per Wallet ID: ${mainWalletId}`);
 
-        // 2. Scarichiamo TUTTE le transazioni di questo wallet
         this.transactionService.getTransactionsByWallet(mainWalletId).subscribe({
           next: (allTransactions) => {
-            console.log("Transazioni trovate:", allTransactions.length);
-
-            // Salviamo tutto lo storico (serve al grafico annuale)
             this.transazioniTotali = allTransactions;
-
-            // 3. Filtriamo per la view mensile (serve alla ciambella)
             this.filtraDatiLocali();
           },
           error: (err) => console.error("Errore download transazioni:", err)
@@ -92,13 +108,11 @@ export class Dashboard implements OnInit {
     const meseTarget = this.currentDate.getMonth();
     const annoTarget = this.currentDate.getFullYear();
 
-    // Filtra solo le spese del mese visualizzato
     const filtered = this.transazioniTotali.filter((t: any) => {
       const d = new Date(t.date);
       return d.getMonth() === meseTarget && d.getFullYear() === annoTarget;
     });
 
-    // Calcola totali al volo
     let entrate = 0;
     let uscite = 0;
 
@@ -107,7 +121,6 @@ export class Dashboard implements OnInit {
       if (t.type === 'USCITA') uscite += Number(t.amount);
     });
 
-    // Aggiorna l'oggetto per i grafici
     this.datiMensili = {
       transactions: filtered,
       totaleEntrate: entrate,
@@ -115,6 +128,6 @@ export class Dashboard implements OnInit {
       saldo: entrate - uscite
     };
 
-    this.cd.detectChanges(); // Aggiorna la vista
+    this.cd.detectChanges();
   }
 }
