@@ -17,6 +17,7 @@
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
 
+
       <div class="col-symbol"
            [routerLink]="['/chart', asset.symbol]"
            title="Clicca per vedere il grafico"
@@ -29,9 +30,20 @@
         </div>
       </div>
 
+      <div class="col-price">
+        {{ asset.currentPrice | currency:'USD':'symbol':'1.2-2' }}
+      </div>
+
+      <div class="col-change">
+        <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent > 0 ? '+' : ''}}{{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+      </div>
+
       <div class="col-action">
         <button class="btn-trade">Scambia</button>
       </div>
+
     </div>
   </div>
 
