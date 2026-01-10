@@ -1,22 +1,26 @@
 <div class="sidebar">
+
   <div class="logo">
+    <span class="icon" style="font-size: 1.8rem;">💰</span>
     <h1>MoneyMind</h1>
   </div>
 
   <nav class="menu">
-    <a routerLink="/dashboard"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{exact: true}"
-       class="menu-item">
-      <span class="icon"></span> Dashboard
+
+    <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
+      <span class="icon">📊</span>
+      <span class="link-text">Dashboard</span>
     </a>
 
     <a routerLink="/movimenti" routerLinkActive="active" class="menu-item">
-      <span class="icon"></span> Movimenti
+      <span class="icon">💸</span>
+      <span class="link-text">Movimenti</span>
     </a>
 
-    <a routerLink="/market" routerLinkActive="active" class="menu-item">
-      <span class="icon"></span> Gruppi
+    <a routerLink="/gruppi" routerLinkActive="active" class="menu-item">
+      <span class="icon">👥</span>
+      <span class="link-text">Gruppi</span>
     </a>
+
   </nav>
 </div>
