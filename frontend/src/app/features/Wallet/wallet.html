@@ -1,0 +1,47 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Gestisci i Wallet</h1>
+  </header>
+
+  <div class="wallet-header">
+    <h2>Wallet condivisi</h2>
+    <button class="btn-primary" (click)="showCreate = true">+ Crea nuovo wallet</button>
+  </div>
+
+  <div *ngIf="showCreate" class="create-box">
+    <input type="text" placeholder="Nome wallet" #walletName>
+  <div class="create-actions">
+    <button class="btn-primary" (click)="handleCreateWallet(walletName); showCreate = false">Crea</button>
+    <button class="btn-secondary" (click)="showCreate = false">Annulla</button>
+  </div>
+
+  <p *ngIf="loading" class="loading">Caricamento wallet...</p>
+
+  <div *ngIf="!loading && wallets.length === 0" class="empty">
+    <p>Non hai ancora nessun wallet in comune</p>
+  </div>
+
+  <div *ngIf="wallets.length > 0" class="wallet-list">
+    <div *ngFor="let wallet of wallets" class="wallet-card">
+      <div class="wallet-top">
+        <h3>{{ wallet.name }}</h3>
+        <span class="badge" [class.inactive]="!wallet.active">
+          {{ wallet.active ? 'Attivo' : 'Inattivo' }}
+        </span>
+      </div>
+
+      <p class="members">
+        👥 {{ wallet.members.length }} membri
+      </p>
+
+      <p *ngIf="wallet.monthlyBudget !== null" class="budget">
+        💰 Budget mensile: {{ wallet.monthlyBudget }} €
+      </p>
+
+      <button class="btn-link">
+        Apri wallet->
+      </button>
+    </div>
+  </div>
+</div>
+</div>
