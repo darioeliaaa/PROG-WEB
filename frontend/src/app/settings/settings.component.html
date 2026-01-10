@@ -1,0 +1,58 @@
+<div class="settings-wrapper">
+  <aside class="settings-sidebar">
+    <h2>Impostazioni</h2>
+    <nav>
+      <button [class.active]="activeTab === 'profilo'" (click)="setTab('profilo')">Profilo</button>
+      <button [class.active]="activeTab === 'wallets'" (click)="setTab('wallets')">Portafogli</button>
+    </nav>
+  </aside>
+
+  <main class="settings-content">
+    <section *ngIf="activeTab === 'profilo'">
+      <h3>Dati Personali</h3>
+      <div class="placeholder-card">
+        <p>Modulo profilo in fase di sviluppo...</p>
+      </div>
+    </section>
+
+    <section *ngIf="activeTab === 'wallets'">
+      <h3>I tuoi Portafogli</h3>
+
+      <div class="wallet-list" *ngIf="!selectedWallet">
+        <div *ngFor="let w of userWallets" class="wallet-card">
+          <span>{{ w.name }}</span>
+          <button *ngIf="!w.personal" (click)="openManage(w)">Gestisci</button>
+          <span *ngIf="w.personal" class="badge">Personale</span>
+        </div>
+      </div>
+
+      <div class="manage-panel" *ngIf="selectedWallet">
+        <button (click)="selectedWallet = null" class="btn-back">← Torna alla lista</button>
+        <h4>Modifica {{ selectedWallet.name }}</h4>
+
+        <div class="form-group">
+          <label>Nome Portafoglio</label>
+          <input type="text" [(ngModel)]="selectedWallet.name">
+        </div>
+
+        <div class="form-group">
+          <label>Budget Mensile (€)</label>
+          <input type="number" [(ngModel)]="selectedWallet.monthlyBudget">
+        </div>
+
+        <div class="members-section">
+          <h5>Membri del gruppo</h5>
+          <ul class="member-list">
+            <li *ngFor="let m of members">
+              {{ m.username }}
+              <button *ngIf="m.id !== userId" class="btn-remove" (click)="removeUser(m.id)">Rimuovi</button>
+              <span *ngIf="m.id === userId" class="badge-admin">Tu (Admin)</span>
+            </li>
+          </ul>
+        </div>
+
+        <button (click)="saveWalletSettings()" class="btn-save">Salva Modifiche</button>
+      </div>
+    </section>
+  </main>
+</div>

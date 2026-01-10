@@ -44,7 +44,7 @@ export class Movimenti implements OnInit {
     console.log("ID Utente trovato:", userId); // <--- CONTROLLO 1
 
     if (userId) {
-      this.walletService.getWalletsByUser(userId).subscribe({
+      this.walletService.getUserWallets(userId).subscribe({
         next: (wallets) => {
           console.log("RISPOSTA DAL BACKEND:", wallets); // <--- CONTROLLO 2: Cosa arriva qui?
           this.userWallets = wallets;
@@ -56,7 +56,7 @@ export class Movimenti implements OnInit {
             console.warn("Array wallet vuoto! L'utente non ha portafogli collegati nel DB.");
           }
         },
-        error: (err) => console.error("ERRORE CHIAMATA:", err) // <--- CONTROLLO 3: È rosso?
+        error: (err:any) => console.error("ERRORE CHIAMATA:", err) // <--- CONTROLLO 3: È rosso?
       });
     }
   }

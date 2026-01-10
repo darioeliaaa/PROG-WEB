@@ -7,6 +7,7 @@ import { MarketHomeComponent } from './features/market/market-home/market-home';
 import { AssetListComponent } from './features/market/asset-list/asset-list';
 
 import { StockChart } from './features/market/stock-chart/stock-chart';
+import {SettingsComponent} from './settings/settings.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -36,5 +37,6 @@ export const routes: Routes = [
 
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
-  { path: 'profilo' , component: Profilo }
+  { path: 'profilo' , component: Profilo },
+  { path: 'settings', component: SettingsComponent }
 ];
