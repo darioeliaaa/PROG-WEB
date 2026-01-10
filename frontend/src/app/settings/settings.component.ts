@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Per usare ngModel
-import { WalletService } from '../services/wallet.service'; // Controlla che il percorso sia giusto
+import { WalletService } from '../services/wallet.service';
+import {Profilo} from '../features/Profilo/profilo';
+
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Profilo],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
@@ -16,6 +18,9 @@ export class SettingsComponent implements OnInit {
   userId: number = 1; // Temporaneo: qui andrà l'ID dell'utente loggato
   selectedWallet: any = null;
   members: any[] = [];
+  showCreateForm: boolean = false;
+  newWallet: any = { name: '', monthlyBudget: 0 };
+  newUserEmail: string = '';
 
   constructor(private walletService: WalletService) {}
 
@@ -33,6 +38,7 @@ export class SettingsComponent implements OnInit {
   setTab(tabName: string) {
     this.activeTab = tabName;
     this.selectedWallet = null; // Chiude il pannello gestione se cambi tab
+    this.showCreateForm = false;
   }
 
   openManage(wallet: any) {
@@ -90,5 +96,25 @@ export class SettingsComponent implements OnInit {
         error: (err) => alert('Errore nella rimozione dell\'utente.')
       });
     }
+  }
+  createNewWallet() {
+    if (!this.newWallet.name || this.newWallet.monthlyBudget <= 0) {
+      alert("Per favore, inserisci un nome e un budget validi.");
+      return;
+    }
+
+    // Chiamata al service
+    this.walletService.createWallet(this.userId, this.newWallet).subscribe({
+      next: (res: any) => {
+        alert("Portafoglio creato con successo!");
+        this.showCreateForm = false; // Chiude il form
+        this.newWallet = { name: '', monthlyBudget: 0 }; // Resetta i campi
+        this.loadWallets(); // Ricarica la lista per vedere il nuovo wallet
+      },
+      error: (err: any) => {
+        console.error(err);
+        alert("Errore durante la creazione del portafoglio.");
+      }
+    });
   }
 }
