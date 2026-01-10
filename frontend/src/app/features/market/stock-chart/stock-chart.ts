@@ -1,21 +1,20 @@
-import { Component, OnInit, AfterViewInit, Input, ElementRef, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
-declare const TradingView: any; // Diciamo a TypeScript che TradingView esiste
+declare const TradingView: any;
 
 @Component({
   selector: 'app-stock-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule],
   templateUrl: './stock-chart.html',
   styleUrl: './stock-chart.css'
 })
 export class StockChart implements OnInit, AfterViewInit {
 
-  // Riceviamo il simbolo dall'URL (es. /chart/AAPL)
   symbol: string = 'NASDAQ:AAPL';
-
   @ViewChild('containerDiv', { static: false }) containerDiv!: ElementRef;
 
   constructor(
@@ -24,31 +23,29 @@ export class StockChart implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    // Recupera il simbolo dalla rotta se presente
     this.route.paramMap.subscribe(params => {
       const sym = params.get('symbol');
-      if (sym) {
-        // TradingView spesso vuole il mercato (es. NASDAQ:AAPL).
-        // Se non lo sai, passa solo il simbolo, spesso funziona lo stesso.
-        this.symbol = sym;
-      }
+      if (sym) this.symbol = sym;
     });
   }
 
   ngAfterViewInit() {
-    // Eseguiamo solo se siamo nel browser (non in server-side rendering)
     if (isPlatformBrowser(this.platformId)) {
       this.loadTradingViewScript();
     }
   }
 
+  // --- ECCO LA FUNZIONE CHE MANCAVA ---
+  goBack() {
+    history.back();
+  }
+  // ------------------------------------
+
   loadTradingViewScript() {
-    // Controlliamo se lo script è già stato caricato per non duplicarlo
     if (document.getElementById('tv-widget-script')) {
       this.initWidget();
       return;
     }
-
     const script = document.createElement('script');
     script.id = 'tv-widget-script';
     script.src = 'https://s3.tradingview.com/tv.js';
@@ -61,28 +58,39 @@ export class StockChart implements OnInit, AfterViewInit {
     if (typeof TradingView !== 'undefined' && this.containerDiv) {
       new TradingView.widget({
         "width": "100%",
-        "height": "100%", // Si adatta al contenitore
+        "height": "100%", // Riempirà il contenitore padre
         "symbol": this.symbol,
-        "interval": "D", // Giornaliero
+        "interval": "D",
         "timezone": "Europe/Rome",
-        "theme": "dark", // TEMA SCURO per abbinarsi alla tua app
-        "style": "1", // 1 = Candele
+        "theme": "light", // TEMA CHIARO di base (si adatta meglio al bianco dell'app)
+        "style": "1",
         "locale": "it",
         "toolbar_bg": "#f1f3f6",
         "enable_publishing": false,
-        "allow_symbol_change": true, // Permetti di cambiare azione
-        "container_id": "tradingview_chart", // Deve coincidere con l'ID nell'HTML
-        "hide_side_toolbar": false, // Mostra gli strumenti di disegno (IMPORTANTE PER LO STUDIO)
+        "allow_symbol_change": true,
+        "container_id": "tradingview_chart",
+        "hide_side_toolbar": false,
         "details": true,
         "hotlist": true,
         "calendar": true,
-        // Personalizzazione colori per matchare il tuo CSS (opzionale)
-        /*
+
+        // OVERRIDES: I colori della tua App
         "overrides": {
-           "paneProperties.background": "#1e1e2d",
-           "scalesProperties.textColor": "#AAA"
+          // Colore sfondo grafico (Bianco/Grigio chiaro come la tua dashboard)
+          "paneProperties.background": "#ffffff",
+
+          // Linee griglia (sottili viola/blu)
+          "paneProperties.vertGridProperties.color": "rgba(101, 101, 248, 0.05)",
+          "paneProperties.horzGridProperties.color": "rgba(101, 101, 248, 0.05)",
+
+          // Candele (Verde brillante e il tuo Viola/Rosso per le discese)
+          "mainSeriesProperties.candleStyle.upColor": "#2ecc71",
+          "mainSeriesProperties.candleStyle.downColor": "#e74c3c",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#2ecc71",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#e74c3c",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#2ecc71",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#e74c3c"
         }
-        */
       });
     }
   }
