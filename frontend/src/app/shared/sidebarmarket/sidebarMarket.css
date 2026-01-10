@@ -1,213 +1,145 @@
-/* sidebar-market.css */
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =========================================
-   1. STRUTTURA E ANIMAZIONE (IDENTICO ALLA TUA SIDEBAR)
+   1. CONTENITORE PRINCIPALE (SILK GRADIENT)
    ========================================= */
-:host {
-  display: block;
-}
-
 .sidebar {
-  width: 80px; /* Parte stretta (solo icone) */
-  height: 100%;
-  background-color: #7D7DFAFF;
-  color: white;
+  width: 80px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 20px 10px; /* Padding ridotto quando è chiusa */
-  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  padding: 24px 12px;
 
-  /* ANIMAZIONE FLUIDA (La tua esatta curva di bezier) */
+  /* SFONDO GRADIENTE (Identico alla Sidebar Principale) */
+  background: linear-gradient(180deg, #8E8EFA 0%, #7D7DFA 100%);
+
+  color: #ffffff;
+  box-shadow: 4px 0 30px rgba(125, 125, 250, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-
   overflow: hidden;
   white-space: nowrap;
-  z-index: 100;
+  z-index: 1000;
+  font-family: 'Inter', sans-serif;
 }
 
-/* STATO APERTO */
 .sidebar:hover {
-  width: 250px;
-  padding: 20px;
+  width: 260px;
+  padding: 24px 20px;
 }
 
 /* =========================================
-   2. LOGO (IDENTICO ALLA TUA SIDEBAR)
+   2. LOGO MARKET
    ========================================= */
-.logo {
-  margin-bottom: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
+.logo-section {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 40px; height: 50px; padding-left: 4px;
 }
 
-.logo h1 {
-  /* IL TUO FONT ESATTO */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  font-size: 1.8rem;
-  margin: 0;
-
-  /* Animazione scomparsa testo */
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.3s ease;
-}
-
-.sidebar:hover .logo h1 {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* =========================================
-   3. MENU ITEMS (IDENTICO ALLA TUA SIDEBAR)
-   ========================================= */
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.menu-item {
-  color: white;
-  text-decoration: none;
-
-  /* IL TUO FONT E DIMENSIONI */
-  font-size: 1.2rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
-  padding: 12px;
+.logo-icon {
+  width: 40px; height: 40px;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  transition: background 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Spazio tra icona e testo */
-  height: 50px;
-  cursor: pointer;
-  position: relative; /* Necessario per posizionare elementi interni */
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+.logo-icon svg { width: 24px; height: 24px; color: white; }
+
+/* Contenitore per allineare Titolo e Badge */
+.brand-container {
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateX(-10px); transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+.brand-name { font-size: 1.2rem; font-weight: 700; margin: 0; line-height: 1; }
+.market-badge { font-size: 0.65rem; color: #a5f3fc; font-weight: 600; letter-spacing: 2px; margin-top: 4px; }
 
-.menu-item.active {
-  background-color: #6464fc;
-  font-weight: bold;
-}
+.sidebar:hover .brand-container { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
 
 /* =========================================
-   4. GESTIONE ICONE E TESTO (LOGICA HIDE/SHOW)
+   3. MENU ITEMS
    ========================================= */
+.nav-menu { display: flex; flex-direction: column; gap: 5px; flex-grow: 1; }
 
-/* Icona sempre visibile */
-.icon {
-  font-size: 1.4rem;
-  min-width: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-/* Il testo del link (Home Market, ecc.) */
-/* Usiamo span generico se non hai messo la classe .link-text ovunque */
-.menu-item span:not(.icon) {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  transition-delay: 0s;
-}
-
-.sidebar:hover .menu-item span:not(.icon) {
-  opacity: 1;
-  transition-delay: 0.1s;
-}
-
-/* =========================================
-   5. AGGIUNTE SPECIFICHE PER MARKET (TENDINA)
-   ========================================= */
-
-/* --- FRECCIA CHE SI GIRA --- */
-.arrow {
-  /* Dimensioni e Colore */
-  font-size: 0.8rem;
+.nav-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px; border-radius: 12px;
+  text-decoration: none; transition: all 0.2s ease; cursor: pointer; height: 48px;
   color: rgba(255, 255, 255, 0.7);
-
-  /* Posizione: La spinge a destra ma non troppo appiccicata */
-  margin-left: auto;
-  margin-right: 5px; /* Un po' di margine destro */
-
-  /* Animazione */
-  transition: transform 0.3s ease, opacity 0.2s ease;
-
-  /* STATO CHIUSO: Completamente invisibile */
-  opacity: 0;
+  border: 1px solid transparent;
+  position: relative; /* Per posizionare la freccia */
 }
 
-/* QUANDO PASSI IL MOUSE: La freccia DEVE apparire */
-.sidebar:hover .arrow {
-  opacity: 1 !important; /* !important è fondamentale qui */
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-/* ROTAZIONE: Quando isMarketOpen è true */
-.rotated {
-  transform: rotate(180deg);
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff; font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
 }
 
-/* FIX CRITICO: Mantiene la rotazione anche durante l'hover */
-.sidebar:hover .rotated {
-  transform: rotate(180deg);
-  opacity: 1 !important;
-}
+.icon-box { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; min-width: 24px; margin-left: 4px; }
+.icon-box svg { width: 22px; height: 22px; stroke-width: 2px; }
 
-/* --- SOTTO MENU (ANIMAZIONE APERTURA) --- */
+.link-text { font-size: 0.95rem; opacity: 0; transition: opacity 0.2s ease; }
+.sidebar:hover .link-text { opacity: 1; transition-delay: 0.15s; }
+
+/* =========================================
+   4. DROPDOWN MARKET (SPECIFICO)
+   ========================================= */
+
+/* Freccia Rotante */
+.arrow-icon {
+  margin-left: auto; /* Spinge a destra */
+  opacity: 0; width: 16px; height: 16px; transition: all 0.3s;
+}
+.sidebar:hover .arrow-icon { opacity: 0.7; }
+.arrow-icon svg { width: 16px; height: 16px; stroke-width: 3px; }
+.rotated { transform: rotate(180deg); }
+
+/* Contenitore Sottomenu */
 .sub-menu-container {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 5px;
-  overflow: hidden;
-
-  /* Animazione entrata */
+  display: flex; flex-direction: column; gap: 4px; margin-top: 5px;
   animation: slideDown 0.3s ease-out forwards;
 }
 
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- LINK DEL SOTTO-MENU (Azioni, ETF...) --- */
+/* Elementi Sottomenu */
 .sub-item {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 1rem !important;
-  padding: 8px 15px !important;
-  padding-left: 55px !important; /* Indentazione gerarchica */
-  color: rgba(255, 255, 255, 0.7) !important;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  transition: all 0.2s;
+  height: 40px; /* Più bassi dei principali */
+  padding-left: 54px; /* Indentazione per allinearsi al testo sopra */
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 0.9rem;
 }
 
-.sub-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white !important;
-}
+.sub-item:hover { color: white !important; background: rgba(255, 255, 255, 0.05); }
 
 .sub-item.active {
-  background-color: #6464fc;
-  color: white !important;
+  background: rgba(255, 255, 255, 0.15); /* Più scuro del principale attivo */
+  color: #a5f3fc !important; /* Ciano chiaro per distinguere */
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: none; border: none;
 }
 
-/* Pallino decorativo */
-.dot {
-  font-size: 0.6em;
-  margin-right: 10px;
-  display: inline-block;
-  opacity: 0.7;
+.dot { margin-right: 8px; font-size: 1.2rem; line-height: 0; }
+.sub-text { opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+.sidebar:hover .sub-text { opacity: 1; transition-delay: 0.1s; }
+
+/* =========================================
+   5. BACK LINK & DIVIDER
+   ========================================= */
+.menu-divider { height: 1px; background-color: rgba(255, 255, 255, 0.15); margin: 10px 0; width: 100%; }
+
+.back-link {
+  margin-top: auto; /* Se vuoi spingerlo giù */
+  color: rgba(255, 255, 255, 0.5);
 }
+.back-link:hover { color: #ff9999; background: rgba(255, 0, 0, 0.1); }

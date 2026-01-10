@@ -1,7 +1,7 @@
 <header class="top-bar">
   <div class="spacer"></div>
 
-  <nav class="toggle-pill">
+  <nav class="toggle-container">
     <a routerLink="/dashboard"
        [class.active]="(router.url.includes('/dashboard') && !router.url.includes('/market')) || router.url.includes('/movimenti') || router.url.includes('/groups')"
        class="toggle-btn">
@@ -18,19 +18,22 @@
   <div class="user-profile">
 
     <ng-container *ngIf="!isLoggedIn">
-      <span class="login-label">Accedi</span>
-      <a routerLink="/login" class="avatar-circle-btn">
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Login">
+      <a routerLink="/login" class="login-btn">
+        Accedi
       </a>
     </ng-container>
 
     <div class="logged-user-container" *ngIf="isLoggedIn">
 
       <div class="avatar-circle-btn" (click)="toggleMenu()">
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" alt="Avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
       </div>
 
       <div class="dropdown-menu" *ngIf="showMenu">
+        <div class="menu-header">Account</div>
         <a routerLink="/settings" (click)="showMenu = false">Impostazioni</a>
         <div class="menu-divider"></div>
         <a (click)="logout()" class="logout-text">Logout</a>

@@ -1,26 +1,48 @@
 <div class="sidebar">
 
-  <div class="logo">
-    <span class="icon" style="font-size: 1.8rem;">💰</span>
-    <h1>MoneyMind</h1>
+  <div class="logo-section">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </div>
+    <h1 class="brand-name">MoneyMind</h1>
   </div>
 
-  <nav class="menu">
+  <nav class="nav-menu">
 
-    <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
-      <span class="icon">📊</span>
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+      </div>
       <span class="link-text">Dashboard</span>
     </a>
 
-    <a routerLink="/movimenti" routerLinkActive="active" class="menu-item">
-      <span class="icon">💸</span>
+    <a routerLink="/movimenti" routerLinkActive="active" class="nav-item">
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline>
+          <polyline points="16 17 22 17 22 11"></polyline>
+        </svg>
+      </div>
       <span class="link-text">Movimenti</span>
     </a>
 
-    <a routerLink="/wallet" routerLinkActive="active" class="menu-item">
-      <span class="icon">👥</span>
+    <a routerLink="/wallet" routerLinkActive="active" class="nav-item">
+      <div class="icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+      </div>
       <span class="link-text">Wallet</span>
     </a>
 
   </nav>
+
 </div>
