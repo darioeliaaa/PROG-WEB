@@ -25,10 +25,6 @@ export class HeaderComponent {
       this.isLoggedIn = state;
     });
   }
-  goToSettings() {
-    this.showMenu = false; // Chiude il menu a tendina
-    this.router.navigate(['/settings']);
-  }
 
   toggleMenu() {
     this.showMenu = !this.showMenu;
