@@ -17,7 +17,11 @@
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
 
-      <div class="col-symbol">
+
+      <div class="col-symbol"
+           [routerLink]="['/market/chart', asset.symbol]"  title="Clicca per vedere il grafico"
+           style="cursor: pointer;">
+
         <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="small-logo">
         <div class="symbol-info">
           <span class="ticker">{{ asset.symbol }}</span>

@@ -1,13 +1,12 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './features/dashboard/dashboard';
-
 import { Movimenti } from './features/movimenti/movimenti';
 import { Login } from './features/auth/login/login';
 import { Profilo } from './features/Profilo/profilo';
 import { MarketHomeComponent } from './features/market/market-home/market-home';
-
-// 1. IMPORTA IL COMPONENTE CHE GESTISCE LA LISTA
 import { AssetListComponent } from './features/market/asset-list/asset-list';
+
+import { StockChart } from './features/market/stock-chart/stock-chart';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -15,28 +14,25 @@ export const routes: Routes = [
 
   {
     path: 'market',
-    component: MarketHomeComponent // 1. Pagina Principale (Vetrina)
+    component: MarketHomeComponent
   },
   {
     path: 'market/azioni',
-    component: AssetListComponent, // 2. Lista Completa Azioni
+    component: AssetListComponent,
     data: { type: 'STOCK' }
   },
   {
     path: 'market/etf',
-    component: AssetListComponent, // 3. Lista Completa ETF
+    component: AssetListComponent,
     data: { type: 'ETF' }
   },
   {
     path: 'market/crypto',
-    component: AssetListComponent, // 4. Lista Completa Crypto
+    component: AssetListComponent,
     data: { type: 'CRYPTO' }
   },
 
-  // Se l'utente scrive solo "localhost:4200/market", lo mandiamo alle azioni di default
-  { path: 'market', redirectTo: 'market/dashboard', pathMatch: 'full' },
-
-  // --- FINE NUOVE ROTTE MARKET ---
+  { path: 'market/chart/:symbol', component: StockChart },
 
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },

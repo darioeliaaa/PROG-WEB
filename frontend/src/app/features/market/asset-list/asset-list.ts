@@ -2,11 +2,12 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1.
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MarketService, MarketAsset } from '../market.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-asset-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './asset-list.html',
   styleUrls: ['./asset-list.css']
 })
