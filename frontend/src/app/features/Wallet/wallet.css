@@ -1,0 +1,186 @@
+/* --- SFONDO E LAYOUT --- */
+.dashboard-container {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+}
+
+.dashboard-header h1 {
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+}
+
+/* --- HEADER WALLET --- */
+.wallet-header {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.wallet-header h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.wallet-header .btn-primary {
+  padding: 12px 20px;
+  font-size: 0.95rem;
+}
+
+/* --- BOX CREAZIONE WALLET --- */
+.create-box {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+  box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-box input {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  background-color: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.create-box input:focus {
+  background-color: #fff;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.create-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-secondary {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* --- LOADING & EMPTY --- */
+.loading, .empty {
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 30px;
+  font-size: 1rem;
+}
+
+/* --- LISTA WALLET --- */
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* --- CARD WALLET --- */
+.wallet-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.wallet-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.2);
+}
+
+/* --- WALLET TOP --- */
+.wallet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wallet-top h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.wallet-top .badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  background-color: #10b981; /* verde attivo */
+}
+
+.wallet-top .badge.inactive {
+  background-color: #ef4444; /* rosso inattivo */
+}
+
+/* --- MEMBERS & BUDGET --- */
+.members, .budget {
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+/* --- APRI WALLET BUTTON --- */
+.wallet-card .btn-link {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 0;
+  align-self: flex-start;
+  transition: color 0.2s;
+}
+
+.wallet-card .btn-link:hover {
+  color: #8b5cf6;
+}
