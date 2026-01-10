@@ -31,8 +31,7 @@
       </div>
 
       <div class="dropdown-menu" *ngIf="showMenu">
-        <a routerLink="/profilo" (click)="closeMenu()">Dati Personali</a>
-        <a routerLink="/settings" (click)="closeMenu()">Impostazioni</a>
+        <a routerLink="/settings" (click)="showMenu = false">Impostazioni</a>
         <div class="menu-divider"></div>
         <a (click)="logout()" class="logout-text">Logout</a>
       </div>
