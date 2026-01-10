@@ -13,9 +13,11 @@
       <div style="display: flex; align-items: center; gap: 10px;">
         <span class="icon">🏠</span>
         <span>Home Market</span>
-      </div>
 
-      <i class="fa fa-chevron-down arrow" [class.rotated]="isMarketOpen"></i>
+        <i class="fa fa-chevron-down arrow"
+           [class.rotated]="isMarketOpen"
+           style="font-size: 0.8em; margin-left: 5px;"></i>
+      </div>
     </a>
 
     <div class="sub-menu-container" *ngIf="isMarketOpen">
