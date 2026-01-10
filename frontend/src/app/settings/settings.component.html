@@ -9,16 +9,35 @@
 
   <main class="settings-content">
     <section *ngIf="activeTab === 'profilo'">
-      <h3>Dati Personali</h3>
-      <div class="placeholder-card">
-        <p>Modulo profilo in fase di sviluppo...</p>
-      </div>
+      <app-profilo></app-profilo>
     </section>
 
     <section *ngIf="activeTab === 'wallets'">
-      <h3>I tuoi Portafogli</h3>
 
-      <div class="wallet-list" *ngIf="!selectedWallet">
+      <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>I tuoi Portafogli</h3>
+        <button class="btn-add-wallet" *ngIf="!selectedWallet && !showCreateForm" (click)="showCreateForm = true">
+          + Nuovo Portafoglio
+        </button>
+      </div>
+
+      <div class="manage-panel" *ngIf="showCreateForm">
+        <h4>Crea nuovo Portafoglio</h4>
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" [(ngModel)]="newWallet.name" placeholder="Es. Spese Casa">
+        </div>
+        <div class="form-group">
+          <label>Budget Mensile (€)</label>
+          <input type="number" [(ngModel)]="newWallet.monthlyBudget">
+        </div>
+        <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
+          <button (click)="showCreateForm = false" class="btn-back" style="margin-bottom: 0;">Annulla</button>
+          <button (click)="createNewWallet()" class="btn-save" style="background-color: #4f46e5;">Crea</button>
+        </div>
+      </div>
+
+      <div class="wallet-list" *ngIf="!selectedWallet && !showCreateForm">
         <div *ngFor="let w of userWallets" class="wallet-card">
           <span>{{ w.name }}</span>
           <button *ngIf="!w.personal" (click)="openManage(w)">Gestisci</button>
@@ -26,7 +45,7 @@
         </div>
       </div>
 
-      <div class="manage-panel" *ngIf="selectedWallet">
+      <div class="manage-panel" *ngIf="selectedWallet && !showCreateForm">
         <button (click)="selectedWallet = null" class="btn-back">← Torna alla lista</button>
         <h4>Modifica {{ selectedWallet.name }}</h4>
 
@@ -53,6 +72,7 @@
 
         <button (click)="saveWalletSettings()" class="btn-save">Salva Modifiche</button>
       </div>
+
     </section>
   </main>
 </div>
