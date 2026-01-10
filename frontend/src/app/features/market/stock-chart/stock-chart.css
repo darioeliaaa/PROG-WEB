@@ -1,46 +1,92 @@
-.chart-wrapper {
-  /* Le tue classi standard glass-card */
-  background: rgba(30, 30, 40, 0.8); /* O il tuo colore scuro di base */
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+/* 1. RESET TOTALE DEL COMPONENTE */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Se il contenitore padre (il tuo router-outlet) ha del padding,
+     possiamo provare a forzarlo, ma di base questo riempie il componente */
+  overflow: hidden;
+}
 
-  /* Dimensioni per riempire lo schermo o il modale */
-  height: 85vh;
-  width: 95%;
-  margin: 20px auto;
-  padding: 20px;
+/* 2. CONTENITORE PRINCIPALE */
+.chart-page-container {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  /* Altezza totale */
+  height: 100%;
+  width: 100%;
+
+  /* FONDAMENTALE: Sfondo bianco per coprire il grigio dell'app */
+  background-color: #ffffff;
+
+  /* ZERO SPAZI: Il contenuto toccherà i bordi */
+  padding: -10px;
+  margin: 0;
 }
 
-.header {
+/* 3. BARRA STRUMENTI IN ALTO */
+.header-actions {
+  flex-shrink: 0; /* Altezza fissa */
+  height: 50px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 15px;
-  color: white;
+  justify-content: space-between;
+  padding: 0 15px; /* Un po' di aria solo per il testo dentro la barra */
+  background-color: #ffffff;
+
+  /* Linea sottile sotto per separare dal grafico */
+  border-bottom: 1px solid #e0e3eb;
+  z-index: 5;
 }
 
-.back-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+/* Titolo e testi */
+.title-group h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #131722;
 }
 
-.back-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.tv-container {
-  flex-grow: 1; /* Prende tutto lo spazio rimanente */
+/* 4. WRAPPER DEL GRAFICO (LA PARTE CRUCIALE) */
+.tv-wrapper {
+  flex: 1; /* Prende tutto lo spazio rimanente sotto la header-actions */
   width: 100%;
-  border-radius: 12px;
-  overflow: hidden; /* Importante per arrotondare il grafico */
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+
+  /* RIMUOVIAMO OGNI STILE "CARD" */
+  border-radius: 0; /* Angoli vivi per toccare perfettamente la sidebar */
+  border: none;     /* Niente bordini */
+  box-shadow: none; /* Niente ombre */
+  background: white;
+
+  /* Assicura che non ci siano margini strani */
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 5. IL GRAFICO VERO E PROPRIO */
+.tv-container {
+  width: 100%;
+  height: 100%;
+  display: block; /* Rimuove spazi fantasma dei div */
+}
+
+/* STILE BOTTONE INDIETRO (Opzionale, pulito) */
+.back-btn {
+  background: white;
+  border: 1px solid #e0e3eb;
+  color: #333;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.back-btn:hover {
+  background-color: #f0f3fa;
+  border-color: #2962ff;
+  color: #2962ff;
 }
