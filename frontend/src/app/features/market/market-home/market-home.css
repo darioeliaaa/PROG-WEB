@@ -45,10 +45,10 @@
   align-items: center;
   cursor: pointer;
   /* Sfondo bianco per la card per massima leggibilità */
-  background: #FFFFFF;
+  background: #ffffff;
 
   padding: 15px 5px;
-  border-radius: 100px;
+  border-radius: 20px;
 
   /* Ombra forte per staccare dal fondo */
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -63,14 +63,12 @@
 
 /* ICONA */
 .icon-wrapper {
-  width: 50px; height: 50px;
-  border-radius: 50%;
+  width: 70px; height: 70px;
+  border-radius: 10%;
   background-color: #ffffff; /* Sfondo bianco dietro il logo */
-  border: 1px solid #FFFFFF;    /* Bordino grigio chiaro */
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 .round-logo { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
 
