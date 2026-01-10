@@ -3,13 +3,13 @@
 <div *ngIf="!isLoginPage" style="display: flex; height: 100vh;">
 
   <app-sidebar-market *ngIf="isMarketSection"></app-sidebar-market>
-
   <app-sidebar *ngIf="!isMarketSection"></app-sidebar>
-  <div class="main-content" style="flex-grow: 1; display: flex; flex-direction: column; background-color: #FFFFFF;">
+
+  <div class="main-content" style="flex-grow: 1; display: flex; flex-direction: column; background-color: #f8fafc;">
 
     <app-header></app-header>
 
-    <div style="padding: 20px; overflow-y: auto; height: 100%;">
+    <div style="padding: 0; overflow-y: auto; height: 100%;">
       <router-outlet></router-outlet>
     </div>
 
