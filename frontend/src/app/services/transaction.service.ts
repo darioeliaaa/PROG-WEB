@@ -13,8 +13,17 @@ export class TransactionService {
 
   // 1. SALVARE (Richiede User e Wallet)
   add(userId: number, walletId: number, t: Transaction): Observable<Transaction> {
-    const payload = { ...t, amount: Number(t.amount) };
-    return this.http.post<Transaction>(`${this.apiUrl}/user/${userId}/wallet/${walletId}`, payload);
+    // Il backend si aspetta i campi in inglese (amount, description, etc.)
+    // Assicuriamoci che l'amount sia un numero puro
+    const payload = {
+      ...t,
+      amount: Number(t.amount)
+    };
+
+    return this.http.post<Transaction>(
+      `${this.apiUrl}/user/${userId}/wallet/${walletId}`,
+      payload
+    );
   }
 
   // 2. LEGGERE (Richiede solo il Wallet)
