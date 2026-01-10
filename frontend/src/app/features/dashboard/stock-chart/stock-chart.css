@@ -1,0 +1,46 @@
+.chart-wrapper {
+  /* Le tue classi standard glass-card */
+  background: rgba(30, 30, 40, 0.8); /* O il tuo colore scuro di base */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+
+  /* Dimensioni per riempire lo schermo o il modale */
+  height: 85vh;
+  width: 95%;
+  margin: 20px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tv-container {
+  flex-grow: 1; /* Prende tutto lo spazio rimanente */
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden; /* Importante per arrotondare il grafico */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
