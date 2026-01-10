@@ -19,8 +19,7 @@
 
 
       <div class="col-symbol"
-           [routerLink]="['/chart', asset.symbol]"
-           title="Clicca per vedere il grafico"
+           [routerLink]="['/market/chart', asset.symbol]"  title="Clicca per vedere il grafico"
            style="cursor: pointer;">
 
         <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="small-logo">
