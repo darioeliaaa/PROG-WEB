@@ -31,4 +31,8 @@ export class WalletService {
   removeMember(walletId: number, adminId: number, memberId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${walletId}/remove-member/${memberId}?adminId=${adminId}`);
   }
+  createWallet(userId: number, walletData: any): Observable<any> {
+    // Il backend di solito vuole l'ID dell'admin che crea il wallet
+    return this.http.post(`${this.apiUrl}/create?userId=${userId}`, walletData);
+  }
 }
