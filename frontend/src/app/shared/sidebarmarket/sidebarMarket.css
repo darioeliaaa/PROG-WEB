@@ -1,30 +1,39 @@
 /* sidebar-market.css */
 
-/* 1. CONFIGURAZIONE BASE SIDEBAR (STATO CHIUSO) */
+/* =========================================
+   1. STRUTTURA E ANIMAZIONE (IDENTICO ALLA TUA SIDEBAR)
+   ========================================= */
+:host {
+  display: block;
+}
+
 .sidebar {
-  width: 80px; /* Larghezza ridotta di base (solo icone) */
+  width: 80px; /* Parte stretta (solo icone) */
   height: 100%;
   background-color: #7D7DFAFF;
   color: white;
   display: flex;
   flex-direction: column;
-  padding: 20px 10px; /* Meno padding laterale */
+  padding: 20px 10px; /* Padding ridotto quando è chiusa */
   box-shadow: 4px 0 10px rgba(0,0,0,0.1);
 
-  /* ANIMAZIONE FLUIDA */
+  /* ANIMAZIONE FLUIDA (La tua esatta curva di bezier) */
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  overflow: hidden; /* Nasconde tutto ciò che esce fuori quando è stretta */
-  white-space: nowrap; /* Impedisce al testo di andare a capo mentre si stringe */
-  z-index: 100; /* Assicura che stia sopra al contenuto */
+
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 100;
 }
 
-/* 2. STATO APERTO (QUANDO CI PASSI SOPRA) */
+/* STATO APERTO */
 .sidebar:hover {
-  width: 250px; /* Larghezza completa */
-  padding: 20px; /* Ripristina il padding comodo */
+  width: 250px;
+  padding: 20px;
 }
 
-/* --- LOGO --- */
+/* =========================================
+   2. LOGO (IDENTICO ALLA TUA SIDEBAR)
+   ========================================= */
 .logo {
   margin-bottom: 40px;
   height: 40px;
@@ -34,42 +43,50 @@
 }
 
 .logo h1 {
+  /* IL TUO FONT ESATTO */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-weight: 700;
+  letter-spacing: -0.5px;
   font-size: 1.8rem;
   margin: 0;
 
-  /* Nascondi il testo del logo quando è chiusa */
+  /* Animazione scomparsa testo */
   opacity: 0;
   transform: translateX(-20px);
   transition: all 0.3s ease;
 }
 
-/* Mostra il testo del logo quando passi sopra la sidebar */
 .sidebar:hover .logo h1 {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* --- MENU ITEMS --- */
+/* =========================================
+   3. MENU ITEMS (IDENTICO ALLA TUA SIDEBAR)
+   ========================================= */
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 .menu-item {
   color: white;
   text-decoration: none;
+
+  /* IL TUO FONT E DIMENSIONI */
   font-size: 1.2rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
   padding: 12px;
   border-radius: 12px;
   transition: background 0.3s;
   display: flex;
   align-items: center;
   gap: 15px; /* Spazio tra icona e testo */
+  height: 50px;
   cursor: pointer;
-  height: 50px; /* Altezza fissa per mantenere l'icona centrata */
+  position: relative; /* Necessario per posizionare elementi interni */
 }
 
 .menu-item:hover {
@@ -78,84 +95,119 @@
 
 .menu-item.active {
   background-color: #6464fc;
+  font-weight: bold;
 }
 
-/* --- ICONE (Sempre visibili) --- */
+/* =========================================
+   4. GESTIONE ICONE E TESTO (LOGICA HIDE/SHOW)
+   ========================================= */
+
+/* Icona sempre visibile */
 .icon {
   font-size: 1.4rem;
-  min-width: 30px; /* Riserva spazio fisso per l'icona così non si sposta */
-  text-align: center;
+  min-width: 30px;
   display: flex;
   justify-content: center;
 }
 
-/* --- TESTI DEI LINK (Nascosti quando chiusa) --- */
-.link-text {
+/* Il testo del link (Home Market, ecc.) */
+/* Usiamo span generico se non hai messo la classe .link-text ovunque */
+.menu-item span:not(.icon) {
   opacity: 0;
   transition: opacity 0.2s ease;
-  /* Ritardo l'apparizione del testo per non farlo sovrapporre subito */
   transition-delay: 0s;
 }
 
-/* Mostra testo quando hover */
-.sidebar:hover .link-text {
+.sidebar:hover .menu-item span:not(.icon) {
   opacity: 1;
-  transition-delay: 0.1s; /* Appare leggermente dopo che la sidebar si allarga */
+  transition-delay: 0.1s;
 }
 
-/* --- FRECCIA ACCORDION --- */
+/* =========================================
+   5. AGGIUNTE SPECIFICHE PER MARKET (TENDINA)
+   ========================================= */
+
+/* --- FRECCIA CHE SI GIRA --- */
 .arrow {
-  margin-left: auto; /* Spinge a destra */
-  opacity: 0; /* Nascosta quando chiusa */
-  transition: opacity 0.3s;
+  /* Dimensioni e Colore */
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+
+  /* Posizione: La spinge a destra ma non troppo appiccicata */
+  margin-left: auto;
+  margin-right: 5px; /* Un po' di margine destro */
+
+  /* Animazione */
+  transition: transform 0.3s ease, opacity 0.2s ease;
+
+  /* STATO CHIUSO: Completamente invisibile */
+  opacity: 0;
 }
 
+/* QUANDO PASSI IL MOUSE: La freccia DEVE apparire */
 .sidebar:hover .arrow {
-  opacity: 0.8;
+  opacity: 1 !important; /* !important è fondamentale qui */
 }
 
+/* ROTAZIONE: Quando isMarketOpen è true */
 .rotated {
   transform: rotate(180deg);
 }
 
-/* --- SOTTO MENU (Sub-items) --- */
+/* FIX CRITICO: Mantiene la rotazione anche durante l'hover */
+.sidebar:hover .rotated {
+  transform: rotate(180deg);
+  opacity: 1 !important;
+}
+
+/* --- SOTTO MENU (ANIMAZIONE APERTURA) --- */
 .sub-menu-container {
   display: flex;
   flex-direction: column;
   gap: 5px;
   margin-top: 5px;
+  overflow: hidden;
 
-  /* Quando la sidebar è chiusa, nascondiamo i sotto-menu per pulizia */
-  opacity: 0;
-  visibility: hidden;
-  height: 0;
-  transition: all 0.3s;
+  /* Animazione entrata */
+  animation: slideDown 0.3s ease-out forwards;
 }
 
-/* Mostra i sotto-menu SOLO se la sidebar è aperta (hover) E se l'accordion è attivo (isMarketOpen) */
-.sidebar:hover .sub-menu-container {
-  opacity: 1;
-  visibility: visible;
-  height: auto; /* Si adatta al contenuto */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- LINK DEL SOTTO-MENU (Azioni, ETF...) --- */
 .sub-item {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 1rem !important;
   padding: 8px 15px !important;
-  padding-left: 55px !important; /* Allineato col testo sopra */
-  color: rgba(255, 255, 255, 0.8) !important;
+  padding-left: 55px !important; /* Indentazione gerarchica */
+  color: rgba(255, 255, 255, 0.7) !important;
+  height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
+  text-decoration: none;
+  transition: all 0.2s;
 }
 
 .sub-item:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1);
   color: white !important;
 }
 
-.sidebar .menu .sub-item.active {
+.sub-item.active {
   background-color: #6464fc;
   color: white !important;
   font-weight: 600;
-  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Pallino decorativo */
+.dot {
+  font-size: 0.6em;
+  margin-right: 10px;
+  display: inline-block;
+  opacity: 0.7;
 }
