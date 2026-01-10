@@ -2,36 +2,46 @@ package com.example.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-
+import java.time.LocalDate; // ✅ Aggiunto per gestire la data di nascita
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users") // Assicurati che la tabella si chiami 'users'
+@Table(name = "users")
 public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(unique = true) // Username deve essere unico
+  @Column(unique = true)
   private String username;
 
   @Column(unique = true)
   private String email;
 
   private String password;
-  @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+
+  // --- NUOVI CAMPI PER IL PROFILO (Default NULL) ---
+  private String nome;
+  private String cognome;
+  private String sesso;
+  private LocalDate dataDiNascita;
+  private String telefono;
+  private String indirizzo;
+
+  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(
-    name = "user_wallets", // Nome della tabella ponte nel DB
+    name = "user_wallets",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "wallet_id")
   )
-  @JsonIgnoreProperties("members") // Evita che Jackson entri in un loop infinito
+  @JsonIgnoreProperties("members")
   private Set<Wallet> wallets = new HashSet<>();
 
   // --- COSTRUTTORI ---
-  public User() {}
+  public User() {
+  }
 
   public User(String username, String email, String password) {
     this.username = username;
@@ -39,19 +49,114 @@ public class User {
     this.password = password;
   }
 
-  // --- GETTER E SETTER (Importanti!) ---
-  public Long getId() { return id; }
-  public void setId(Long id) { this.id = id; }
+  // --- METODO GAMIFICATION (Calcolo Percentuale) ---
+  public int getProfileCompletion() {
+    // Totale campi da monitorare: 8
+    // 2 Base (Username, Email) + 6 Anagrafici (Nome, Cognome, Sesso, Data, Tel, Indirizzo)
+    int totalFields = 8;
+    int filledFields = 0;
 
-  public String getUsername() { return username; }
-  public void setUsername(String username) { this.username = username; }
+    // 1. Campi Base (Questi ci sono quasi sempre, quindi danno il "bonus" iniziale)
+    if (username != null && !username.isEmpty()) filledFields++;
+    if (email != null && !email.isEmpty()) filledFields++;
 
-  public String getEmail() { return email; }
-  public void setEmail(String email) { this.email = email; }
+    // 2. Campi Opzionali (Quelli da compilare)
+    if (nome != null && !nome.isEmpty()) filledFields++;
+    if (cognome != null && !cognome.isEmpty()) filledFields++;
+    if (sesso != null && !sesso.isEmpty()) filledFields++;
+    if (dataDiNascita != null) filledFields++;
+    if (telefono != null && !telefono.isEmpty()) filledFields++;
+    if (indirizzo != null && !indirizzo.isEmpty()) filledFields++;
 
-  public String getPassword() { return password; }
-  public void setPassword(String password) { this.password = password; }
+    // Calcolo percentuale
+    return (int) ((filledFields / (double) totalFields) * 100);
+  }
 
-  public Set<Wallet> getWallets() { return wallets; }
-  public void setWallets(Set<Wallet> wallets) { this.wallets = wallets; }
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getNome() {
+    return nome;
+  }
+
+  public void setNome(String nome) {
+    this.nome = nome;
+  }
+
+  public String getCognome() {
+    return cognome;
+  }
+
+  public void setCognome(String cognome) {
+    this.cognome = cognome;
+  }
+
+  public String getSesso() {
+    return sesso;
+  }
+
+  public void setSesso(String sesso) {
+    this.sesso = sesso;
+  }
+
+  public LocalDate getDataDiNascita() {
+    return dataDiNascita;
+  }
+
+  public void setDataDiNascita(LocalDate dataDiNascita) {
+    this.dataDiNascita = dataDiNascita;
+  }
+
+  public String getTelefono() {
+    return telefono;
+  }
+
+  public void setTelefono(String telefono) {
+    this.telefono = telefono;
+  }
+
+  public String getIndirizzo() {
+    return indirizzo;
+  }
+
+  public void setIndirizzo(String indirizzo) {
+    this.indirizzo = indirizzo;
+  }
+
+  public Set<Wallet> getWallets() {
+    return wallets;
+  }
+
+  public void setWallets(Set<Wallet> wallets) {
+    this.wallets = wallets;
+  }
 }

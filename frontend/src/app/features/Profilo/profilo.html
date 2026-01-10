@@ -1,45 +1,80 @@
 <div class="dashboard-container">
 
-  <header class="dashboard-header">
-    <h1>Profilo Personale</h1>
-    <p>Completa al 100% il tuo profilo</p>
+  <header class="page-header">
+    <div class="header-left">
+      <div class="avatar-circle">
+        {{ userData.nome ? userData.nome.charAt(0).toUpperCase() : 'U' }}
+      </div>
 
-    <form>
+      <div class="header-texts">
+        <h1>Il tuo Profilo</h1>
+        <p>Gestisci le tue informazioni personali</p>
+      </div>
+    </div>
+
+    <button class="back-btn" (click)="backToDashboard()">Torna alla Dashboard</button>
+  </header>
+
+  <div *ngIf="message" class="feedback-box" [ngClass]="isError ? 'error' : 'success'">
+    <span>{{ isError ? '⚠️' : '✅' }}</span>
+    {{ message }}
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="form-section">
+    <div class="form-grid">
+
       <div class="form-group">
         <label for="nome">Nome</label>
-        <input type="text" name="nome" id="nome" placeholder="Mario" required>
+        <input type="text" id="nome" name="nome"
+               [(ngModel)]="userData.nome"
+               placeholder="Es. Mario">
       </div>
 
       <div class="form-group">
         <label for="cognome">Cognome</label>
-        <input type="text" name="cognome" id="cognome" placeholder="Rossi" required>
+        <input type="text" id="cognome" name="cognome"
+               [(ngModel)]="userData.cognome"
+               placeholder="Es. Rossi">
       </div>
 
       <div class="form-group">
-        <label for="sesso">Sesso</label>
-        <select name="sesso" id="sesso" required>
-          <option value=" ">Seleziona...</option>
-          <option value="M">Maschio</option>
-          <option value="F">Femmina</option>
+        <label for="sesso">Genere</label>
+        <select id="sesso" name="sesso" [(ngModel)]="userData.sesso">
+          <option value="" disabled selected>Seleziona...</option>
+          <option value="M">Uomo</option>
+          <option value="F">Donna</option>
+          <option value="Altro">Altro</option>
         </select>
       </div>
 
       <div class="form-group">
         <label for="dataNascita">Data di Nascita</label>
-        <input type="date" name="dataNascita" id="dataNascita" required>
+        <input type="date" id="dataNascita" name="dataDiNascita"
+               [(ngModel)]="userData.dataDiNascita">
       </div>
 
       <div class="form-group">
-        <label for="telefono">Numero di Telefono</label>
-        <input type="tel" name="telefono" id="telefono" placeholder="+39 ... ... ...." required>
+        <label for="telefono">Telefono</label>
+        <input type="tel" id="telefono" name="telefono"
+               [(ngModel)]="userData.telefono"
+               placeholder="+39 ...">
       </div>
 
-      <div class="form-group">
-        <label for="Indirizzo">Indirizzo</label>
-        <input type="text" name="indirizzo" id="indirizzo" placeholder="Via Roma 10, Milano">
+      <div class="form-group"></div>
+
+      <div class="form-group full-width">
+        <label for="indirizzo">Indirizzo di Residenza</label>
+        <input type="text" id="indirizzo" name="indirizzo"
+               [(ngModel)]="userData.indirizzo"
+               placeholder="Via, Civico, Città, CAP">
       </div>
 
-      <button type="submit" class="btn-primary">Salva e Continua</button>
-    </form>
-  </header>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="backToDashboard()">Annulla</button>
+      <button type="submit" class="btn-save">Salva Modifiche</button>
+    </div>
+  </form>
+
 </div>

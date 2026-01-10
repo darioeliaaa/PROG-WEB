@@ -58,11 +58,11 @@ export class StockChart implements OnInit, AfterViewInit {
     if (typeof TradingView !== 'undefined' && this.containerDiv) {
       new TradingView.widget({
         "width": "100%",
-        "height": "100%", // Riempirà il contenitore padre
+        "height": "100%",
         "symbol": this.symbol,
         "interval": "D",
         "timezone": "Europe/Rome",
-        "theme": "light", // TEMA CHIARO di base (si adatta meglio al bianco dell'app)
+        "theme": "light",
         "style": "1",
         "locale": "it",
         "toolbar_bg": "#f1f3f6",
@@ -74,16 +74,12 @@ export class StockChart implements OnInit, AfterViewInit {
         "hotlist": true,
         "calendar": true,
 
-        // OVERRIDES: I colori della tua App
         "overrides": {
-          // Colore sfondo grafico (Bianco/Grigio chiaro come la tua dashboard)
           "paneProperties.background": "#ffffff",
 
-          // Linee griglia (sottili viola/blu)
           "paneProperties.vertGridProperties.color": "rgba(101, 101, 248, 0.05)",
           "paneProperties.horzGridProperties.color": "rgba(101, 101, 248, 0.05)",
 
-          // Candele (Verde brillante e il tuo Viola/Rosso per le discese)
           "mainSeriesProperties.candleStyle.upColor": "#2ecc71",
           "mainSeriesProperties.candleStyle.downColor": "#e74c3c",
           "mainSeriesProperties.candleStyle.wickUpColor": "#2ecc71",

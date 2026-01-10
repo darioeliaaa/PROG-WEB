@@ -1,6 +1,6 @@
 /* --- SFONDO E LAYOUT --- */
 .dashboard-container {
-  background-color: #f8fafc; /* Grigio chiarissimo, quasi bianco "freddo" */
+  background-color: #FFFFFF; /* Grigio chiarissimo, quasi bianco "freddo" */
   min-height: 100vh;
   padding: 40px 20px;
   display: flex;
@@ -27,7 +27,7 @@
   box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.5);
 
-  max-width: 500px; /* Più stretto per sembrare più mobile-app */
+  max-width: 100%; /* Più stretto per sembrare più mobile-app */
   width: 100%;
   position: relative;
   overflow: hidden; /* Per eventuali effetti glow interni */
