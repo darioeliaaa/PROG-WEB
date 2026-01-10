@@ -1,55 +1,161 @@
-/* sidebar.component.css */
+/* sidebar-market.css */
 
+/* 1. CONFIGURAZIONE BASE SIDEBAR (STATO CHIUSO) */
 .sidebar {
-  width: 250px;
+  width: 80px; /* Larghezza ridotta di base (solo icone) */
   height: 100%;
   background-color: #7D7DFAFF;
   color: white;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 20px 10px; /* Meno padding laterale */
   box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+
+  /* ANIMAZIONE FLUIDA */
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden; /* Nasconde tutto ciò che esce fuori quando è stretta */
+  white-space: nowrap; /* Impedisce al testo di andare a capo mentre si stringe */
+  z-index: 100; /* Assicura che stia sopra al contenuto */
 }
 
-.sidebar .logo {
+/* 2. STATO APERTO (QUANDO CI PASSI SOPRA) */
+.sidebar:hover {
+  width: 250px; /* Larghezza completa */
+  padding: 20px; /* Ripristina il padding comodo */
+}
+
+/* --- LOGO --- */
+.logo {
   margin-bottom: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
 
-.sidebar .logo h1 {
-  /* Prima era Comic Sans */
+.logo h1 {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 700; /* Bello grassetto */
-  letter-spacing: -0.5px; /* Rende il testo più compatto e moderno */
+  font-weight: 700;
   font-size: 1.8rem;
+  margin: 0;
+
+  /* Nascondi il testo del logo quando è chiusa */
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.3s ease;
 }
 
-.sidebar .menu {
+/* Mostra il testo del logo quando passi sopra la sidebar */
+.sidebar:hover .logo h1 {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- MENU ITEMS --- */
+.menu {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
-.sidebar .menu .menu-item {
+.menu-item {
   color: white;
   text-decoration: none;
   font-size: 1.2rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  padding: 12px 15px;
+  padding: 12px;
   border-radius: 12px;
   transition: background 0.3s;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px; /* Spazio tra icona e testo */
+  cursor: pointer;
+  height: 50px; /* Altezza fissa per mantenere l'icona centrata */
 }
 
-/* Effetto quando passi sopra col mouse */
-.sidebar .menu .menu-item:hover {
+.menu-item:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Stile del bottone attivo (selezionato) */
-.sidebar .menu .menu-item.active {
-  background-color: #6464fc; /* Blu più scuro */
-  font-weight: bold;
+.menu-item.active {
+  background-color: #6464fc;
+}
 
+/* --- ICONE (Sempre visibili) --- */
+.icon {
+  font-size: 1.4rem;
+  min-width: 30px; /* Riserva spazio fisso per l'icona così non si sposta */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- TESTI DEI LINK (Nascosti quando chiusa) --- */
+.link-text {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  /* Ritardo l'apparizione del testo per non farlo sovrapporre subito */
+  transition-delay: 0s;
+}
+
+/* Mostra testo quando hover */
+.sidebar:hover .link-text {
+  opacity: 1;
+  transition-delay: 0.1s; /* Appare leggermente dopo che la sidebar si allarga */
+}
+
+/* --- FRECCIA ACCORDION --- */
+.arrow {
+  margin-left: auto; /* Spinge a destra */
+  opacity: 0; /* Nascosta quando chiusa */
+  transition: opacity 0.3s;
+}
+
+.sidebar:hover .arrow {
+  opacity: 0.8;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+/* --- SOTTO MENU (Sub-items) --- */
+.sub-menu-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+
+  /* Quando la sidebar è chiusa, nascondiamo i sotto-menu per pulizia */
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  transition: all 0.3s;
+}
+
+/* Mostra i sotto-menu SOLO se la sidebar è aperta (hover) E se l'accordion è attivo (isMarketOpen) */
+.sidebar:hover .sub-menu-container {
+  opacity: 1;
+  visibility: visible;
+  height: auto; /* Si adatta al contenuto */
+}
+
+.sub-item {
+  font-size: 1rem !important;
+  padding: 8px 15px !important;
+  padding-left: 55px !important; /* Allineato col testo sopra */
+  color: rgba(255, 255, 255, 0.8) !important;
+  display: flex;
+  align-items: center;
+}
+
+.sub-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
+.sidebar .menu .sub-item.active {
+  background-color: #6464fc;
+  color: white !important;
+  font-weight: 600;
+  border-radius: 12px;
 }
