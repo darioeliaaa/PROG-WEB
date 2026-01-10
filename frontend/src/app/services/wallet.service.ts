@@ -31,4 +31,8 @@ export class WalletService {
   removeMember(walletId: number, adminId: number, memberId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${walletId}/remove-member/${memberId}?adminId=${adminId}`);
   }
+
+  createWallet(userId: number, walletName: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/user/${userId}/create?walletName=${encodeURIComponent(walletName)}`, {});
+  }
 }
