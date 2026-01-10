@@ -1,8 +1,8 @@
 /* --- CONTENITORE PRINCIPALE --- */
 .market-home-container {
-  padding: 20px;
+
   /* Sfondo chiaro ma non bianco puro per far risaltare le card */
-  background-color: #f5f7fa;
+  background-color: #FFFFFF;
   min-height: 100vh;
   color: #333;
   font-family: 'Jost', sans-serif;
@@ -45,9 +45,10 @@
   align-items: center;
   cursor: pointer;
   /* Sfondo bianco per la card per massima leggibilità */
-  background: #ffffff;
+  background: #FFFFFF;
+
   padding: 15px 5px;
-  border-radius: 16px;
+  border-radius: 100px;
 
   /* Ombra forte per staccare dal fondo */
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -62,10 +63,10 @@
 
 /* ICONA */
 .icon-wrapper {
-  width: 52px; height: 52px;
+  width: 50px; height: 50px;
   border-radius: 50%;
   background-color: #ffffff; /* Sfondo bianco dietro il logo */
-  border: 1px solid #eee;    /* Bordino grigio chiaro */
+  border: 1px solid #FFFFFF;    /* Bordino grigio chiaro */
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 10px;
   overflow: hidden;
