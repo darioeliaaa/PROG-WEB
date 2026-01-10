@@ -1,5 +1,6 @@
-/* FILE: src/styles.css (NON profilo.css) */
+/* src/styles.css */
 
+/* 1. RESET TOTALE: Toglie il bordo bianco del browser */
 html, body {
   margin: 0 !important;
   padding: 0 !important;
@@ -8,7 +9,14 @@ html, body {
   box-sizing: border-box;
 }
 
-/* Se vuoi lo sfondo grigio su tutto il sito: */
+/* 2. SFONDO UNIFORME: Toglie l'area grigia "spezzata" */
 body {
-  background-color: #f4f7f6;
+  /* Impostiamo lo sfondo BIANCO per tutto il sito, così non vedi stacchi */
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif; /* Opzionale, se vuoi il font ovunque */
+}
+
+/* Regola tecnica per evitare che padding e bordi rompano il layout */
+*, *:before, *:after {
+  box-sizing: inherit;
 }
