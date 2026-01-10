@@ -120,3 +120,16 @@
   background: #333;
   transform: scale(1.05);
 }
+/* Quando passi sopra il simbolo/nome */
+.col-symbol:hover .ticker {
+  color: #3498db; /* Diventa blu (o il tuo colore primario) */
+  text-decoration: underline;
+}
+
+.col-symbol {
+  transition: transform 0.2s;
+}
+
+.col-symbol:hover {
+  transform: translateX(5px); /* Piccolo spostamento a destra per feedback */
+}
