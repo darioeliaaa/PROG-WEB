@@ -7,7 +7,7 @@ import { MarketHomeComponent } from './features/market/market-home/market-home';
 import { AssetListComponent } from './features/market/asset-list/asset-list';
 
 // 1. IMPORTA IL NUOVO COMPONENTE GRAFICO (Verifica che il percorso sia giusto)
-import { StockChart } from './features/dashboard/stock-chart/stock-chart';
+import { StockChart } from './features/market/stock-chart/stock-chart';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
