@@ -1,19 +1,14 @@
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-  padding: 20px;
-  transition: transform 0.3s ease;
+/* FILE: src/styles.css (NON profilo.css) */
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.glass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px 0 rgba(64, 0, 255, 0.4);
-}
+/* Se vuoi lo sfondo grigio su tutto il sito: */
 body {
-   background-color: #f4f7f6;
-   margin: 0;
- }
+  background-color: #f4f7f6;
+}
