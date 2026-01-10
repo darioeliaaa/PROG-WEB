@@ -1,10 +1,18 @@
-<div class="chart-wrapper glass-card">
-  <div class="header">
-    <button class="back-btn" onclick="history.back()">
-      <i class="fa fa-arrow-left"></i> Torna alla lista
+<div class="chart-page-container">
+
+  <div class="header-actions">
+    <div class="title-group">
+      <h2>{{ symbol }}</h2>
+      <span style="color: #787b86; font-size: 0.9rem;">Analisi Tecnica</span>
+    </div>
+
+    <button class="back-btn" (click)="goBack()">
+      <i class="fa fa-arrow-left"></i> Torna al Market
     </button>
-    <h2>Analisi Tecnica: {{ symbol }}</h2>
   </div>
 
-  <div id="tradingview_chart" #containerDiv class="tv-container"></div>
+  <div class="tv-wrapper">
+    <div id="tradingview_chart" #containerDiv class="tv-container"></div>
+  </div>
+
 </div>
