@@ -2,8 +2,14 @@
   <div class="spacer"></div>
 
   <nav class="toggle-container">
+
     <a routerLink="/dashboard"
-       [class.active]="(router.url.includes('/dashboard') && !router.url.includes('/market')) || router.url.includes('/movimenti') || router.url.includes('/groups')"
+       [class.active]="(router.url.includes('/dashboard') && !router.url.includes('/market'))
+                     || router.url.includes('/movimenti')
+                     || router.url.includes('/groups')
+                     || router.url.includes('/wallet')
+                     || router.url.includes('/settings')
+                     || router.url.includes('/profile')"
        class="toggle-btn">
       Gestione Finanze
     </a>
