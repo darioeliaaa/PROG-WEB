@@ -52,23 +52,33 @@ export class Login {
   // --- LOGICA LOGIN ---
   onLogin() {
     this.resetErrors();
-
-    if (!this.loginObj.email || !this.loginObj.password) {
-      alert('Inserisci email e password.');
-      return;
-    }
+    console.log("1. Pulsante Login cliccato");
 
     this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
       next: (res: any) => {
+        console.log("2. Risposta ricevuta dal server:", res);
+
         if (res && res.id) {
+          // SALVATAGGIO IMMEDIATO
+          const userData = JSON.stringify({ id: res.id, email: res.email });
+          localStorage.setItem('user', userData);
+
+          console.log("3. LocalStorage aggiornato con:", localStorage.getItem('user'));
+
+          // Aggiorniamo il servizio e navighiamo
           this.userService.login(res.id, res.email);
-          this.router.navigate(['/dashboard']);
+
+          // Piccola pausa per essere sicuri che il browser scriva sul disco
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+          }, 100);
         } else {
-          alert('Credenziali errate.');
+          console.error("Errore: Il server non ha inviato l'ID");
+          alert('Errore interno: dati utente non validi.');
         }
       },
       error: (err) => {
-        console.error(err);
+        console.error("Errore chiamata HTTP:", err);
         alert('Email o password non corretti.');
       }
     });
