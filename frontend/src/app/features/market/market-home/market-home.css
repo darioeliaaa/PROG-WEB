@@ -168,34 +168,26 @@
     font-size: 1.25rem;
   }
 }
+/* =========================================
+   8. VISUAL NEWS CAROUSEL (Premium Glass Style)
+   ========================================= */
 
 .visual-carousel-container {
   width: 100%;
-  height: 400px;
+  height: 380px;
   margin-bottom: 40px;
-
   border-radius: 24px;
-
   overflow: hidden;
   position: relative;
-
-  /* Sfondo di base: usa il colore del testo scuro dell'app per coerenza */
   background-color: #f8fafc;
-
-  /* Ombra morbida colorata (non nera pura) per effetto "elevazione" */
   box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
-
-  /* Maschera laterale per sfumare l'uscita delle card */
   mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
 }
 
-/* Il binario che si muove */
 .visual-track {
   display: flex !important;
   height: 100%;
   width: max-content;
-  /* Animazione fluida e lenta */
   animation: scroll-visual 90s linear infinite;
 }
 
@@ -203,87 +195,106 @@
   animation-play-state: paused;
 }
 
-/* LA SINGOLA CARD */
 .visual-news-card {
   position: relative;
-  width: 480px;       /* Leggermente più stretto per proporzioni migliori */
+  width: 420px;       /* Un po' più stretto per vederne di più */
   height: 100%;
   flex-shrink: 0;
-  margin-right: 16px; /* Gap più stretto e preciso */
-
-  /* Nessun border-radius qui, usiamo quello del container o maschere se servisse,
-     ma qui lasciamo dritto perché scorre dietro la maschera del container */
-
+  margin-right: 20px;
+  border-radius: 20px; /* Arrotondamento card */
+  overflow: hidden;
   background-position: center center;
   background-size: cover;
-  background-repeat: no-repeat;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Filtro leggero per uniformare la luminosità delle immagini */
-  filter: saturate(1.1) brightness(0.95);
-
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Stessa curva "rimbalzo" delle tue card */
+  /* Bordo sottile per definire la card */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Effetto Hover: Zoom fluido */
 .visual-news-card:hover {
-  transform: scale(1.03);
-  filter: saturate(1.2) brightness(1); /* Si illumina all'hover */
+  transform: scale(1.02) translateY(-5px);
   z-index: 5;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
 .visual-card-link {
-  display: block;
-  width: 100%;
-  height: 100%;
-  text-decoration: none;
-}
-
-/* L'OVERLAY (Sfumatura) */
-.visual-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Copre tutta la card per gestire meglio il gradiente */
-  padding: 30px 24px;
-
-  /* GRADIENTE COERENTE: Usa #0f172a (il tuo colore testo) invece del nero */
-  background: linear-gradient(
-    to top,
-    rgba(15, 23, 42, 1) 0%,
-    rgba(15, 23, 42, 0.8) 30%,
-    rgba(15, 23, 42, 0) 70%
-  );
-
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between; /* Spinge il badge su e il testo giù */
+  height: 100%;
+  text-decoration: none;
+  padding: 20px; /* Padding interno alla card */
+  box-sizing: border-box;
+
+  /* Gradiente leggero su tutta la card per leggibilità */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+}
+
+/* --- IL BADGE "NEWS" IN ALTO --- */
+.card-badge {
+  align-self: flex-end; /* Lo mette a destra */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- L'OVERLAY EFFETTO VETRO (GLASSMORPHISM) --- */
+.visual-overlay {
+  /* Non occupa tutto, ma è un box fluttuante in basso */
+  background: rgba(15, 23, 42, 0.75); /* Colore scuro semi-trasparente */
+  backdrop-filter: blur(12px);       /* SFOCATURA DELLO SFONDO */
+  -webkit-backdrop-filter: blur(12px);
+
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Bordo vetroso */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+  transform: translateY(0);
+  transition: background 0.3s;
+}
+
+/* All'hover diventa leggermente più scuro per leggere meglio */
+.visual-news-card:hover .visual-overlay {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.source-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.source-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #60a5fa; /* Pallino azzurro */
+  border-radius: 50%;
+  box-shadow: 0 0 8px #60a5fa;
 }
 
 .visual-source {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 8px;
-
-  /* COLORE BRAND: Indaco chiaro, richiama il tuo bottone "Vedi tutto" (#4f46e5) ma leggibile su scuro */
-  color: #a5b4fc;
-
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  color: #e2e8f0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .visual-title {
-  font-family: 'Inter', sans-serif; /* Forza il font dell'app */
-  font-size: 1.35rem; /* Titolo bello grande */
-  font-weight: 800;   /* Extra Bold come i tuoi titoli h2 */
+  font-size: 1.1rem; /* Un po' più piccolo ma più pulito */
+  font-weight: 700;
   color: #ffffff;
-  line-height: 1.25;
+  line-height: 1.4;
   margin: 0;
-
-  /* Ombra testo morbida */
-  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -291,25 +302,14 @@
   overflow: hidden;
 }
 
-/* ANIMAZIONE SCORRIMENTO */
+/* Animazione */
 @keyframes scroll-visual {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-/* Responsive per Mobile */
 @media (max-width: 600px) {
-  .visual-carousel-container {
-    height: 260px;
-    border-radius: 16px;
-  }
-  .visual-news-card {
-    width: 320px;
-  }
-  .visual-title {
-    font-size: 1.1rem;
-  }
-  .visual-overlay {
-    padding: 20px 16px;
-  }
+  .visual-carousel-container { height: 280px; }
+  .visual-news-card { width: 300px; }
+  .visual-title { font-size: 0.95rem; }
 }
