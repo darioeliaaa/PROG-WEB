@@ -2,7 +2,7 @@
 .market-home-container {
 
   /* Sfondo chiaro ma non bianco puro per far risaltare le card */
-  background-color: #FFFFFF;
+  background-color: #f8faff;
   min-height: 100vh;
   color: #333;
   font-family: 'Jost', sans-serif;
