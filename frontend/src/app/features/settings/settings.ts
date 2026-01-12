@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Per usare ngModel
-import { WalletService } from '../services/wallet.service';
-import {Profilo} from '../features/Profilo/profilo';
+import { WalletService } from '../../../app/services/wallet.service';
+import {Profilo} from '../Profilo/profilo';
 
 
 @Component({
   selector: 'app-settings',
   standalone: true,
   imports: [CommonModule, FormsModule, Profilo],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  templateUrl: './settings.html',
+  styleUrl: './settings.css'
 })
 export class SettingsComponent implements OnInit {
   activeTab: string = 'profilo';
