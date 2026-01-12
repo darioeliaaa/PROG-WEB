@@ -2,63 +2,109 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 
+// 1. INTERFACCIA AGGIORNATA (Match perfetto con il Backend Java)
 export interface MarketAsset {
   symbol: string;
   name: string;
-  currentPrice: number;
-  changePercent: number;
   type: string;
-  logoUrl: string;
+  logoUrl?: string; // Opzionale perché potrebbe non esserci
+
+  // Dati Prezzo Live
+  currentPrice: number;
+  changeValue: number;    // Variazione in valuta (es. -$1.50)
+  changePercent: number;  // Variazione in % (es. -0.99%)
+
+  // Dettagli Giornalieri
+  highPrice: number;
+  lowPrice: number;
+  openPrice: number;
+  prevClosePrice: number;
+
+  // Fondamentali (Opzionali perché le crypto potrebbero non averli tutti)
+  marketCap?: number;
+  industry?: string;
+  currency?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarketService {
+
+  // Assicurati che questo URL corrisponda al tuo Controller Java
   private apiUrl = 'http://localhost:8080/api/market/overview';
+
   private http = inject(HttpClient);
 
   getAssetsByType(typeFilter: string): Observable<MarketAsset[]> {
+    // Passiamo un parametro dummy per evitare la cache se serve: ?forceRefresh=true
     return this.http.get<MarketAsset[]>(this.apiUrl).pipe(
       map(allAssets => {
-        // 1. Filtra i dati veri che arrivano dal backend
-        const filtered = allAssets.filter(asset => asset.type === typeFilter);
+        // 1. Il backend ti manda TUTTO, qui filtriamo per tipo (STOCK, ETF, CRYPTO)
+        // Nota: Assicurati che il backend mandi 'stock', 'etf' (spesso sono lowercase o uppercase, qui normalizziamo)
+        const filtered = allAssets.filter(asset =>
+          asset.type.toUpperCase() === typeFilter.toUpperCase()
+        );
 
-        // 2. TRUCCO FRONTEND: Se la lista è vuota (es. ETF), usiamo dati finti
+        // 2. Fallback: Se la lista è vuota, usiamo i dati finti per non rompere la UI
         if (filtered.length === 0) {
-          console.warn(`Backend vuoto per ${typeFilter}, uso dati finti per test.`);
+          console.warn(`Backend vuoto per ${typeFilter}, uso dati finti.`);
           return this.getMockData(typeFilter);
         }
 
         return filtered;
       }),
-      // Se il backend è proprio spento o dà errore, mostra comunque i dati finti
       catchError(err => {
-        console.error("Backend non raggiungibile, uso dati mock", err);
+        console.error("Backend non raggiungibile o errore API", err);
         return of(this.getMockData(typeFilter));
       })
     );
   }
 
-  // Generatore di dati finti per testare la UI
+  // --- DATI FINTI AGGIORNATI (Con la nuova struttura) ---
   private getMockData(type: string): MarketAsset[] {
-    if (type === 'ETF') {
+    const t = type.toUpperCase();
+
+    if (t === 'ETF') {
       return [
-        { symbol: 'VTI', name: 'Vanguard Total Stock', currentPrice: 220.50, changePercent: 1.2, type: 'ETF', logoUrl: '' },
-        { symbol: 'VOO', name: 'Vanguard S&P 500', currentPrice: 410.10, changePercent: -0.5, type: 'ETF', logoUrl: '' },
-        { symbol: 'QQQ', name: 'Invesco QQQ Trust', currentPrice: 350.75, changePercent: 2.1, type: 'ETF', logoUrl: '' }
+        {
+          symbol: 'VTI', name: 'Vanguard Total Stock', type: 'ETF', logoUrl: '',
+          currentPrice: 220.50, changeValue: 2.5, changePercent: 1.2,
+          highPrice: 222.00, lowPrice: 218.00, openPrice: 219.00, prevClosePrice: 218.00,
+          marketCap: 1000000, industry: 'Fund', currency: 'USD'
+        },
+        {
+          symbol: 'QQQ', name: 'Invesco QQQ', type: 'ETF', logoUrl: '',
+          currentPrice: 350.75, changeValue: 7.2, changePercent: 2.1,
+          highPrice: 352.00, lowPrice: 345.00, openPrice: 346.00, prevClosePrice: 343.55,
+          marketCap: 2000000, industry: 'Technology Fund', currency: 'USD'
+        }
       ];
     }
-    if (type === 'STOCK') {
+    if (t === 'STOCK' || t === 'AZIONI') {
       return [
-        { symbol: 'AAPL', name: 'Apple Inc.', currentPrice: 175.30, changePercent: 0.5, type: 'STOCK', logoUrl: '' },
-        { symbol: 'TSLA', name: 'Tesla Inc.', currentPrice: 240.00, changePercent: -1.2, type: 'STOCK', logoUrl: '' }
+        {
+          symbol: 'AAPL', name: 'Apple Inc.', type: 'stock', logoUrl: 'https://static.finnhub.io/logo/87cb30d8-80df-11ea-8951-0544d0f8d219.png',
+          currentPrice: 175.30, changeValue: 0.85, changePercent: 0.5,
+          highPrice: 176.00, lowPrice: 174.00, openPrice: 174.50, prevClosePrice: 174.45,
+          marketCap: 2800000, industry: 'Technology', currency: 'USD'
+        },
+        {
+          symbol: 'TSLA', name: 'Tesla Inc.', type: 'stock', logoUrl: '',
+          currentPrice: 240.00, changeValue: -3.50, changePercent: -1.2,
+          highPrice: 245.00, lowPrice: 238.00, openPrice: 244.00, prevClosePrice: 243.50,
+          marketCap: 800000, industry: 'Automotive', currency: 'USD'
+        }
       ];
     }
-    if (type === 'CRYPTO') {
+    if (t === 'CRYPTO') {
       return [
-        { symbol: 'BTC', name: 'Bitcoin', currentPrice: 42000, changePercent: 3.5, type: 'CRYPTO', logoUrl: '' },
-        { symbol: 'ETH', name: 'Ethereum', currentPrice: 2200, changePercent: 1.1, type: 'CRYPTO', logoUrl: '' }
+        {
+          symbol: 'BTC', name: 'Bitcoin', type: 'crypto', logoUrl: '',
+          currentPrice: 42000, changeValue: 1200, changePercent: 3.5,
+          highPrice: 42500, lowPrice: 41000, openPrice: 40800, prevClosePrice: 40800,
+          marketCap: 800000, industry: 'Blockchain', currency: 'USD'
+        }
       ];
     }
     return [];

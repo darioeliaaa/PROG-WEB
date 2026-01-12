@@ -33,7 +33,7 @@ export class MarketHomeComponent implements OnInit {
     // 1. Carica STOCKS
     this.marketService.getAssetsByType('STOCK').subscribe({
       next: (res) => {
-        this.topStocks = res.slice(0, 4);
+        this.topStocks = res.slice(0, 8);
         this.cd.detectChanges(); // <--- 3. Forza l'aggiornamento grafico
       },
       error: (err) => console.error(err)
@@ -42,7 +42,7 @@ export class MarketHomeComponent implements OnInit {
     // 2. Carica CRYPTO
     this.marketService.getAssetsByType('CRYPTO').subscribe({
       next: (res) => {
-        this.topCrypto = res.slice(0, 4);
+        this.topCrypto = res.slice(0, 8);
         this.cd.detectChanges(); // <--- 3. Forza l'aggiornamento grafico
       },
       error: (err) => console.error(err)
@@ -51,7 +51,7 @@ export class MarketHomeComponent implements OnInit {
     // 3. Carica ETF
     this.marketService.getAssetsByType('ETF').subscribe({
       next: (res) => {
-        this.topEtf = res.slice(0, 4);
+        this.topEtf = res.slice(0, 8);
         this.loading = false; // Nasconde lo spinner
         this.cd.detectChanges(); // <--- 3. Forza l'aggiornamento grafico
       },

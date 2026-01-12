@@ -1,92 +1,153 @@
-/* 1. RESET TOTALE DEL COMPONENTE */
+/* =========================================
+   1. RESET E LAYOUT GENITORE
+   ========================================= */
 :host {
   display: block;
   width: 100%;
-  height: 100%;
-  /* Se il contenitore padre (il tuo router-outlet) ha del padding,
-     possiamo provare a forzarlo, ma di base questo riempie il componente */
-  overflow: hidden;
+  height: 100%; /* Forza l'altezza intera della viewport */
+  overflow: hidden; /* Niente scrollbar sulla pagina principale */
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  color: #1e293b; /* Slate-800 */
 }
 
-/* 2. CONTENITORE PRINCIPALE */
 .chart-page-container {
   display: flex;
   flex-direction: column;
-  /* Altezza totale */
   height: 100%;
   width: 100%;
-
-  /* FONDAMENTALE: Sfondo bianco per coprire il grigio dell'app */
   background-color: #ffffff;
-
-  /* ZERO SPAZI: Il contenuto toccherà i bordi */
-  padding: -10px;
-  margin: 0;
 }
 
-/* 3. BARRA STRUMENTI IN ALTO */
+/* =========================================
+   2. HEADER (BARRA STRUMENTI)
+   ========================================= */
 .header-actions {
-  flex-shrink: 0; /* Altezza fissa */
-  height: 50px;
+  flex-shrink: 0; /* Altezza fissa, non si schiaccia */
+  height: 60px;   /* Altezza confortevole */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 15px; /* Un po' di aria solo per il testo dentro la barra */
+  padding: 0 24px;
   background-color: #ffffff;
 
-  /* Linea sottile sotto per separare dal grafico */
-  border-bottom: 1px solid #e0e3eb;
-  z-index: 5;
+  /* Bordo inferiore sottile e moderno */
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Ombra impercettibile */
 }
 
-/* Titolo e testi */
+/* GRUPPO TITOLO */
+.title-group {
+  display: flex;
+  align-items: baseline; /* Allinea il testo sulla base */
+  gap: 12px;
+}
+
 .title-group h2 {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #131722;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a; /* Nero Inchiostro */
+  letter-spacing: -0.03em; /* Tracking stretto */
+  line-height: 1;
 }
 
-/* 4. WRAPPER DEL GRAFICO (LA PARTE CRUCIALE) */
-.tv-wrapper {
-  flex: 1; /* Prende tutto lo spazio rimanente sotto la header-actions */
-  width: 100%;
-  height: 100%;
-
-  /* RIMUOVIAMO OGNI STILE "CARD" */
-  border-radius: 0; /* Angoli vivi per toccare perfettamente la sidebar */
-  border: none;     /* Niente bordini */
-  box-shadow: none; /* Niente ombre */
-  background: white;
-
-  /* Assicura che non ci siano margini strani */
-  margin: 0;
-  padding: 0;
-  position: relative;
+.asset-subtitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b; /* Grigio medio */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
-/* 5. IL GRAFICO VERO E PROPRIO */
-.tv-container {
-  width: 100%;
-  height: 100%;
-  display: block; /* Rimuove spazi fantasma dei div */
-}
-
-/* STILE BOTTONE INDIETRO (Opzionale, pulito) */
+/* =========================================
+   3. BOTTONE "TORNA AL MARKET"
+   ========================================= */
 .back-btn {
-  background: white;
-  border: 1px solid #e0e3eb;
-  color: #333;
-  padding: 5px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+
+  /* Stile "Ghost" (senza sfondo finché non passi sopra) */
+  background-color: transparent;
+  color: #475569; /* Slate-600 */
+  border: 1px solid #e2e8f0; /* Bordo grigio chiaro */
+  padding: 8px 16px;
+  border-radius: 8px; /* Curve morbide */
+
+  /* Tipografia */
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Hover Effect */
 .back-btn:hover {
-  background-color: #f0f3fa;
-  border-color: #2962ff;
-  color: #2962ff;
+  background-color: #f8fafc; /* Slate-50 */
+  color: #0f172a; /* Slate-900 */
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Active Effect */
+.back-btn:active {
+  transform: translateY(0);
+}
+
+/* Icona Freccia (CSS puro per la freccia) */
+.back-arrow::before {
+  content: "←";
+  font-size: 1.2em;
+  line-height: 1;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.back-btn:hover .back-arrow::before {
+  transform: translateX(-3px); /* La freccia si muove a sinistra all'hover */
+}
+
+/* =========================================
+   4. WRAPPER DEL GRAFICO (FULLSCREEN)
+   ========================================= */
+.tv-wrapper {
+  flex: 1; /* Prende tutto lo spazio rimanente in altezza */
+  width: 100%;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden; /* Impedisce scrollbar indesiderate */
+}
+
+/* Il container vero e proprio */
+.tradingview_widget {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  display: block; /* Rimuove spazi fantasma */
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .header-actions {
+    height: 50px;
+    padding: 0 16px;
+  }
+
+  .title-group h2 {
+    font-size: 1.2rem;
+  }
+
+  .asset-subtitle {
+    display: none; /* Nascondi sottotitolo su mobile per spazio */
+  }
+
+  .back-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
 }

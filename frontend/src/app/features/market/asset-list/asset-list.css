@@ -1,135 +1,360 @@
-/* --- CONTENITORE --- */
-.market-container {
-  padding: 20px;
-  background-color: #f8faff; /* Grigio chiaro di base */
+/* =========================================
+   1. STRUTTURA GENERALE & SFONDO
+   ========================================= */
+:host {
+  display: block;
+  background-color: #f8fafc; /* Slate-50: Grigio chiarissimo freddo */
   min-height: 100vh;
-  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #334155; /* Slate-700 */
 }
 
-.market-header h2 {
-  color: #111;
-  font-weight: 800;
-  border-bottom: 2px solid #ddd; /* Linea di separazione più spessa */
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+.market-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
-/* --- TABELLA (TV LIST) --- */
-.tv-list {
+/* Contenitore Header "Glass" */
+.market-header {
+  /* Layout */
   display: flex;
-  flex-direction: column;
-  background: #ffffff; /* Sfondo bianco puro */
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Ombra elegante */
+  align-items: center;
+  justify-content: space-between;
+
+  /* Spaziatura */
+  padding: 24px 32px;
+  margin-bottom: 30px;
+
+  /* Stile Vetro & Bordo */
+  background: rgba(255, 255, 255, 0.85); /* Bianco all'85% */
+  backdrop-filter: blur(12px);            /* Sfocatura dello sfondo sottostante */
+  border: 1px solid rgba(255, 255, 255, 0.6); /* Bordo semi-trasparente */
+  border-radius: 24px;                    /* Curve morbide */
+
+  /* Ombra soffice */
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.03),
+    0 4px 6px -2px rgba(0, 0, 0, 0.01);
+}
+
+/* Tipografia del Titolo */
+.market-header h2 {
+  font-size: 1.75rem;       /* Grande ma non enorme */
+  font-weight: 800;         /* Extra Bold */
+  color: #0f172a;           /* Slate-900 (Nero Inchiostro) */
+  margin: 0;
+  letter-spacing: -0.03em;  /* Tracking stretto (lettere vicine) */
+  line-height: 1.2;
+
+  /* Setup per la barretta laterale */
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 24px; /* Spazio riservato alla barretta */
+}
+
+/* La Barretta "Accent" (Gradiente + Glow) */
+.market-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+
+  /* Dimensioni */
+  height: 32px; /* Altezza fissa per essere elegante */
+  width: 6px;   /* Larghezza sottile */
+
+  /* Stile "Pillola" */
+  border-radius: 10px;
+
+  /* Colore: Gradiente da Indigo a Viola */
+  background: linear-gradient(180deg, #4f46e5 0%, #818cf8 100%);
+
+  /* Effetto Luce (Glow) */
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* =========================================
+   2. LA TABELLA (CARD PRINCIPALE)
+   ========================================= */
+.tv-list {
+  background: white;
+  border-radius: 24px; /* Curve ampie e moderne */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); /* Ombra profonda ma soffice */
+  border: 1px solid #f1f5f9; /* Bordo sottilissimo */
   overflow: hidden;
 }
 
-/* RIGA GENERICA */
+/* --- GRID LAYOUT --- */
 .tv-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 90px;
+  /* Definizione colonne: Simbolo | Prezzo | Var% | Stats | MarketCap | Azione */
+  grid-template-columns: 2fr 1.2fr 1.2fr 1.5fr 1.2fr 100px;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee; /* Riga grigia chiara */
+  padding: 20px 30px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transizione fluida */
 }
 
-.tv-row:last-child { border-bottom: none; }
-
-/* HEADER TABELLA */
+/* Header della tabella */
 .header-row {
-  background-color: #f9fafb; /* Grigio chiarissimo */
-  color: #666; /* Testo grigio scuro */
-  font-size: 0.8rem;
-  text-transform: uppercase;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding-top: 15px;
+  padding-bottom: 15px;
+
+  /* Tipografia Header */
+  color: #64748b; /* Slate-500 */
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* RIGA DATI HOVER */
-.item-row:hover {
-  background-color: #f0f7ff; /* Azzurrino chiarissimo al passaggio */
+/* Hover sulla riga (Effetto "Sollevamento") */
+.item-row {
   cursor: pointer;
+  position: relative;
 }
 
-/* COLONNA SIMBOLO */
-.col-symbol { display: flex; align-items: center; gap: 12px; }
+.item-row:hover {
+  background-color: #ffffff;
+  transform: translateY(-2px) scale(1.002); /* Leggerissimo zoom e lift */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* Ombra che appare on-hover */
+  z-index: 10; /* Porta la riga sopra le altre */
+  border-color: transparent;
+}
+
+/* =========================================
+   3. STILE DELLE COLONNE
+   ========================================= */
+
+/* COL 1: SIMBOLO E LOGO */
+.col-symbol {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .small-logo {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1px solid #eee;
-  padding: 2px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px; /* "Squircle" (quadrato arrotondato) stile iOS */
+  padding: 4px;
+  background: white;
+  border: 1px solid #e2e8f0;
   object-fit: contain;
 }
 
-.symbol-info { display: flex; flex-direction: column; }
+.symbol-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .ticker {
-  color: #000;
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 1.1rem;
 }
+
 .full-name {
-  color: #666;
   font-size: 0.85rem;
+  color: #64748b;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
-/* COLONNA PREZZO */
-.col-price {
+/* Badge Settore */
+.industry-badge {
+  display: inline-flex;
+  font-size: 0.65rem;
   font-weight: 700;
-  font-size: 1rem;
-  color: #333;
-  text-align: right;
-  padding-right: 20px;
+  color: #6366f1; /* Indigo */
+  background: #eef2ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* COLONNA VARIAZIONE */
-.col-change { display: flex; justify-content: flex-end; padding-right: 10px; }
+/* COL 2: PREZZO */
+.col-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
 
-.badge {
+  /* 🔥 FONDAMENTALE: Allinea i numeri (0-9 hanno la stessa larghezza) */
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* COL 3: VARIAZIONE (Badge Pillola) */
+.col-change .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: 9999px; /* Pillola perfetta */
   font-size: 0.85rem;
   font-weight: 700;
-  min-width: 80px;
-  text-align: center;
+  font-variant-numeric: tabular-nums;
+  min-width: 85px; /* Larghezza minima fissa per allineamento */
 }
 
-/* COLORI FORTI */
-.up {
-  color: #047857;       /* Verde bosco */
-  background-color: #d1fae5; /* Verde menta chiaro */
-}
-.down {
-  color: #b91c1c;       /* Rosso sangue */
-  background-color: #fee2e2; /* Rosa chiaro */
+/* Colori moderni (Sfondo pastello + Testo scuro) */
+.badge.up {
+  background-color: #dcfce7; /* Verde menta chiaro */
+  color: #166534;          /* Verde foresta scuro */
 }
 
-/* BOTTONE */
+.badge.down {
+  background-color: #fee2e2; /* Rosso rosa chiaro */
+  color: #991b1b;          /* Rosso rubino scuro */
+}
+
+.change-value {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 6px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+  padding-left: 4px;
+}
+
+.text-up { color: #16a34a; }
+.text-down { color: #dc2626; }
+
+/* COL 4 & 5: DATI SECONDARI */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  color: #94a3b8; /* Slate-400 */
+  padding-right: 25px;
+}
+
+.stat-row strong {
+  color: #475569; /* Slate-600 */
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* COL 6: BOTTONE AZIONE */
 .btn-trade {
-  background: #000; /* Bottone nero forte */
+  background-color: #4f46e5; /* Indigo-600 */
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 10px 0;
+  width: 100%;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); /* Ombra colorata */
 }
+
 .btn-trade:hover {
-  background: #333;
-  transform: scale(1.05);
-}
-/* Quando passi sopra il simbolo/nome */
-.col-symbol:hover .ticker {
-  color: #3498db; /* Diventa blu (o il tuo colore primario) */
-  text-decoration: underline;
+  background-color: #4338ca; /* Indigo-700 */
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
 }
 
-.col-symbol {
-  transition: transform 0.2s;
+/* =========================================
+   4. STATI CARICAMENTO & VUOTO
+   ========================================= */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 100px 20px;
+  color: #94a3b8;
+  font-weight: 500;
+  background: white;
+  border-radius: 20px;
+  margin-top: 20px;
 }
 
-.col-symbol:hover {
-  transform: translateX(5px); /* Piccolo spostamento a destra per feedback */
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =========================================
+   5. RESPONSIVE MOBILE
+   ========================================= */
+@media (max-width: 900px) {
+  /* Tablet: Nascondi Market Cap e Stats */
+  .col-market, .col-stats { display: none; }
+
+  /* Griglia ridotta */
+  .tv-row { grid-template-columns: 2fr 1fr 1fr 100px; }
+}
+
+@media (max-width: 600px) {
+  /* Mobile: Layout compatto */
+  .market-container { padding: 20px 10px; }
+
+  .tv-list { border-radius: 16px; }
+
+  .tv-row {
+    /* 3 Colonne: Info | Prezzi/Var | Bottone */
+    grid-template-columns: 1fr 100px 60px;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  /* Nascondi header row e classi mobile-hide */
+  .mobile-hide, .header-row { display: none; }
+
+  /* Logo più piccolo */
+  .small-logo { width: 40px; height: 40px; }
+
+  /* Allinea prezzo a destra */
+  .col-price {
+    text-align: right;
+    font-size: 1rem;
+  }
+
+  /* Sposta variazione sotto il prezzo */
+  .col-change {
+    grid-column: 2;
+    align-items: flex-end;
+    margin-top: -4px;
+  }
+
+  /* Badge trasparente su mobile per pulizia */
+  .col-change .badge {
+    background: transparent;
+    padding: 0;
+    min-width: auto;
+    font-size: 0.85rem;
+  }
+
+  .badge.up { color: #16a34a; }
+  .badge.down { color: #dc2626; }
+
+  /* Bottone ridotto */
+  .btn-trade {
+    padding: 8px 0;
+    font-size: 0.75rem;
+    background: #f1f5f9;
+    color: #4f46e5;
+    box-shadow: none;
+  }
 }

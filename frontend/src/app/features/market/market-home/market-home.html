@@ -2,16 +2,24 @@
 
   <section class="market-section">
     <div class="section-header">
-      <h2>Acquisti popolari (Azioni)</h2>
+      <h2>Azioni in tendenza</h2>
       <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
     </div>
 
     <div class="revolut-grid">
-      <div *ngFor="let asset of topStocks" class="ball-card">
+      <div *ngFor="let asset of topStocks"
+           class="ball-card"
+           [routerLink]="['/market/chart', asset.symbol]"
+           title="Vedi grafico di {{ asset.symbol }}">
+
         <div class="icon-wrapper">
-          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
+               class="round-logo"
+               alt="{{ asset.symbol }}">
         </div>
+
         <span class="ticker-symbol">{{ asset.symbol }}</span>
+
         <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent | number:'1.2-2' }}%
         </span>
@@ -26,7 +34,9 @@
     </div>
 
     <div class="revolut-grid">
-      <div *ngFor="let asset of topEtf" class="ball-card">
+      <div *ngFor="let asset of topEtf"
+           class="ball-card"
+           [routerLink]="['/market/chart', asset.symbol]">
         <div class="icon-wrapper">
           <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
         </div>
@@ -45,7 +55,9 @@
     </div>
 
     <div class="revolut-grid">
-      <div *ngFor="let asset of topCrypto" class="ball-card">
+      <div *ngFor="let asset of topCrypto"
+           class="ball-card"
+           [routerLink]="['/market/chart', asset.symbol]">
         <div class="icon-wrapper">
           <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
         </div>
