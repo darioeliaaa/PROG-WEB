@@ -9,7 +9,7 @@
                      || router.url.includes('/groups')
                      || router.url.includes('/wallet')
                      || router.url.includes('/settings')
-                     || router.url.includes('/profile')"
+                     || router.url.includes('/profilo')"
        class="toggle-btn">
       Gestione Finanze
     </a>
@@ -40,7 +40,9 @@
 
       <div class="dropdown-menu" *ngIf="showMenu">
         <div class="menu-header">Account</div>
-        <a routerLink="/settings" (click)="showMenu = false">Impostazioni</a>
+        <a routerLink="/profilo" (click)="showMenu = false">profilo</a>
+        <div class="menu-divider"></div>
+        <a routerLink="/wallet" (click)="showMenu = false">portafoglio</a>
         <div class="menu-divider"></div>
         <a (click)="logout()" class="logout-text">Logout</a>
       </div>
