@@ -8,11 +8,21 @@
     <button class="btn-primary" (click)="showCreate = true">+ Crea nuovo wallet</button>
   </div>
 
+  <!-- SEZIONE PER JOIN WALLET -->
+  <div class="join-wallet">
+    <input type="text" placeholder="ID Wallet" #walletIdInput>
+    <button class="btn-primary" (click)="enterWallet(+walletIdInput.value); walletIdInput.value=''">
+      Entra nel wallet
+    </button>
+  </div>
+
+
   <div *ngIf="showCreate" class="create-box">
     <input type="text" placeholder="Nome wallet" #walletName>
-  <div class="create-actions">
-    <button class="btn-primary" (click)="handleCreateWallet(walletName); showCreate = false">Crea</button>
-    <button class="btn-secondary" (click)="showCreate = false">Annulla</button>
+    <div class="create-actions">
+      <button class="btn-primary" (click)="handleCreateWallet(walletName); showCreate = false">Crea</button>
+      <button class="btn-secondary" (click)="showCreate = false">Annulla</button>
+    </div>
   </div>
 
   <p *ngIf="loading" class="loading">Caricamento wallet...</p>
@@ -30,9 +40,11 @@
         </span>
       </div>
 
-      <p class="members">
-        👥 {{ wallet.members.length }} membri
-      </p>
+      <div class="members">
+        <span
+          class="member-icon" *ngFor="let member of wallet.members">👤</span>
+      </div>
+
 
       <p *ngIf="wallet.monthlyBudget !== null" class="budget">
         💰 Budget mensile: {{ wallet.monthlyBudget }} €
@@ -43,5 +55,4 @@
       </button>
     </div>
   </div>
-</div>
 </div>
