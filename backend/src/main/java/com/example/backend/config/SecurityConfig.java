@@ -14,17 +14,18 @@ public class SecurityConfig {
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    // Questo oggetto servirà per criptare le password
     return new BCryptPasswordEncoder();
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .csrf(csrf -> csrf.disable()) // <--- QUESTA RIGA È FONDAMENTALE
-      .cors(cors -> {}) // Permette i @CrossOrigin che hai sui Controller
+      .csrf(csrf -> csrf.disable())
+      .cors(cors -> {})
       .authorizeHttpRequests(auth -> auth
-        .anyRequest().permitAll() // Permette a tutti di chiamare le API
+        .requestMatchers("/api/news").permitAll()
+
+        .anyRequest().permitAll()
       );
     return http.build();
   }
