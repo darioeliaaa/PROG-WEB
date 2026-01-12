@@ -17,10 +17,14 @@ import java.util.Set;
 public class WalletController {
 
   @Autowired
-  private WalletService walletService;
+  private final WalletService walletService;
 
   @Autowired
   private UserRepository userRepository; // <--- FONDAMENTALE PER TROVARE L'UTENTE
+
+  public WalletController(WalletService walletService) {
+    this.walletService = walletService;
+  }
 
   // --- QUESTO È IL METODO CHE MANCAVA ---
   @GetMapping("/user/{userId}")
@@ -81,4 +85,14 @@ public class WalletController {
     walletService.toggleWalletStatus(adminId, walletId, active);
     return ResponseEntity.ok("Stato del portafoglio aggiornato");
   }
+
+  @PostMapping("/{walletId}/join")
+  public ResponseEntity<Wallet> joinWallet(
+    @PathVariable Long walletId,
+    @RequestParam Long userId) {  // <-- ID dell'utente che vuole entrare
+    Wallet wallet = walletService.joinWallet(walletId, userId);
+    return ResponseEntity.ok(wallet);
+  }
+
+
 }

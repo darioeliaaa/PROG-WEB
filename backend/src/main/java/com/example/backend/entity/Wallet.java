@@ -39,4 +39,9 @@ public class Wallet {
   @ManyToMany(mappedBy = "wallets")
   @JsonIgnoreProperties("wallets")
   private Set<User> members = new HashSet<>();
+
+  public void addMember(User user) {
+    this.members.add(user);
+    user.getWallets().add(this);
+  }
 }
