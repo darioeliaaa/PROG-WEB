@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate; // ✅ Aggiunto per gestire la data di nascita
 import java.util.HashSet;
@@ -47,6 +48,7 @@ public class User {
     this.username = username;
     this.email = email;
     this.password = password;
+
   }
 
   // --- METODO GAMIFICATION (Calcolo Percentuale) ---
@@ -159,4 +161,26 @@ public class User {
   public void setWallets(Set<Wallet> wallets) {
     this.wallets = wallets;
   }
+  // --- CAMPI PER IMPOSTAZIONI DI SISTEMA (Valori default inclusi) ---
+  private String language = "it";
+  private String currency = "EUR";
+  private boolean privacyMode = false;
+  private boolean budgetAlerts = true;
+
+  // --- GETTER E SETTER ---
+  public String getLanguage() { return language; }
+  public void setLanguage(String language) { this.language = language; }
+
+  public String getCurrency() { return currency; }
+  public void setCurrency(String currency) { this.currency = currency; }
+
+
+  @JsonProperty("privacyMode") // Forza il nome nel JSON
+  public boolean isPrivacyMode() { return privacyMode; }
+  public void setPrivacyMode(boolean privacyMode) { this.privacyMode = privacyMode; }
+
+  @JsonProperty("budgetAlerts") // Forza il nome nel JSON
+  public boolean isBudgetAlerts() { return budgetAlerts; }
+  public void setBudgetAlerts(boolean budgetAlerts) { this.budgetAlerts = budgetAlerts; }
+
 }
