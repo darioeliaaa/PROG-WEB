@@ -22,52 +22,87 @@ public class MarketService {
   private MarketAssetRepository assetRepository;
 
   private final String BASE_URL = "https://finnhub.io/api/v1";
+  private final RestTemplate restTemplate = new RestTemplate();
 
-  // ✅ 1. LA MEMORIA CACHE (Fondamentale!)
+  // ✅ 1. LA MEMORIA CACHE
   private List<AssetQuoteDTO> cachedData = new ArrayList<>();
 
   // ----------------------------------------------------------------
-  // METODO DASHBOARD (Blindato con Cache)
+  // METODO DASHBOARD (Blindato con Cache + Dati Ricchi)
   // ----------------------------------------------------------------
   public List<AssetQuoteDTO> getDashboardAssets(boolean forceRefresh) {
 
-    // ✅ CONTROLLO DI SICUREZZA
-    // Se ho dati in memoria E tu NON hai premuto "Aggiorna"...
+    // ✅ CONTROLLO CACHE
     if (!cachedData.isEmpty() && !forceRefresh) {
-      System.out.println("🛡️ RISPARMIO API: Uso i dati in memoria (0 chiamate a Finnhub)");
-      return cachedData; // Restituisco subito la lista vecchia!
+      System.out.println("🛡️ RISPARMIO API: Uso dati in memoria");
+      return cachedData;
     }
 
-    // 🔄 SCARICAMENTO REALE (Solo se necessario)
-    System.out.println("🌍 CHIAMATA API: Sto scaricando nuovi dati da Finnhub...");
+    System.out.println("🌍 CHIAMATA API: Scarico dati completi (Prezzi + Fondamentali)...");
 
     List<MarketAsset> assets = assetRepository.findAll();
     List<AssetQuoteDTO> newData = new ArrayList<>();
-    RestTemplate restTemplate = new RestTemplate();
 
     for (MarketAsset asset : assets) {
-      String url = BASE_URL + "/quote?symbol=" + asset.getSymbol() + "&token=" + API_KEY;
       try {
-        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-        if (response != null && response.get("c") != null) {
-          double price = Double.parseDouble(response.get("c").toString());
-          double change = Double.parseDouble(response.get("dp").toString());
+        // --- 1. CHIAMATA PREZZI (/quote) ---
+        String quoteUrl = String.format("%s/quote?symbol=%s&token=%s", BASE_URL, asset.getSymbol(), API_KEY);
+        FinnhubQuote quote = restTemplate.getForObject(quoteUrl, FinnhubQuote.class);
 
-          newData.add(new AssetQuoteDTO(
-            asset.getSymbol(), asset.getName(), price, change, asset.getType(), asset.getLogoUrl()
-          ));
+        // --- 2. CHIAMATA PROFILO (/stock/profile2) ---
+        String profileUrl = String.format("%s/stock/profile2?symbol=%s&token=%s", BASE_URL, asset.getSymbol(), API_KEY);
+        FinnhubProfile profile = null;
+        try {
+          profile = restTemplate.getForObject(profileUrl, FinnhubProfile.class);
+        } catch (Exception ex) {
+          System.out.println("⚠️ Profilo non trovato per " + asset.getSymbol());
         }
+
+        // --- 3. MERGE DEI DATI ---
+        if (quote != null) {
+          AssetQuoteDTO dto = new AssetQuoteDTO();
+
+          // Dati Base
+          dto.setSymbol(asset.getSymbol());
+          dto.setType(asset.getType());
+
+          // Default dal DB
+          dto.setName(asset.getName());
+          dto.setLogoUrl(asset.getLogoUrl());
+
+          // Dati Prezzo Live
+          dto.setCurrentPrice(quote.c);
+          dto.setChangeValue(quote.d);
+          dto.setChangePercent(quote.dp);
+          dto.setHighPrice(quote.h);
+          dto.setLowPrice(quote.l);
+          dto.setOpenPrice(quote.o);
+          dto.setPrevClosePrice(quote.pc);
+
+          // Dati Profilo (Se disponibili sovrascrivono/arricchiscono)
+          if (profile != null) {
+            if (profile.name != null) dto.setName(profile.name);
+            if (profile.logo != null && !profile.logo.isEmpty()) dto.setLogoUrl(profile.logo);
+
+            dto.setMarketCap(profile.marketCapitalization);
+            dto.setIndustry(profile.finnhubIndustry);
+            dto.setCurrency(profile.currency);
+          }
+
+          newData.add(dto);
+        }
+
       } catch (Exception e) {
         System.out.println("⚠️ Errore API per " + asset.getSymbol() + ": " + e.getMessage());
       }
     }
 
-    // ✅ SALVATAGGIO IN MEMORIA
+    // ✅ AGGIORNAMENTO CACHE
     if (!newData.isEmpty()) {
-      this.cachedData = newData; // Aggiorno la cache con i dati nuovi
-      System.out.println("✅ Cache aggiornata con successo (" + newData.size() + " asset)!");
+      this.cachedData = newData;
+      System.out.println("✅ Cache aggiornata (" + newData.size() + " asset)!");
     } else {
-      System.out.println("⚠️ Recupero fallito, restituisco i vecchi dati per non rompere la pagina.");
+      System.out.println("⚠️ Recupero fallito, uso vecchia cache.");
       return this.cachedData;
     }
 
@@ -75,17 +110,12 @@ public class MarketService {
   }
 
   // ----------------------------------------------------------------
-  // DATI STORICI (Grafico Intraday - Ultime 24 ore)
+  // DATI STORICI (Grafico Intraday)
   // ----------------------------------------------------------------
   public Map<String, Object> getIntradayHistory(String symbol) {
-    RestTemplate restTemplate = new RestTemplate();
-
-    long to = System.currentTimeMillis() / 1000; // Adesso
-    long from = to - (86400); // Esattamente 24 ore fa (86400 secondi)
-
-    // resolution=15 (dati ogni 15 minuti)
+    long to = System.currentTimeMillis() / 1000;
+    long from = to - (86400); // 24 ore fa
     String url = BASE_URL + "/stock/candle?symbol=" + symbol + "&resolution=15&from=" + from + "&to=" + to + "&token=" + API_KEY;
-
     try {
       return restTemplate.getForObject(url, Map.class);
     } catch (Exception e) {
@@ -94,19 +124,38 @@ public class MarketService {
   }
 
   // ----------------------------------------------------------------
-  // METODO VECCHIO (Portafoglio Personale)
+  // UTILITY: Prezzo Singolo (usato da InvestmentService se serve)
   // ----------------------------------------------------------------
   public double getCurrentPrice(String symbol) {
-    RestTemplate restTemplate = new RestTemplate();
-    String url = BASE_URL + "/quote?symbol=" + symbol + "&token=" + API_KEY;
+    String url = String.format("%s/quote?symbol=%s&token=%s", BASE_URL, symbol, API_KEY);
     try {
-      Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-      if (response != null && response.get("c") != null) {
-        return Double.parseDouble(response.get("c").toString());
-      }
+      FinnhubQuote quote = restTemplate.getForObject(url, FinnhubQuote.class);
+      return quote != null ? quote.c : 0.0;
     } catch (Exception e) {
-      System.out.println("Errore recupero dati per " + symbol + ": " + e.getMessage());
+      return 0.0;
     }
-    return 0.0;
+  }
+
+  // ================================================================
+  // CLASSI INTERNE PER MAPPARE IL JSON (Molto più pulito di Map<String, Object>)
+  // ================================================================
+
+  private static class FinnhubQuote {
+    public double c;  // Current price
+    public double d;  // Change
+    public double dp; // Percent change
+    public double h;  // High
+    public double l;  // Low
+    public double o;  // Open
+    public double pc; // Previous close
+  }
+
+  private static class FinnhubProfile {
+    public String name;
+    public String logo;
+    public String finnhubIndustry;
+    public String currency;
+    public double marketCapitalization;
+    public double shareOutstanding;
   }
 }

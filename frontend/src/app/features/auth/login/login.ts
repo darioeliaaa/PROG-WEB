@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -15,92 +15,161 @@ import { UserService } from '../../../services/user.service';
 })
 export class Login {
 
-  loginObj: any = {
-    email: '',
-    password: ''
-  };
+  // True = Mostra Login, False = Mostra Registrazione
+  isLoginMode: boolean = true;
 
-  registerObj: any = {
-    username: '', // Attenzione: Assicurati che il backend si aspetti 'username' o 'name'
-    email: '',
-    password: ''
-  };
+  // Oggetti per i dati dei form
+  loginObj: any = { email: '', password: '' };
+  registerObj: any = { username: '', email: '', password: '' };
 
-  errorMessage: string = '';
-  registerMessage: string = '';
+  // Flag per gli errori specifici (per i bordi rossi)
+  fieldErrors: { username: boolean, email: boolean } = { username: false, email: false };
 
-  isRegisterError: boolean = false;
+  // Messaggi di stato
+  registerMessage: string = ''; // Messaggi verdi (successo) o generici
+  suggestedUsernames: string[] = []; // Array per i suggerimenti
 
-  constructor(private router: Router, private http: HttpClient, private userService: UserService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
+  // Cambio tra Login e Register
+  toggleMode() {
+    this.isLoginMode = !this.isLoginMode;
+    this.resetErrors();
+  }
+
+  // Pulisce tutti gli stati di errore e i messaggi
+  resetErrors() {
+    this.registerMessage = '';
+    this.fieldErrors = { username: false, email: false };
+    this.suggestedUsernames = [];
+  }
+
+  // --- LOGICA LOGIN ---
   onLogin() {
-    this.errorMessage = '';
+    this.resetErrors();
 
-    if (this.loginObj.email.trim() == '' || this.loginObj.password.trim() == '') {
-      this.errorMessage = 'Compila tutti i campi per accedere!';
+    if (!this.loginObj.email || !this.loginObj.password) {
+      alert('Inserisci email e password.');
       return;
     }
 
     this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
       next: (res: any) => {
-        // CORREZIONE FONDAMENTALE QUI SOTTO:
-        // Controlliamo che la risposta contenga l'ID
         if (res && res.id) {
-          console.log("Login successo! ID ricevuto dal backend:", res.id);
-
-          // Passiamo ENTRAMBI i parametri al service: ID ed Email
           this.userService.login(res.id, res.email);
-
-          this.router.navigate(['/dashboard']); // O '/' a seconda delle tue rotte
+          this.router.navigate(['/dashboard']);
         } else {
-          this.errorMessage = 'Email o password errati (o nessun ID ricevuto)';
+          alert('Credenziali errate.');
         }
       },
       error: (err) => {
-        console.error("Errore login:", err);
-        this.errorMessage = 'Credenziali non valide o errore server.';
+        console.error(err);
+        alert('Email o password non corretti.');
       }
     });
   }
 
+  // --- LOGICA REGISTRAZIONE INTELLIGENTE ---
   onRegister() {
-    this.registerMessage = '';
-    this.isRegisterError = false;
+    this.resetErrors();
 
-    if (!this.registerObj.username ||
-      !this.registerObj.email ||
-      !this.registerObj.password) {
-
-      this.registerMessage = 'Tutti i campi sono obbligatori!';
-      this.isRegisterError = true;
+    // Validazione base
+    if (!this.registerObj.username || !this.registerObj.email || !this.registerObj.password) {
+      this.registerMessage = 'Compila tutti i campi.';
       return;
     }
 
-    // Mappatura oggetto per il backend
-    // Verifica nel backend (User.java) se il campo si chiama 'name' o 'username'
     const userToSend = {
-      username: this.registerObj.username, // Spesso in Spring il campo è 'name'
+      username: this.registerObj.username,
       email: this.registerObj.email,
       password: this.registerObj.password,
     };
 
     this.http.post('http://localhost:8080/api/users/register', userToSend).subscribe({
       next: (res: any) => {
-        this.isRegisterError = false;
-        this.registerMessage = 'Registrazione avvenuta con successo! Fai il login.';
-        // Puliamo i campi
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.registerObj = { username: '', email: '', password: '' };
-        }, 2000);
-      },
-      error: (err) => {
-        this.isRegisterError = true;
-        this.registerMessage = 'Errore: email già esistente o dati non validi.';
+        // SUCCESSO
+        this.registerMessage = 'Account creato! Login automatico...';
         this.cdr.detectChanges();
 
+        // Magic UX: Copia SOLO l'email nel login (Sicurezza: password vuota)
+        this.loginObj.email = this.registerObj.email;
+        this.loginObj.password = ''; // Resettiamo la password per sicurezza
+
+        // Attendi 1.5s e vai al login
+        setTimeout(() => {
+          this.isLoginMode = true;
+          this.registerMessage = '';
+          // Pulisci il form di registrazione
+          this.registerObj = { username: '', email: '', password: '' };
+          this.cdr.detectChanges();
+        }, 1500);
+      },
+      error: (err) => {
+        console.error("Errore Backend:", err);
+
+        // --- ANALISI INTELLIGENTE DELL'ERRORE ---
+        let errorBody = '';
+        if (err.error && typeof err.error === 'string') errorBody = err.error.toLowerCase();
+        else if (err.error && err.error.message) errorBody = err.error.message.toLowerCase();
+        else if (err.error && err.error.field) errorBody = err.error.field.toLowerCase(); // Se usi il controller Java nuovo
+        else if (err.message) errorBody = err.message.toLowerCase();
+
+        // 1. CASO: USERNAME GIA' PRESO
+        if (errorBody.includes('username') || errorBody.includes('uk') || err.status === 409) {
+          this.fieldErrors.username = true;
+          this.generateUsernameSuggestions(this.registerObj.username);
+        }
+
+        // 2. CASO: EMAIL GIA' PRESA
+        if (errorBody.includes('email')) {
+          this.fieldErrors.email = true;
+          this.fieldErrors.username = false;
+        }
+
+        // 3. FALLBACK
+        if (!this.fieldErrors.username && !this.fieldErrors.email) {
+          this.fieldErrors.username = true;
+          this.generateUsernameSuggestions(this.registerObj.username);
+          this.registerMessage = "Errore: dati non validi o già in uso.";
+        }
+
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  // --- FUNZIONI DI SUPPORTO UX ---
+
+  generateUsernameSuggestions(base: string) {
+    if(!base) base = "User";
+    const random = Math.floor(Math.random() * 1000);
+    const year = new Date().getFullYear();
+
+    this.suggestedUsernames = [
+      `${base}_${random}`,
+      `${base}.official`,
+      `${base}${year}`
+    ];
+  }
+
+  selectSuggestion(suggestion: string) {
+    this.registerObj.username = suggestion;
+    this.fieldErrors.username = false;
+    this.suggestedUsernames = [];
+    this.registerMessage = '';
+  }
+
+  // Clic su "Vuoi accedere invece?": va al login con SOLO email
+  goToLoginWithEmail() {
+    this.loginObj.email = this.registerObj.email;
+    this.loginObj.password = ''; // Assicuro che la password sia vuota
+    this.isLoginMode = true;
+    this.resetErrors();
   }
 
   tornaIndietro() {
