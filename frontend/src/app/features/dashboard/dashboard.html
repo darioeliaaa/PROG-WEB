@@ -7,6 +7,12 @@
     </div>
 
     <div class="header-controls">
+
+      <button class="btn-add-funds" (click)="openModal()">
+        <div class="icon-circle">+</div>
+        <span>Aggiungi Fondi</span>
+      </button>
+
       <div class="month-selector">
         <button class="nav-arrow" (click)="cambiaMese(-1)">
           <span class="arrow-icon">❮</span>
@@ -16,16 +22,14 @@
           <span class="arrow-icon">❯</span>
         </button>
       </div>
+
     </div>
   </header>
 
   <div class="gamification-wrapper" *ngIf="profilePercentage < 100">
     <div class="gamification-card" (click)="goToProfile()">
-
       <div class="card-left">
-        <div class="icon-box">
-          🚀
-        </div>
+        <div class="icon-box">🚀</div>
         <div class="text-box">
           <div class="title-row">
             <h3>Completa il tuo profilo</h3>
@@ -34,7 +38,6 @@
           <p>Aumenta la sicurezza del tuo account.</p>
         </div>
       </div>
-
       <div class="card-right">
         <div class="progress-container">
           <div class="progress-track">
@@ -43,29 +46,29 @@
         </div>
         <div class="action-arrow">➜</div>
       </div>
-
     </div>
   </div>
 
   <section class="chart-section fade-in">
-    <app-investment-summary
-      [currentDate]="currentDate"
-      [tutteLeTransazioni]="transazioniTotali">
-    </app-investment-summary>
+    <app-investment-summary [currentDate]="currentDate" [tutteLeTransazioni]="transazioniTotali"></app-investment-summary>
   </section>
 
   <section class="chart-section fade-in" style="animation-delay: 0.1s;">
-    <app-budget-overview
-      [currentDate]="currentDate"
-      [datiReali]="datiMensili">
-    </app-budget-overview>
+    <app-budget-overview [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview>
   </section>
 
   <section class="chart-section fade-in" style="animation-delay: 0.2s;">
-    <app-yearly-history
-      [currentDate]="currentDate"
-      [allTransactions]="transazioniTotali">
-    </app-yearly-history>
+    <app-yearly-history [currentDate]="currentDate" [allTransactions]="transazioniTotali"></app-yearly-history>
   </section>
+
+  <div class="modal-overlay fade-in" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Nuovo Movimento</h3>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+      <app-movimenti (close)="closeModal()" (saved)="handleTransactionSaved()"></app-movimenti>
+    </div>
+  </div>
 
 </div>

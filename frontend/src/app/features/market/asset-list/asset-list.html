@@ -1,49 +1,82 @@
 <div class="market-container">
 
   <header class="market-header">
-    <h2>Tutti gli asset: {{ currentType === 'STOCK' ? 'Azioni' : currentType }}</h2>
+    <h2>Listino:  {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
   </header>
 
-  <div *ngIf="loading" class="loading-state">Caricamento listino...</div>
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div> Caricamento dati di mercato...
+  </div>
 
   <div class="tv-list" *ngIf="!loading && assets.length > 0">
 
     <div class="tv-row header-row">
-      <div class="col-symbol">Simbolo</div>
+      <div class="col-symbol">Asset</div>
       <div class="col-price">Prezzo</div>
-      <div class="col-change">Variazione</div>
-      <div class="col-action"></div>
+      <div class="col-change">Var %</div>
+
+      <div class="col-stats mobile-hide">Statistiche 24h</div>
+      <div class="col-market mobile-hide">Fondamentali</div>
+
+      <div class="col-action">Azioni</div>
     </div>
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
 
-
       <div class="col-symbol"
-           [routerLink]="['/market/chart', asset.symbol]"  title="Clicca per vedere il grafico"
-           style="cursor: pointer;">
+           [routerLink]="['/market/chart', asset.symbol]"
+           title="Clicca per il grafico">
 
-        <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="small-logo">
+        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'"
+             class="small-logo"
+             alt="logo">
+
         <div class="symbol-info">
           <span class="ticker">{{ asset.symbol }}</span>
           <span class="full-name">{{ asset.name }}</span>
+          <span class="industry-badge" *ngIf="asset.industry">{{ asset.industry }}</span>
         </div>
       </div>
 
       <div class="col-price">
-        {{ asset.currentPrice | currency:'USD':'symbol':'1.2-2' }}
+        <span class="main-price">{{ asset.currentPrice | currency: (asset.currency || 'USD') }}</span>
       </div>
 
       <div class="col-change">
-        <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent > 0 ? '+' : ''}}{{ asset.changePercent | number:'1.2-2' }}%
-        </span>
+        <div class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent > 0 ? '▲' : '▼' }} {{ asset.changePercent | number:'1.2-2' }}%
+        </div>
+        <small class="change-value" [class.text-up]="asset.changeValue >= 0" [class.text-down]="asset.changeValue < 0">
+          {{ asset.changeValue > 0 ? '+' : ''}}{{ asset.changeValue | number:'1.2-2' }}
+        </small>
+      </div>
+
+      <div class="col-stats mobile-hide">
+        <div class="stat-row"><span>Open:</span> <strong>{{ asset.openPrice | number:'1.2-2' }}</strong></div>
+        <div class="stat-row"><span>High:</span> <strong>{{ asset.highPrice | number:'1.2-2' }}</strong></div>
+        <div class="stat-row"><span>Low:</span> <strong>{{ asset.lowPrice | number:'1.2-2' }}</strong></div>
+      </div>
+
+      <div class="col-market mobile-hide">
+        <div class="stat-row" *ngIf="asset.marketCap">
+          <span>Mkt Cap:</span>
+          <strong>{{ asset.marketCap | number }} M</strong>
+        </div>
+        <div class="stat-row">
+          <span>Prev. Cl:</span>
+          <span style="color: #666">{{ asset.prevClosePrice | number:'1.2-2' }}</span>
+        </div>
       </div>
 
       <div class="col-action">
-        <button class="btn-trade">Scambia</button>
+        <button class="btn-trade">Trade</button>
       </div>
 
     </div>
+  </div>
+
+  <div *ngIf="!loading && assets.length === 0" class="empty-state">
+    Nessun asset trovato in questa categoria.
   </div>
 
 </div>

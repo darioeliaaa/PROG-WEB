@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { WalletService} from '../../services/wallet.service';
 import { Wallet } from '../../models/wallet.model';
-import {NgIf} from '@angular/common';
+import {NgIf, NgFor} from '@angular/common';
 
 @Component({
   selector: 'app-wallet',
   templateUrl: './wallet.html',
   imports: [
-    NgIf
+    NgIf,
+    NgFor
   ],
   styleUrls: ['./wallet.css']
 })
@@ -78,5 +79,29 @@ export class WalletComponent implements OnInit {
       error: (err) => console.error('Errore rimozione membro:', err)
     });
   }
+
+  leaveWallet(walletId: number): void {
+    // per ora usiamo userId come adminId (poi lo miglioreremo)
+    this.walletService.removeMember(walletId, this.userId, this.userId).subscribe({
+      next: () => this.loadWallets(),
+      error: err => console.error('Errore abbandono wallet', err)
+    });
+  }
+
+  enterWallet(walletId: number) {
+    this.walletService.joinWallet(walletId, this.userId).subscribe({
+      next: (wallet: Wallet) => {
+        // Aggiorna solo il wallet appena entrato nella lista
+        const index = this.wallets.findIndex(w => w.id === wallet.id);
+        if (index >= 0) {
+          this.wallets[index] = wallet; // aggiorna i membri
+        } else {
+          this.wallets.push(wallet); // aggiunge se non presente
+        }
+      },
+      error: err => console.error('Errore entrata wallet', err)
+    });
+  }
+
 
 }

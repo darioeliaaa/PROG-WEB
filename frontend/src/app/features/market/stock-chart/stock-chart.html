@@ -3,16 +3,16 @@
   <div class="header-actions">
     <div class="title-group">
       <h2>{{ symbol }}</h2>
-      <span style="color: #787b86; font-size: 0.9rem;">Analisi Tecnica</span>
+      <span class="asset-subtitle">Analisi Tecnica</span>
     </div>
 
     <button class="back-btn" (click)="goBack()">
-      <i class="fa fa-arrow-left"></i> Torna al Market
+      <i class="back-arrow"></i> Torna al Market
     </button>
   </div>
 
   <div class="tv-wrapper">
-    <div id="tradingview_chart" #containerDiv class="tv-container"></div>
+    <div id="tradingview_chart" #containerDiv class="tradingview_widget"></div>
   </div>
 
 </div>

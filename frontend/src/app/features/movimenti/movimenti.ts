@@ -1,13 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-// IMPORTS DEI SERVICES
 import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
-import { WalletService } from '../../services/wallet.service'; // <--- FONDAMENTALE
-
+import { WalletService } from '../../services/wallet.service';
 import { Transaction } from '../../models/transaction.model';
 
 @Component({
@@ -19,62 +17,69 @@ import { Transaction } from '../../models/transaction.model';
 })
 export class Movimenti implements OnInit {
 
-  // Oggetto legato al form HTML
+  @Output() close = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<void>();
+
   nuovoMovimento = {
     tipo: 'uscita',
     importo: null,
     descrizione: '',
     categoria: '',
-    walletId: null as number | null, // <--- Qui verrà salvato l'ID selezionato
+    walletId: null as number | null, // Sarà impostato automaticamente
     data: new Date().toISOString().split('T')[0]
   };
 
-  // Lista dove caricheremo i portafogli dal backend
   userWallets: any[] = [];
 
   constructor(
     private router: Router,
     private transactionService: TransactionService,
     private userService: UserService,
-    private walletService: WalletService // <--- Iniettiamo il service
+    private walletService: WalletService
   ) {}
 
   ngOnInit() {
     const userId = this.userService.getCurrentUserId();
-    console.log("ID Utente trovato:", userId); // <--- CONTROLLO 1
-
     if (userId) {
       this.walletService.getUserWallets(userId).subscribe({
         next: (wallets) => {
-          console.log("RISPOSTA DAL BACKEND:", wallets); // <--- CONTROLLO 2: Cosa arriva qui?
           this.userWallets = wallets;
 
           if (this.userWallets.length > 0) {
-            this.nuovoMovimento.walletId = this.userWallets[0].id;
-            console.log("Wallet selezionato ID:", this.nuovoMovimento.walletId);
-          } else {
-            console.warn("Array wallet vuoto! L'utente non ha portafogli collegati nel DB.");
+            // LOGICA AUTOMATICA:
+            // Cerca il wallet flaggato come "personal", altrimenti prendi il primo della lista
+            const personalWallet = this.userWallets.find(w => w.personal === true);
+
+            if (personalWallet) {
+              this.nuovoMovimento.walletId = personalWallet.id;
+            } else {
+              this.nuovoMovimento.walletId = this.userWallets[0].id;
+            }
+
+            // console.log("Wallet automatico impostato ID:", this.nuovoMovimento.walletId);
           }
         },
-        error: (err:any) => console.error("ERRORE CHIAMATA:", err) // <--- CONTROLLO 3: È rosso?
+        error: (err:any) => console.error("Errore caricamento wallet:", err)
       });
     }
   }
 
   salva() {
-    // Controllo validazione: il walletId è obbligatorio ora!
-    if (!this.nuovoMovimento.importo ||
-      !this.nuovoMovimento.descrizione ||
-      !this.nuovoMovimento.categoria ||
-      !this.nuovoMovimento.walletId) {
-      alert('Per favore compila tutti i campi, incluso il Portafoglio!');
+    // Rimosso controllo walletId manuale, tanto è automatico
+    if (!this.nuovoMovimento.importo || !this.nuovoMovimento.descrizione || !this.nuovoMovimento.categoria) {
+      alert('Per favore compila tutti i campi.');
+      return;
+    }
+
+    // Sicurezza: se per qualche motivo il wallet non c'è (es. errore rete), blocca
+    if (!this.nuovoMovimento.walletId) {
+      alert("Errore: Nessun portafoglio trovato.");
       return;
     }
 
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
 
-    // Prepariamo l'oggetto Transaction (Il backend si aspetta i nomi in inglese)
     const movimentoDaSalvare: Transaction = {
       description: this.nuovoMovimento.descrizione,
       category: this.nuovoMovimento.categoria,
@@ -83,23 +88,21 @@ export class Movimenti implements OnInit {
       type: this.nuovoMovimento.tipo === 'entrata' ? 'ENTRATA' : 'USCITA'
     };
 
-    console.log(`Salvataggio su Wallet ID: ${this.nuovoMovimento.walletId}`);
-
-    // CHIAMATA AL BACKEND
-    // Passiamo userId, walletId e l'oggetto transazione
     this.transactionService.add(userId, this.nuovoMovimento.walletId, movimentoDaSalvare).subscribe({
       next: (res) => {
-        console.log("Transazione salvata!", res);
-        this.router.navigate(['/dashboard']);
+        this.saved.emit();
+        this.close.emit();
+        this.nuovoMovimento.importo = null;
+        this.nuovoMovimento.descrizione = '';
       },
       error: (err) => {
         console.error("Errore salvataggio:", err);
-        alert("Errore durante il salvataggio. Controlla che il backend sia attivo.");
+        alert("Errore salvataggio.");
       }
     });
   }
 
   annulla() {
-    this.router.navigate(['/dashboard']);
+    this.close.emit();
   }
 }

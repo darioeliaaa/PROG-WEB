@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {WalletComponent} from '../features/Wallet/wallet';
+import {Wallet} from '../models/wallet.model';
 
 @Injectable({ providedIn: 'root' })
 export class WalletService {
@@ -32,7 +34,16 @@ export class WalletService {
     return this.http.delete(`${this.apiUrl}/${walletId}/remove-member/${memberId}?adminId=${adminId}`);
   }
 
-  createWallet(userId: number, walletName: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/user/${userId}/create?walletName=${encodeURIComponent(walletName)}`, {});
+  createWallet(userId: number, walletName: string): Observable<Wallet> {
+    return this.http.post<Wallet>(`${this.apiUrl}/user/${userId}/create?walletName=${encodeURIComponent(walletName)}`, {});
+  }
+
+  joinWallet(walletId: number, userId: number): Observable<Wallet> {
+    return this.http.post<Wallet>(`${this.apiUrl}/${walletId}/join?userId=${userId}`, {});
+  }
+
+
+  getWalletById(walletId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${walletId}`);
   }
 }
