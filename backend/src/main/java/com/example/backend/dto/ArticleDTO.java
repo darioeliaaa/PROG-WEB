@@ -6,7 +6,7 @@ import lombok.Data;
 public class ArticleDTO {
   private String title;
   private String url;
-  private String urlToImage; // Utile per il frontend
+  private String urlToImage;
   private SourceDTO source;
 
   @Data
