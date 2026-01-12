@@ -1,215 +1,65 @@
-.settings-wrapper {
+.settings-container {
   display: flex;
-  max-width: 1200px;
-  margin: 40px auto;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  min-height: 600px;
-  overflow: hidden;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  justify-content: center;
+  padding: 50px 20px;
+  background-color: #f4f7fe;
+  min-height: 100vh;
 }
 
-/* Sidebar Sinistra */
-.settings-sidebar {
-  width: 280px;
-  background: #fdfdfd;
-  border-right: 1px solid #f0f0f0;
-  padding: 30px 20px;
-}
-
-.settings-sidebar h2 {
-  font-size: 1.4rem;
-  color: #1a1a1a;
-  margin-bottom: 30px;
-  padding-left: 10px;
-}
-
-.settings-sidebar nav button {
-  display: flex;
-  align-items: center;
+.settings-card {
   width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 8px;
-  border: none;
-  background: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #555;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.settings-sidebar nav button:hover {
-  background: #f0f0f0;
-}
-
-.settings-sidebar nav button.active {
-  background: #4f46e5;
-  color: white;
-}
-
-/* Contenuto Destra */
-.settings-content {
-  flex: 1;
-  padding: 40px 60px;
-}
-
-.settings-content h3 {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
-  color: #111;
-}
-
-.placeholder-card {
-  border: 2px dashed #e0e0e0;
+  max-width: 700px;
+  background: white;
+  border-radius: 20px;
   padding: 40px;
-  text-align: center;
-  color: #999;
-  border-radius: 12px;
-  margin-top: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
-/* Lista Portafogli */
-.wallet-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
-}
+.settings-header { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+.settings-header h1 { font-size: 24px; color: #2b3674; margin: 0; }
+.settings-header p { color: #a3aed0; margin: 5px 0 0 0; }
 
-.wallet-card {
+.settings-group { margin-bottom: 30px; }
+.settings-group h3 { font-size: 16px; color: #4f46e5; text-transform: uppercase; margin-bottom: 15px; }
+
+.setting-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 24px;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  transition: box-shadow 0.2s;
+  padding: 15px 0;
+  border-bottom: 1px solid #f7f7f7;
 }
 
-.wallet-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+.setting-row .info label { display: block; font-weight: 600; color: #2b3674; }
+.setting-row .info span { font-size: 13px; color: #a3aed0; }
 
-.badge {
-  background: #e0e7ff;
-  color: #4338ca;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
+/* Switch CSS */
+.switch { position: relative; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #cbd5e0; transition: .4s; border-radius: 20px;
 }
-
-/* Pannello Gestione */
-.manage-panel {
-  animation: fadeIn 0.3s ease;
+.slider:before {
+  position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+  background-color: white; transition: .4s; border-radius: 50%;
 }
-
-.btn-back {
-  background: none;
-  border: none;
-  color: #4f46e5;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 20px;
-  font-weight: 600;
+input:checked + .slider {
+  background-color: #4f46e5 !important;
 }
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #444;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
+input:checked + .slider:before {
+  transform: translateX(20px) !important;
 }
 
 .btn-save {
-  background: #10b981;
+  width: 100%;
+  background: #4f46e5;
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: 15px;
+  border-radius: 12px;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: 600;
-  width: 100%;
+  transition: 0.3s;
 }
-.members-section {
-  margin-top: 25px;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
-}
-
-.member-list {
-  list-style: none;
-  padding: 0;
-}
-
-.member-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #fafafa;
-}
-
-.btn-remove {
-  background: #fee2e2;
-  color: #ef4444;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.badge-admin {
-  font-size: 0.7rem;
-  color: #888;
-  font-style: italic;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 1. Rimuoviamo lo sfondo e il padding eccessivo dal container del collega */
-app-profilo .dashboard-container {
-  background: transparent !important; /* Forza lo sfondo trasparente */
-  padding: 0 !important;             /* Rimuove i margini interni giganti */
-  min-height: auto !important;       /* Evita che occupi tutta la pagina verticalmente */
-  width: 100% !important;
-  box-shadow: none !important;       /* Rimuove ombre doppie */
-}
-
-/* 2. Sistemiamo l'header del profilo per non avere titoli doppi */
-app-profilo .page-header {
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-/* 3. Nascondiamo il tasto "Torna alla Dashboard" del collega
-      (perché l'utente è già dentro le Impostazioni) */
-app-profilo .back-btn {
-  display: none !important;
-}
-
-/* 4. Armonizziamo i pulsanti del collega con i tuoi arrotondamenti */
-app-profilo .btn-save {
-  background-color: #4f46e5 !important; /* Usiamo il tuo viola per coerenza */
-  border-radius: 8px;
-}
+.btn-save:hover { background: #3931af; }
