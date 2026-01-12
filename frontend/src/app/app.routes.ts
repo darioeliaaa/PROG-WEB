@@ -7,7 +7,6 @@ import { MarketHomeComponent } from './features/market/market-home/market-home';
 import { AssetListComponent } from './features/market/asset-list/asset-list';
 
 import { StockChart } from './features/market/stock-chart/stock-chart';
-import {SettingsComponent} from './settings/settings.component';
 import {WalletComponent} from './features/Wallet/wallet';
 
 export const routes: Routes = [
@@ -39,6 +38,5 @@ export const routes: Routes = [
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
-  { path: 'settings', component: SettingsComponent },
   { path: 'wallet', component: WalletComponent }
 ];
