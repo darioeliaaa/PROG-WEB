@@ -21,8 +21,11 @@
 .brand-side {
   width: 45%;
   height: 100%;
-  /* Gradiente Business Deep Purple */
-  background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+
+  /* --- CORREZIONE COLORE: LO STESSO DELLA SIDEBAR --- */
+  /* Usiamo gli stessi esadecimali della tua Sidebar: #8E8EFA -> #7D7DFA */
+  background: linear-gradient(135deg, #8E8EFA 0%, #5454fa 100%);
+
   position: relative;
   display: flex;
   align-items: center;
@@ -38,11 +41,11 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.4;
+  opacity: 0.5; /* Aumentata leggermente opacità per fondersi meglio col nuovo viola */
   z-index: 1;
 }
-.c1 { width: 300px; height: 300px; background: #a5b4fc; top: -50px; left: -50px; }
-.c2 { width: 400px; height: 400px; background: #7D7DFA; bottom: -100px; right: -100px; }
+.c1 { width: 300px; height: 300px; background: #ffffff; top: -50px; left: -50px; opacity: 0.2; }
+.c2 { width: 400px; height: 400px; background: #6464fa; bottom: -100px; right: -100px; }
 
 .brand-content {
   position: relative;
@@ -61,29 +64,29 @@ h1 {
 }
 
 .brand-side p {
-  font-size: 1.1rem; line-height: 1.6; opacity: 0.9; margin-bottom: 50px;
+  font-size: 1.1rem; line-height: 1.6; opacity: 0.95; margin-bottom: 50px;
 }
 
 /* GLASS CARD DECORATIVA */
 .glass-card-decor {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15); /* Più chiaro per risaltare sul viola chiaro */
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 20px;
   border-radius: 16px;
   width: 240px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   transform: rotate(-3deg);
   transition: transform 0.3s ease;
 }
 .glass-card-decor:hover { transform: rotate(0deg) scale(1.02); }
 
 .decor-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-.decor-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;}
+.decor-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;}
 .decor-text { display: flex; flex-direction: column; }
-.decor-text span { font-size: 0.85rem; opacity: 0.8; }
-.decor-text strong { font-size: 1.1rem; color: #4ade80; } /* Verde positivo */
-.chart-line { height: 4px; width: 60%; background: rgba(255,255,255,0.3); border-radius: 2px; }
+.decor-text span { font-size: 0.85rem; opacity: 0.9; }
+.decor-text strong { font-size: 1.1rem; color: #2bffbf; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.chart-line { height: 4px; width: 60%; background: rgba(255,255,255,0.4); border-radius: 2px; }
 
 /* =========================================
    LATO DESTRO (FORM) - 55% Larghezza
@@ -104,7 +107,8 @@ h1 {
   display: flex; align-items: center; gap: 8px;
   color: #64748b; font-weight: 500; cursor: pointer; text-decoration: none; transition: 0.2s;
 }
-.back-link:hover { color: #4f46e5; }
+/* Hover link col colore brand */
+.back-link:hover { color: #7D7DFA; }
 
 /* Wrapper del contenuto form */
 .form-wrapper {
@@ -133,24 +137,31 @@ input {
   font-size: 1rem; color: #1e293b; outline: none; transition: all 0.2s;
   box-sizing: border-box;
 }
-input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+/* FOCUS RING col colore Brand */
+input:focus {
+  background-color: white;
+  border-color: #7D7DFA;
+  box-shadow: 0 0 0 4px rgba(125, 125, 250, 0.15);
+}
 
 /* Checkbox & Links */
 .extras { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 0.9rem; }
 .checkbox-container { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569; }
-.forgot-link { color: #4f46e5; font-weight: 600; cursor: pointer; text-decoration: none; }
-.forgot-link:hover { text-decoration: underline; }
+.forgot-link { color: #7D7DFA; font-weight: 600; cursor: pointer; text-decoration: none; }
+.forgot-link:hover { text-decoration: underline; color: #6464fa; }
 
-/* Bottoni Primari */
+/* Bottoni Primari AGGIORNATI COL COLORE BRAND */
 .btn-primary {
   width: 100%; height: 50px;
-  background-color: #4f46e5; color: white;
+  background-color: #7D7DFA; /* IL TUO VIOLA */
+  color: white;
   border: none; border-radius: 10px;
   font-size: 1rem; font-weight: 600;
   cursor: pointer; transition: background 0.2s, transform 0.1s;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 15px rgba(125, 125, 250, 0.4); /* Ombra colorata coerente */
 }
-.btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+.btn-primary:hover { background-color: #6464fa; transform: translateY(-1px); }
+
 .btn-register { background-color: #1e293b; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3); }
 .btn-register:hover { background-color: #0f172a; }
 
@@ -171,7 +182,7 @@ input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 
 
 /* Switch Text */
 .switch-text { text-align: center; font-size: 0.95rem; color: #475569; }
-.switch-text a { color: #4f46e5; font-weight: 700; cursor: pointer; text-decoration: none; margin-left: 5px; }
+.switch-text a { color: #7D7DFA; font-weight: 700; cursor: pointer; text-decoration: none; margin-left: 5px; }
 .switch-text a:hover { text-decoration: underline; }
 
 /* Box Messaggi Generici */
@@ -184,8 +195,8 @@ input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 
 
 /* Bordo Rosso per Input Sbagliato (con animazione shake) */
 .error-border {
-  border-color: #ef4444 !important; /* Rosso deciso */
-  background-color: #fef2f2 !important; /* Sfondo rossiccio leggero */
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
   color: #991b1b !important;
   animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
@@ -203,7 +214,7 @@ input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 
 
 /* Link intelligente "Accedi qui" */
 .login-link-smart {
-  color: #4f46e5;
+  color: #7D7DFA;
   text-decoration: underline;
   cursor: pointer;
   font-weight: 700;
@@ -228,23 +239,23 @@ input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 
 
 /* I "Bottoni" dei suggerimenti */
 .suggestion-chip {
-  background-color: #eef2ff;
-  color: #4f46e5;
+  background-color: #f0f0ff; /* Viola chiarissimo */
+  color: #7D7DFA;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid #c7d2fe;
+  border: 1px solid #dcdcfc;
   transition: all 0.2s ease;
   user-select: none;
 }
 
 .suggestion-chip:hover {
-  background-color: #4f46e5;
+  background-color: #7D7DFA;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 10px rgba(125, 125, 250, 0.3);
 }
 
 /* Animazione "Shake" (Scossa) per attirare l'attenzione */
@@ -258,6 +269,6 @@ input:focus { background-color: white; border-color: #4f46e5; box-shadow: 0 0 0 
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .auth-container { flex-direction: column; }
-  .brand-side { display: none; } /* Su mobile nascondiamo il brand per focus sul form */
+  .brand-side { display: none; }
   .form-side { width: 100%; }
 }
