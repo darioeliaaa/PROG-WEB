@@ -1,7 +1,7 @@
 <div class="market-container">
 
   <header class="market-header">
-    <h2>Listino: {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
+    <h2>Listino:  {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
   </header>
 
   <div *ngIf="loading" class="loading-state">
