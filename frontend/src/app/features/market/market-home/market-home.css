@@ -1,7 +1,6 @@
 /* =========================================
    1. STRUTTURA & FONT (IMPORTANTE)
    ========================================= */
-/* Importiamo Inter per avere numeri e lettere bellissimi */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap');
 
 :host {
@@ -10,21 +9,21 @@
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #0f172a;
-  -webkit-font-smoothing: antialiased; /* Rende il testo nitido */
+  -webkit-font-smoothing: antialiased;
 }
 
 .market-home-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 5px 10px;
 }
 
 .market-section {
-  margin-bottom: 50px; /* Più respiro tra le sezioni */
+  margin-bottom: 50px;
 }
 
 /* =========================================
-   2. HEADER SEZIONE (SCRITTE PIÙ CARINE)
+   2. HEADER SEZIONE
    ========================================= */
 .section-header {
   display: flex;
@@ -35,14 +34,13 @@
 }
 
 .section-header h2 {
-  font-size: 1.5rem; /* Titolo più grande */
-  font-weight: 800;  /* Extra Bold */
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #1e293b;
   margin: 0;
-  letter-spacing: -0.03em; /* Lettere più vicine (Look moderno) */
+  letter-spacing: -0.03em;
 }
 
-/* Link "Vedi tutto" Pillola */
 .see-all-btn {
   font-size: 0.85rem;
   font-weight: 700;
@@ -50,7 +48,7 @@
   text-decoration: none;
   background: #eef2ff;
   padding: 8px 16px;
-  border-radius: 99px; /* Pillola perfetta */
+  border-radius: 99px;
   transition: all 0.2s ease;
 }
 
@@ -65,7 +63,6 @@
    ========================================= */
 .revolut-grid {
   display: grid;
-  /* Celle più larghe per ospitare le icone grandi */
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 20px;
   justify-items: center;
@@ -78,15 +75,13 @@
   background: transparent;
   box-shadow: none;
   border: none;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px; /* Spazio tra icona e testo */
+  gap: 10px;
   width: 100%;
-
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* Effetto rimbalzo */
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .ball-card:hover {
@@ -94,42 +89,29 @@
 }
 
 /* =========================================
-   5. CERCHIO GRANDE (IL PROTAGONISTA)
+   5. CERCHIO GRANDE
    ========================================= */
 .icon-wrapper {
-  /* DIMENSIONE AUMENTATA */
   width: 76px;
   height: 76px;
-
-  border-radius: 50%; /* Cerchio perfetto */
-  background: #f1f5f9; /* Sfondo di fallback se l'immagine è trasparente */
-
-  /* Bordo sottilissimo per definizione */
+  border-radius: 50%;
+  background: #f1f5f9;
   border: 1px solid #e2e8f0;
-
-  /* Ombra soffice per staccarlo dallo sfondo */
   box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.08);
-
-  /* FONDAMENTALE: Nasconde tutto ciò che esce dal cerchio */
   overflow: hidden;
   position: relative;
-
   transition: box-shadow 0.3s ease;
 }
 
 .ball-card:hover .icon-wrapper {
-  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15); /* Ombra più forte all'hover */
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15);
   border-color: #cbd5e1;
 }
 
-/* IMMAGINE CHE RIEMPIE TUTTO */
 .round-logo {
   width: 100%;
   height: 100%;
-
-  /* COVER: L'immagine si espande per coprire tutto il cerchio (zoom) */
   object-fit: cover;
-
   display: block;
 }
 
@@ -137,14 +119,13 @@
    6. TESTI E PERCENTUALI
    ========================================= */
 .ticker-symbol {
-  font-size: 1rem;     /* Più leggibile */
-  font-weight: 800;    /* Molto grassetto (stile app finanziaria) */
+  font-size: 1rem;
+  font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.01em;
   margin-top: 2px;
 }
 
-/* Percentuale Minimal (Solo testo) */
 .percent-badge {
   font-size: 0.85rem;
   font-weight: 700;
@@ -154,11 +135,9 @@
   gap: 3px;
 }
 
-/* Colori Vividi */
-.percent-badge.up { color: #16a34a; }   /* Verde acceso */
-.percent-badge.down { color: #dc2626; } /* Rosso acceso */
+.percent-badge.up { color: #16a34a; }
+.percent-badge.down { color: #dc2626; }
 
-/* Frecce automatiche più carine */
 .percent-badge.up::before {
   content: "▲";
   font-size: 0.6em;
@@ -177,20 +156,160 @@
   .market-home-container {
     padding: 20px 15px;
   }
-
   .revolut-grid {
-    /* 3 colonne su mobile per farle sembrare grandi, o 4 per densità */
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
   }
-
   .icon-wrapper {
-    /* Leggermente più piccole su mobile, ma comunque grandi */
     width: 64px;
     height: 64px;
   }
-
   .section-header h2 {
     font-size: 1.25rem;
+  }
+}
+
+.visual-carousel-container {
+  width: 100%;
+  height: 400px;
+  margin-bottom: 40px;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+  position: relative;
+
+  /* Sfondo di base: usa il colore del testo scuro dell'app per coerenza */
+  background-color: #f8fafc;
+
+  /* Ombra morbida colorata (non nera pura) per effetto "elevazione" */
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
+
+  /* Maschera laterale per sfumare l'uscita delle card */
+  mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+}
+
+/* Il binario che si muove */
+.visual-track {
+  display: flex !important;
+  height: 100%;
+  width: max-content;
+  /* Animazione fluida e lenta */
+  animation: scroll-visual 90s linear infinite;
+}
+
+.visual-track:hover {
+  animation-play-state: paused;
+}
+
+/* LA SINGOLA CARD */
+.visual-news-card {
+  position: relative;
+  width: 480px;       /* Leggermente più stretto per proporzioni migliori */
+  height: 100%;
+  flex-shrink: 0;
+  margin-right: 16px; /* Gap più stretto e preciso */
+
+  /* Nessun border-radius qui, usiamo quello del container o maschere se servisse,
+     ma qui lasciamo dritto perché scorre dietro la maschera del container */
+
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  /* Filtro leggero per uniformare la luminosità delle immagini */
+  filter: saturate(1.1) brightness(0.95);
+
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Stessa curva "rimbalzo" delle tue card */
+}
+
+/* Effetto Hover: Zoom fluido */
+.visual-news-card:hover {
+  transform: scale(1.03);
+  filter: saturate(1.2) brightness(1); /* Si illumina all'hover */
+  z-index: 5;
+}
+
+.visual-card-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
+/* L'OVERLAY (Sfumatura) */
+.visual-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Copre tutta la card per gestire meglio il gradiente */
+  padding: 30px 24px;
+
+  /* GRADIENTE COERENTE: Usa #0f172a (il tuo colore testo) invece del nero */
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 1) 0%,
+    rgba(15, 23, 42, 0.8) 30%,
+    rgba(15, 23, 42, 0) 70%
+  );
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.visual-source {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+
+  /* COLORE BRAND: Indaco chiaro, richiama il tuo bottone "Vedi tutto" (#4f46e5) ma leggibile su scuro */
+  color: #a5b4fc;
+
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.visual-title {
+  font-family: 'Inter', sans-serif; /* Forza il font dell'app */
+  font-size: 1.35rem; /* Titolo bello grande */
+  font-weight: 800;   /* Extra Bold come i tuoi titoli h2 */
+  color: #ffffff;
+  line-height: 1.25;
+  margin: 0;
+
+  /* Ombra testo morbida */
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ANIMAZIONE SCORRIMENTO */
+@keyframes scroll-visual {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Responsive per Mobile */
+@media (max-width: 600px) {
+  .visual-carousel-container {
+    height: 260px;
+    border-radius: 16px;
+  }
+  .visual-news-card {
+    width: 320px;
+  }
+  .visual-title {
+    font-size: 1.1rem;
+  }
+  .visual-overlay {
+    padding: 20px 16px;
   }
 }
