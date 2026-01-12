@@ -1,78 +1,64 @@
-<div class="settings-wrapper">
-  <aside class="settings-sidebar">
-    <h2>Impostazioni</h2>
-    <nav>
-      <button [class.active]="activeTab === 'profilo'" (click)="setTab('profilo')">Profilo</button>
-      <button [class.active]="activeTab === 'wallets'" (click)="setTab('wallets')">Portafogli</button>
-    </nav>
-  </aside>
+<div class="settings-container">
+  <div class="settings-card">
+    <header class="settings-header">
+      <h1>Impostazioni di Sistema</h1>
+      <p>Gestisci le preferenze del tuo account</p>
+    </header>
 
-  <main class="settings-content">
-    <section *ngIf="activeTab === 'profilo'">
-      <app-profilo></app-profilo>
-    </section>
-
-    <section *ngIf="activeTab === 'wallets'">
-
-      <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3>I tuoi Portafogli</h3>
-        <button class="btn-add-wallet" *ngIf="!selectedWallet && !showCreateForm" (click)="showCreateForm = true">
-          + Nuovo Portafoglio
-        </button>
-      </div>
-
-      <div class="manage-panel" *ngIf="showCreateForm">
-        <h4>Crea nuovo Portafoglio</h4>
-        <div class="form-group">
-          <label>Nome</label>
-          <input type="text" [(ngModel)]="newWallet.name" placeholder="Es. Spese Casa">
-        </div>
-        <div class="form-group">
-          <label>Budget Mensile (€)</label>
-          <input type="number" [(ngModel)]="newWallet.monthlyBudget">
-        </div>
-        <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
-          <button (click)="showCreateForm = false" class="btn-back" style="margin-bottom: 0;">Annulla</button>
-          <button (click)="createNewWallet()" class="btn-save" style="background-color: #4f46e5;">Crea</button>
-        </div>
-      </div>
-
-      <div class="wallet-list" *ngIf="!selectedWallet && !showCreateForm">
-        <div *ngFor="let w of userWallets" class="wallet-card">
-          <span>{{ w.name }}</span>
-          <button *ngIf="!w.personal" (click)="openManage(w)">Gestisci</button>
-          <span *ngIf="w.personal" class="badge">Personale</span>
-        </div>
-      </div>
-
-      <div class="manage-panel" *ngIf="selectedWallet && !showCreateForm">
-        <button (click)="selectedWallet = null" class="btn-back">← Torna alla lista</button>
-        <h4>Modifica {{ selectedWallet.name }}</h4>
-
-        <div class="form-group">
-          <label>Nome Portafoglio</label>
-          <input type="text" [(ngModel)]="selectedWallet.name">
+    <div class="settings-content">
+      <section class="settings-group">
+        <h3>Preferenze Generali</h3>
+        <div class="setting-row">
+          <div class="info">
+            <label>Lingua</label>
+            <span>Scegli la lingua dell'interfaccia</span>
+          </div>
+          <select [(ngModel)]="systemSettings.language">
+            <option value="it">Italiano</option>
+            <option value="en">English</option>
+          </select>
         </div>
 
-        <div class="form-group">
-          <label>Budget Mensile (€)</label>
-          <input type="number" [(ngModel)]="selectedWallet.monthlyBudget">
+        <div class="setting-row">
+          <div class="info">
+            <label>Valuta</label>
+            <span>Valuta principale per i conteggi</span>
+          </div>
+          <select [(ngModel)]="systemSettings.currency">
+            <option value="EUR">Euro (€)</option>
+            <option value="USD">Dollar ($)</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settings-group">
+        <h3>Sicurezza & Avvisi</h3>
+        <div class="setting-row">
+          <div class="info">
+            <label>Modalità Privacy</label>
+            <span>Nascondi i saldi nella dashboard</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="systemSettings.privacyMode">
+            <span class="slider"></span>
+          </label>
         </div>
 
-        <div class="members-section">
-          <h5>Membri del gruppo</h5>
-          <ul class="member-list">
-            <li *ngFor="let m of members">
-              {{ m.username }}
-              <button *ngIf="m.id !== userId" class="btn-remove" (click)="removeUser(m.id)">Rimuovi</button>
-              <span *ngIf="m.id === userId" class="badge-admin">Tu (Admin)</span>
-            </li>
-          </ul>
+        <div class="setting-row">
+          <div class="info">
+            <label>Avvisi Budget</label>
+            <span>Notifica al superamento del limite</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="systemSettings.budgetAlerts">
+            <span class="slider"></span>
+          </label>
         </div>
+      </section>
+    </div>
 
-        <button (click)="saveWalletSettings()" class="btn-save">Salva Modifiche</button>
-      </div>
-
-    </section>
-  </main>
+    <footer class="settings-footer">
+      <button class="btn-save" (click)="saveSettings()">Salva Impostazioni</button>
+    </footer>
+  </div>
 </div>
