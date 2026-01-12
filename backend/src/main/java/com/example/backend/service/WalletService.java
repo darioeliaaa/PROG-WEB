@@ -10,6 +10,7 @@ import com.example.backend.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,9 +18,14 @@ import java.time.LocalDate;
 @Service
 public class WalletService {
   @Autowired
-  private WalletRepository walletRepository;
-  @Autowired private UserRepository userRepository;
+  private final WalletRepository walletRepository;
+  @Autowired private final UserRepository userRepository;
   @Autowired private TransactionRepository transactionRepository;
+
+  public WalletService(WalletRepository walletRepository, UserRepository userRepository) {
+    this.walletRepository = walletRepository;
+    this.userRepository = userRepository;
+  }
 
   // Crea un nuovo wallet separato (Condiviso)
   @Transactional
@@ -128,4 +134,24 @@ public class WalletService {
     guest.getWallets().add(wallet);
     walletRepository.save(wallet);
   }
+
+  @Transactional
+  public Wallet joinWallet(Long walletId, Long userId) {
+    Wallet wallet = walletRepository.findById(walletId)
+      .orElseThrow(() -> new RuntimeException("Wallet non trovato"));
+
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+    if (!wallet.getMembers().contains(user)) {
+      wallet.getMembers().add(user);
+    }
+
+    Wallet savedWallet = walletRepository.save(wallet);
+    System.out.println("Members after join: " + savedWallet.getMembers());
+
+    return wallet;
+  }
+
+
 }
