@@ -109,4 +109,13 @@ export class MarketService {
     }
     return [];
   }
+  getNews(): Observable<any[]> {
+    // Chiama il tuo controller Spring Boot
+    return this.http.get<any[]>('http://localhost:8080/api/news').pipe(
+      catchError(err => {
+        console.error('Errore news backend', err);
+        return of([]); // Ritorna array vuoto se il backend fallisce
+      })
+    );
+  }
 }
