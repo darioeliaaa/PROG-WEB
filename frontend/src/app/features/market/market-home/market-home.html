@@ -23,8 +23,14 @@
              [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
 
           <a [href]="news.url" target="_blank" class="visual-card-link">
+
+            <div class="card-badge">NEWS</div>
+
             <div class="visual-overlay">
-              <span class="visual-source">{{ news.source.name }}</span>
+              <div class="source-wrapper">
+                <span class="source-dot"></span>
+                <span class="visual-source">{{ news.source.name }}</span>
+              </div>
               <h3 class="visual-title">{{ news.title }}</h3>
             </div>
           </a>
