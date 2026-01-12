@@ -21,6 +21,7 @@ repositories {
 dependencies {
   // 1. Questa serve per far funzionare il Backend (REST API)
   implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-cache'
 
   // 2. QUESTA è quella che ti mancava per risolvere l'errore 'persistence'
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -30,6 +31,7 @@ dependencies {
     // 3. Questa serve per @Data (Lombok)
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
+
 
   // Database
   implementation 'org.postgresql:postgresql'
