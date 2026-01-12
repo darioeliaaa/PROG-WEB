@@ -1,7 +1,7 @@
 /* --- CONTENITORE --- */
 .market-container {
   padding: 20px;
-  background-color: #FFFFFF; /* Grigio chiaro di base */
+  background-color: #f8faff; /* Grigio chiaro di base */
   min-height: 100vh;
   color: #333;
 }
