@@ -15,19 +15,63 @@
   padding: 40px 20px;
 }
 
+/* Contenitore Header "Glass" */
 .market-header {
-  margin-bottom: 24px;
+  /* Layout */
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
+
+  /* Spaziatura */
+  padding: 24px 32px;
+  margin-bottom: 30px;
+
+  /* Stile Vetro & Bordo */
+  background: rgba(255, 255, 255, 0.85); /* Bianco all'85% */
+  backdrop-filter: blur(12px);            /* Sfocatura dello sfondo sottostante */
+  border: 1px solid rgba(255, 255, 255, 0.6); /* Bordo semi-trasparente */
+  border-radius: 24px;                    /* Curve morbide */
+
+  /* Ombra soffice */
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.03),
+    0 4px 6px -2px rgba(0, 0, 0, 0.01);
 }
 
+/* Tipografia del Titolo */
 .market-header h2 {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #0f172a; /* Slate-900: Quasi nero */
+  font-size: 1.75rem;       /* Grande ma non enorme */
+  font-weight: 800;         /* Extra Bold */
+  color: #0f172a;           /* Slate-900 (Nero Inchiostro) */
   margin: 0;
-  letter-spacing: -0.025em; /* Tracking stretto tipico dei titoli moderni */
+  letter-spacing: -0.03em;  /* Tracking stretto (lettere vicine) */
+  line-height: 1.2;
+
+  /* Setup per la barretta laterale */
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 24px; /* Spazio riservato alla barretta */
+}
+
+/* La Barretta "Accent" (Gradiente + Glow) */
+.market-header h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+
+  /* Dimensioni */
+  height: 32px; /* Altezza fissa per essere elegante */
+  width: 6px;   /* Larghezza sottile */
+
+  /* Stile "Pillola" */
+  border-radius: 10px;
+
+  /* Colore: Gradiente da Indigo a Viola */
+  background: linear-gradient(180deg, #4f46e5 0%, #818cf8 100%);
+
+  /* Effetto Luce (Glow) */
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
 }
 
 /* =========================================
