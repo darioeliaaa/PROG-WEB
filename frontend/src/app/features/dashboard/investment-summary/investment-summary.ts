@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-investment-summary',
@@ -8,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './investment-summary.html',
   styleUrl: './investment-summary.css',
 })
-export class InvestmentSummary implements OnChanges {
+export class InvestmentSummary implements OnInit, OnChanges {
 
   @Input() currentDate!: Date;
   @Input() tutteLeTransazioni: any[] = [];
@@ -16,16 +17,44 @@ export class InvestmentSummary implements OnChanges {
   totaleEntrate: number = 0;
   totaleUscite: number = 0;
   saldoAttuale: number = 0;
+  userSettings: any;
+  peekBalance: boolean = false;
+
+  // 2. Inietta il servizio qui
+  constructor(private userService: UserService,private cd: ChangeDetectorRef) {
+    // 3. Assegna il valore nel costruttore
+    this.userSettings = this.userService.getSettingsSync();
+
+  }
 
   // NUOVO: Array per contenere i dati degli ultimi 6 mesi
   trendData: { label: string; value: number; heightPercent: number; isCurrent: boolean }[] = [];
 
+  ngOnInit() {
+    // ASCOLTO CONTINUO: se l'utente cambia privacy o valuta, il componente si aggiorna da solo
+    this.userService.userSettings$.subscribe({
+      next: (settings) => {
+        if (settings) {
+          this.userSettings = settings;
+          this.cd.detectChanges(); // Comunica ad Angular di ridisegnare i numeri/asterischi
+        }
+      }
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    // Ricalcola tutto ogni volta che cambiano i dati o la data
+    // Qui facciamo SOLO i calcoli matematici sui dati.
+    // NON aggiungiamo sottoscrizioni o logica di inizializzazione.
     if (changes['currentDate'] || changes['tutteLeTransazioni']) {
+      // Prendiamo l'ultimo valore disponibile per i calcoli
+      this.userSettings = this.userService.getSettingsSync();
+
       this.calcoloPatrimonioAttuale();
       this.calcoloTrendUltimi6Mesi();
     }
+  }
+  togglePeek() {
+    this.peekBalance = !this.peekBalance;
   }
 
   // 1. Calcolo del saldo ad oggi (quello che avevi già)
