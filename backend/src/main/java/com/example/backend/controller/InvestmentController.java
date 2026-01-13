@@ -1,16 +1,10 @@
 package com.example.backend.controller;
 
-import com.example.backend.entity.Investment;
+import com.example.backend.dto.TradeRequestDTO;
 import com.example.backend.service.InvestmentService;
-import com.example.backend.service.MarketService; // Importante
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/investments")
@@ -20,45 +14,25 @@ public class InvestmentController {
   @Autowired
   private InvestmentService investmentService;
 
-  @Autowired
-  private MarketService marketService; // Il servizio per i prezzi reali
+  // ✅ MODIFICATO: Da "/buy" a "/trade" per gestire anche le vendite
+  @PostMapping("/trade")
+  public ResponseEntity<?> trade(@RequestBody TradeRequestDTO request) {
+    try {
+      System.out.println("--- RICEVUTA RICHIESTA TRADE ---");
+      System.out.println("User ID: " + request.getUserId());
+      System.out.println("Action: " + request.getAction());
+      System.out.println("Symbol: " + request.getSymbol());
 
-  // COMPRARE (Salvare nel DB)
-  @PostMapping("/buy/{userId}")
-  public ResponseEntity<Investment> buyStock(@PathVariable Long userId, @RequestBody Investment investment) {
-    return ResponseEntity.ok(investmentService.buyStock(userId, investment));
-  }
+      investmentService.executeTrade(request);
 
-  // VEDERE PORTAFOGLIO (Con prezzi aggiornati da Finnhub)
-  @GetMapping("/portfolio/{userId}")
-  public ResponseEntity<List<Map<String, Object>>> getPortfolio(@PathVariable Long userId) {
+      return ResponseEntity.ok("{\"message\": \"Operazione eseguita con successo!\"}");
+    } catch (RuntimeException e) {
+      // STAMPA L'ERRORE NEL TERMINALE
+      System.err.println("❌ ERRORE TRADE: " + e.getMessage());
+      e.printStackTrace();
 
-    // 1. Recuperiamo gli investimenti dal DB
-    List<Investment> investments = investmentService.getUserPortfolio(userId);
-
-    // 2. Creiamo la lista arricchita
-    List<Map<String, Object>> portfolioWithPrices = new ArrayList<>();
-
-    for (Investment inv : investments) {
-      Map<String, Object> item = new HashMap<>();
-
-      // Mettiamo i dati dell'investimento
-      item.put("investment", inv);
-
-      // Chiediamo il prezzo attuale all'API esterna
-      double currentPrice = marketService.getCurrentPrice(inv.getSymbol());
-      item.put("currentPrice", currentPrice);
-
-      // Calcoliamo i guadagni
-      double totalValue = currentPrice * inv.getQuantity();
-      double gainLoss = totalValue - (inv.getBuyPrice() * inv.getQuantity());
-
-      item.put("currentTotalValue", totalValue);
-      item.put("gainLoss", gainLoss);
-
-      portfolioWithPrices.add(item);
+      // RESTITUISCE IL MESSAGGIO AL FRONTEND
+      return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
     }
-
-    return ResponseEntity.ok(portfolioWithPrices);
   }
 }
