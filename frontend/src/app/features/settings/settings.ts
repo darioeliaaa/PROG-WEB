@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService } from './settings.service';
 import { ChangeDetectorRef } from '@angular/core';
 import {UserService} from '../../services/user.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -28,39 +29,35 @@ export class SettingsComponent implements OnInit {
   constructor(
     private settingsService: SettingsService,
     private cdr: ChangeDetectorRef,
-    private userService: UserService,) {}
+    private userService: UserService,
+    private router: Router) {}
 
   ngOnInit(): void {
     const idLoggato = this.userService.getCurrentUserId();
 
     if (idLoggato) {
       this.userId = idLoggato;
-      console.log("Settings: ID recuperato correttamente:", this.userId);
-      this.loadRemoteSettings(); // Carica solo se l'ID esiste
+      this.loadRemoteSettings();
     } else {
-      // Invece di usare il 6, diamo un errore o reindirizziamo al login
-      console.error("ERRORE: Nessun utente loggato trovato nel sistema!");
-      // Opzionale: alert("Devi effettuare il login per vedere questa pagina");
-      // Opzionale: this.router.navigate(['/login']);
+      // Se non c'è l'ID, lo rimandiamo al login
+      alert("Sessione scaduta o utente non trovato. Torna al login.");
+      this.router.navigate(['/login']);
     }
   }
 
   loadRemoteSettings(): void {
     this.settingsService.getSettings(this.userId).subscribe({
       next: (data) => {
-        console.log("Dati dal DB:", data);
-
-        // Assegnazione forzata
+        // Assegnazione pulita
         this.systemSettings.language = data.language;
         this.systemSettings.currency = data.currency;
         this.systemSettings.privacyMode = data.privacyMode;
         this.systemSettings.budgetAlerts = data.budgetAlerts;
 
-        // 3. Forza Angular a rinfrescare i pulsanti sulla pagina
+        // Forza il refresh della grafica
         this.cdr.detectChanges();
-
-        console.log("Stato finale UI:", this.systemSettings.privacyMode);
-      }
+      },
+      error: (err) => console.error("Errore nel recupero impostazioni:", err)
     });
   }
 
