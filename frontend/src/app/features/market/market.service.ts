@@ -29,6 +29,7 @@ export interface MarketAsset {
 @Injectable({
   providedIn: 'root'
 })
+@Injectable({ providedIn: 'root' })
 export class MarketService {
 
   // Assicurati che questo URL corrisponda al tuo Controller Java
@@ -115,6 +116,16 @@ export class MarketService {
       catchError(err => {
         console.error('Errore news backend', err);
         return of([]); // Ritorna array vuoto se il backend fallisce
+      })
+    );
+  }
+  executeTrade(transactionRequest: any): Observable<any> {
+    // Assumi che il backend abbia un endpoint per le transazioni
+    // Se non ce l'ha ancora, useremo un mock per ora
+    return this.http.post(`${this.apiUrl}/transactions`, transactionRequest).pipe(
+      catchError(err => {
+        console.error('Errore Trade:', err);
+        throw err;
       })
     );
   }
