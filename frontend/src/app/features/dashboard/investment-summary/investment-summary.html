@@ -1,22 +1,37 @@
 <div class="glass-card summary-card">
 
   <div class="info-group">
-    <h3>Saldo Totale</h3>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <h3>Saldo Totale</h3>
+
+      <button *ngIf="userSettings?.privacyMode"
+              (click)="togglePeek()"
+              class="peek-toggle-btn"
+              [title]="peekBalance ? 'Nascondi dati' : 'Mostra dati'">
+        <i class="fa" [ngClass]="peekBalance ? 'fa-eye-slash' : 'fa-eye'"></i>
+      </button>
+    </div>
 
     <div class="balance-amount" [class.negative-balance]="saldoAttuale < 0">
-      {{ saldoAttuale | currency:'EUR':'symbol':'1.2-2' }}
+      <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
+        {{ saldoAttuale | currency: userSettings?.currency : 'symbol' : '1.2-2' }}
+      </ng-container>
+
+      <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">
+        ••••••
+      </ng-container>
     </div>
 
     <div class="stats-row" style="margin-top: 15px; display: flex; gap: 15px;">
       <span class="performance-badge positive">
         <i class="fa fa-arrow-up"></i>
-        {{ totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}
+        {{ userSettings?.privacyMode ? '•••' : (totaleEntrate | currency: userSettings?.currency :'symbol':'1.0-0') }}
         <small> Tot. Entrate</small>
       </span>
 
       <span class="performance-badge negative">
         <i class="fa fa-arrow-down"></i>
-        {{ totaleUscite | currency:'EUR':'symbol':'1.0-0' }}
+        {{ userSettings?.privacyMode ? '•••' : (totaleUscite | currency: userSettings?.currency :'symbol':'1.0-0') }}
         <small> Tot. Uscite</small>
       </span>
     </div>
@@ -25,13 +40,12 @@
   <div class="mini-chart">
     <div *ngFor="let item of trendData"
          class="bar-wrapper"
-         [title]="item.label + ': ' + (item.value | currency:'EUR')">
+         [title]="userSettings?.privacyMode ? 'Dato Protetto' : (item.label + ': ' + (item.value | currency: userSettings?.currency))">
 
       <div class="bar"
            [class.active]="item.isCurrent"
            [style.height.%]="item.heightPercent">
       </div>
-
     </div>
   </div>
 
