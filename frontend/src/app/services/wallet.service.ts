@@ -45,4 +45,11 @@ export class WalletService {
   getWalletById(walletId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${walletId}`);
   }
+
+  deleteWallet(walletId: number, adminId: number): Observable<any> {
+    return this.http.delete(
+      `${this.apiUrl}/${walletId}?adminId=${adminId}`
+    );
+  }
+
 }
