@@ -1,13 +1,12 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.Investment;
+import com.example.backend.entity.Portfolio;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import java.util.Optional;
 
 public interface InvestmentRepository extends JpaRepository<Investment, Long> {
-  // Trova tutti gli investimenti di un utente
-  List<Investment> findByUserId(Long userId);
 
-  // Trova se l'utente ha già comprato azioni di QUELLA azienda (utile per sommarle)
-  List<Investment> findByUserIdAndSymbol(Long userId, String symbol);
+  // AGGIUNGI QUESTO PER TROVARE L'AZIONE NEL PORTFOLIO:
+  Optional<Investment> findByPortfolioAndSymbol(Portfolio portfolio, String symbol);
 }

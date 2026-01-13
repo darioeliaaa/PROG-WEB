@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MarketService, MarketAsset } from '../market.service';
+import { UserService } from '../../../services/user.service';
 import { RouterModule } from '@angular/router';
+import {  Router } from '@angular/router';
 
 @Component({
   selector: 'app-asset-list',
@@ -19,15 +21,18 @@ export class AssetListComponent implements OnInit {
   loading = false;
 
   isTradeModalOpen = false;
-  selectedAsset: MarketAsset | null = null;
-  tradeAction: 'BUY' | 'SELL' = 'BUY'; // Azione di default
-  tradeQuantity: number = 1;
-  isProcessing = false; // Per lo spinner sul bottone conferma
+  isProcessing = false;
+  selectedAsset: any = null;
+  tradeAction: 'BUY' | 'SELL' = 'BUY';
+  tradeQuantity: number = 0; // Quantità inserita
+  currentHolding: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private marketService: MarketService,
-    private cd: ChangeDetectorRef // <--- 2. Iniettalo qui
+    private cd: ChangeDetectorRef,
+    private userService: UserService, // <--- NUOVO
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -46,7 +51,6 @@ export class AssetListComponent implements OnInit {
         this.assets = res;
         this.loading = false;
 
-        // <--- 3. FORZA L'AGGIORNAMENTO GRAFICO
         this.cd.detectChanges();
 
         console.log(`Dati caricati per ${this.currentType}:`, this.assets);
@@ -54,55 +58,82 @@ export class AssetListComponent implements OnInit {
       error: (err) => {
         console.error("Errore download market:", err);
         this.loading = false;
-        this.cd.detectChanges(); // Anche in caso di errore
+        this.cd.detectChanges();
       }
     });
   }
-  openTradePanel(asset: MarketAsset) {
+  openTradePanel(asset: any) {
     this.selectedAsset = asset;
-    this.tradeQuantity = 1; // Reset quantità
-    this.tradeAction = 'BUY'; // Reset azione
+    this.tradeAction = 'BUY';
+    this.tradeQuantity = 0; // Reset input
     this.isTradeModalOpen = true;
   }
 
-  // CHIUDI IL PANNELLO
   closeTradePanel() {
     this.isTradeModalOpen = false;
     this.selectedAsset = null;
   }
 
-  // IMPOSTA AZIONE (Compra/Vendi)
   setAction(action: 'BUY' | 'SELL') {
     this.tradeAction = action;
   }
 
-  // CALCOLA TOTALE LIVE
   get estimatedTotal(): number {
-    if (!this.selectedAsset) return 0;
+    if (!this.selectedAsset || !this.tradeQuantity) return 0;
     return this.selectedAsset.currentPrice * this.tradeQuantity;
   }
 
-  // ESEGUI TRANSAZIONE
   confirmTrade() {
+    // 1. Validazione input
     if (!this.selectedAsset || this.tradeQuantity <= 0) return;
+
+    // 2. Recupero ID Utente dal Service
+    const currentUserId = this.userService.getCurrentUserId();
+
+    // Se l'utente non è loggato, lo mandiamo al login
+    if (!currentUserId) {
+      alert("Devi effettuare il login per fare trading!");
+      this.router.navigate(['/login']);
+      return;
+    }
 
     this.isProcessing = true;
 
+    // 3. Creazione Oggetto per il Backend (TradeRequestDTO)
     const request = {
-      assetSymbol: this.selectedAsset.symbol,
-      amount: this.estimatedTotal, // O la quantità, dipende dal tuo backend
-      quantity: this.tradeQuantity,
-      type: this.tradeAction == 'BUY' ? 'ENTRATA' : 'USCITA', // Adatta ai tuoi enum Java
-      priceAtTransaction: this.selectedAsset.currentPrice
+      userId: currentUserId,                 // ID Utente reale
+      symbol: this.selectedAsset.symbol,     // Simbolo (es. AAPL)
+      assetName: this.selectedAsset.name,    // Nome (es. Apple Inc.)
+      quantity: this.tradeQuantity,          // Quante ne compri
+      priceAtTransaction: this.selectedAsset.currentPrice, // Prezzo attuale
+      action: this.tradeAction               // "BUY" o "SELL"
     };
-    console.log('Invio Ordine:', request);
 
-    // Simuliamo una chiamata (Sostituisci con this.marketService.executeTrade(request).subscribe...)
-    setTimeout(() => {
-      alert(`Ordine ${this.tradeAction} eseguito con successo per ${this.selectedAsset?.symbol}!`);
-      this.isProcessing = false;
-      this.closeTradePanel();
-    }, 1500);
+    console.log('Invio Ordine al Backend:', request);
+
+// CAMBIA QUESTO: da this.marketService.buyAsset(request) a:
+    this.marketService.tradeAsset(request).subscribe({
+      next: (response) => {
+        console.log('Risposta Backend:', response);
+        this.isProcessing = false;
+        this.closeTradePanel();
+
+        // Messaggio di successo
+        const tipoOperazione = this.tradeAction === 'BUY' ? 'Acquisto' : 'Vendita';
+        alert(`✅ ${tipoOperazione} di ${this.selectedAsset.symbol} completato con successo!`);
+
+        // Qui potresti chiamare this.loadAssets() se volessi aggiornare qualcosa,
+        // ma per ora va bene così.
+      },
+      error: (err) => {
+        console.error('Errore Backend:', err);
+        this.isProcessing = false;
+
+        // Mostra il messaggio di errore specifico che arriva da Java (es. "Fondi insufficienti")
+        const errorMsg = err.error && err.error.error ? err.error.error : "Errore durante la transazione";
+        alert("❌ Transazione fallita: " + errorMsg);
+      }
+    });
   }
 
 

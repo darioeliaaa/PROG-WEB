@@ -29,13 +29,12 @@ export class MarketHomeComponent implements OnInit {
 
   ngOnInit() {
     this.caricaAnteprime();
-    this.caricaNotizie(); // <--- Avvia il caricamento news
+    this.caricaNotizie();
   }
 
   caricaNotizie() {
     this.marketService.getNews().subscribe({
       next: (data) => {
-        // Se il backend risponde ma la lista è vuota, usiamo dati finti
         if (!data || data.length === 0) {
           console.warn('Backend ha risposto con lista vuota. Uso dati di test.');
           this.usaDatiFinti();
@@ -46,14 +45,12 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.error('Errore chiamata news:', err);
-        // In caso di errore, mostriamo comunque il banner con dati finti
         this.usaDatiFinti();
         this.cd.detectChanges();
       }
     });
   }
 
-  // Aggiungi questo metodo per popolare i dati finti
   usaDatiFinti() {
     this.newsList = [
       {
@@ -77,7 +74,6 @@ export class MarketHomeComponent implements OnInit {
   caricaAnteprime() {
     this.loading = true;
 
-    // 1. Carica STOCKS
     this.marketService.getAssetsByType('STOCK').subscribe({
       next: (res) => {
         this.topStocks = res.slice(0, 8);
@@ -86,7 +82,6 @@ export class MarketHomeComponent implements OnInit {
       error: (err) => console.error(err)
     });
 
-    // 2. Carica CRYPTO
     this.marketService.getAssetsByType('CRYPTO').subscribe({
       next: (res) => {
         this.topCrypto = res.slice(0, 8);
@@ -95,7 +90,6 @@ export class MarketHomeComponent implements OnInit {
       error: (err) => console.error(err)
     });
 
-    // 3. Carica ETF
     this.marketService.getAssetsByType('ETF').subscribe({
       next: (res) => {
         this.topEtf = res.slice(0, 8);
