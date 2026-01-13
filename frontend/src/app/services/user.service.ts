@@ -15,6 +15,8 @@ export class UserService {
 
   private currentUserEmail: string | null = localStorage.getItem('email');
   private currentUserId: number | null = localStorage.getItem('userId') ? Number(localStorage.getItem('userId')) : null;
+  private userSettings = new BehaviorSubject<any>(null);
+  userSettings$ = this.userSettings.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +35,20 @@ export class UserService {
     this.currentUserEmail = null;
     this.currentUserId = null;
     this.loggedIn.next(false);
+  }
+  loadUserSettings(userId: number): void {
+    this.http.get(`http://localhost:8080/api/settings/${userId}`).subscribe({
+      next: (settings) => {
+        this.userSettings.next(settings);
+        // Salviamole anche nel localStorage per averle subito al ricarico
+        localStorage.setItem('userSettings', JSON.stringify(settings));
+      },
+      error: (err) => console.error("Errore caricamento impostazioni nel service", err)
+    });
+  }
+  getSettingsSync() {
+    const local = localStorage.getItem('userSettings');
+    return local ? JSON.parse(local) : { language: 'it', currency: 'EUR', privacyMode: false };
   }
 
   isLoggedIn(): boolean {
