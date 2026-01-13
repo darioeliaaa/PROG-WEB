@@ -1,10 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+<div class="dashboard-container">
 
-</body>
-</html>
+  <header class="page-header">
+    <div class="header-left">
+      <div class="avatar-circle">
+        {{ currentUserName ? currentUserName.charAt(0).toUpperCase() : 'U' }}
+      </div>
+
+      <div class="header-texts">
+        <h1>Gestione Wallet</h1>
+        <p>Amministra i tuoi wallet come Admin</p>
+      </div>
+    </div>
+
+    <button class="back-btn" (click)="backToDashboard()">Torna alla Dashboard</button>
+  </header>
+
+  <div *ngIf="message" class="feedback-box" [ngClass]="isError ? 'error' : 'success'">
+    <span>{{isError ? '⚠️' : '✅'}}</span>
+    {{message}}
+  </div>
+
+  <div *ngIf="!loading && adminWallets.length === 0" class="form-section">
+    <p class="warning-text">Non sei admin di nessun wallet</p>
+  </div>
+
+  <form *ngIf="adminWallets.length > 0" class="form-section">
+    <div class="form-grid">
+      <div class="form-group full-width">
+        <label for="wallateSelect">Seleziona wallet</label>
+        <select id="walletSelect" (change)="selectWallet($event)">
+          <option value="">-- seleziona --</option>
+          <option *ngFor="let w of adminWallets; let i = index" [value]="i">{{ w.name }}</option>
+        </select>
+
+      </div>
+
+      <div class="form-group" *ngIf="selectedWallet">
+        <label for="monthlyBudget">Budget mensile (per membro)</label>
+        <input type="number" id="monthlyBudget" [(ngModel)]="selectedWallet.monthlyBudget" name="monthlyBudget" placeholder="Inserisci budget">
+        <button type="button" (click)="updateBudget()" class="btn-save">Salva budget</button>
+      </div>
+
+      <!-- MEMBRI -->
+      <div class="form-group full-width" *ngIf="selectedWallet">
+        <label>Membri del wallet</label>
+        <ul class="members-list">
+          <li *ngFor="let m of selectedWallet.members">
+            {{ m.username }}
+            <button
+              *ngIf="m.id !== currentUserId"
+              type="button"
+              class="btn-cancel"
+              (click)="removeMember(m.id)">
+              Rimuovi
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ELIMINA WALLET -->
+      <div class="form-group full-width" *ngIf="selectedWallet">
+        <button type="button" class="btn-cancel big" (click)="deleteWallet()">
+          Elimina Wallet
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
