@@ -358,3 +358,150 @@
     box-shadow: none;
   }
 }
+
+/* =========================================
+   TRADE MODAL STYLES (MATCHING TRANSACTION FORM)
+   ========================================= */
+
+/* Sfondo scuro (Backdrop) */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* La Card Centrale */
+.trade-card-stylish {
+  background: #ffffff;
+  width: 90%;
+  max-width: 600px; /* Larghezza contenuta come il form */
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Spazio verticale tra gli elementi */
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header Carino */
+.stylish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.stylish-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.asset-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.mini-logo {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+}
+
+/* --- REPLICA ESATTA DEL TUO CSS --- */
+
+/* 1. Toggle */
+.toggle-buttons {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+}
+.btn-toggle {
+  flex: 1; border: none; background: transparent; padding: 10px;
+  border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+}
+/* Verde per Acquista (Income) */
+.btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+/* Rosso per Vendi (Expense) */
+.btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* 2. Input Gigante */
+.center-input-section {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.center-input-section label {
+  font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700;
+}
+.amount-wrapper { position: relative; display: inline-block; width: 100%; text-align: center; }
+
+.big-input {
+  font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
+  border: none; background: transparent; text-align: center; width: 100%;
+  outline: none; padding: 0 0 5px 0; margin: 0;
+  border-bottom: 2px solid #e2e8f0; /* Linea un po' più spessa */
+  border-radius: 0;
+  transition: border-color 0.3s ease;
+  color: #1e293b;
+}
+
+.big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
+.big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
+
+/* Rimuove le frecce numeriche */
+.big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.big-input::placeholder { color: #cbd5e1; }
+
+/* 3. Griglia e Input Glass */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; }
+
+.grid-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Stile per i campi sola lettura (Prezzo e Totale) */
+.glass-readonly {
+  width: 100%; height: 45px; padding: 0 15px;
+  border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;
+  font-size: 0.95rem; color: #475569;
+  display: flex; align-items: center; /* Centra verticalmente il testo */
+  box-sizing: border-box;
+}
+
+.bold-text { font-weight: 700; color: #1e293b; }
+
+/* 4. Bottoni */
+.form-actions { display: flex; gap: 15px; margin-top: 10px; }
+.btn-primary, .btn-secondary {
+  flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s;
+}
+.btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3); }
+.btn-primary:hover { background: #6464fa; transform: translateY(-1px); }
+.btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
+
+.btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
+.btn-secondary:hover { background: #f1f5f9; }
+
+/* Animazioni */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
