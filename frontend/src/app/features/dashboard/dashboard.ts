@@ -27,6 +27,7 @@ export class Dashboard implements OnInit {
 
   currentDate: Date = new Date();
   profilePercentage: number = 0;
+  userSettings: any = { currency: 'EUR', privacyMode: false };
 
   // Variabile per gestire l'apertura/chiusura del modale
   isModalOpen: boolean = false; // ✅ NOVITÀ
@@ -46,6 +47,28 @@ export class Dashboard implements OnInit {
   ngOnInit() {
     this.caricaDati();
     this.checkProfileStatus();
+    this.userService.userSettings$.subscribe({
+      next: (settings) => {
+        if (settings) {
+          this.userSettings = settings;
+          console.log("Dashboard: Impostazioni aggiornate in tempo reale!", settings);
+          this.cd.detectChanges(); // Forza Angular a ridisegnare la pagina
+        }
+      }
+    });
+
+    // Caricamento iniziale (per sicurezza)
+    this.caricaImpostazioniUtente();
+  }
+  caricaImpostazioniUtente() {
+    const userId = this.userService.getCurrentUserId();
+    if (userId) {
+      // Carichiamo le impostazioni dal service
+      this.userSettings = this.userService.getSettingsSync();
+
+      // Opzionale: restiamo in ascolto di cambiamenti live
+      this.userService.loadUserSettings(userId);
+    }
   }
 
   get titoloMese(): string {
