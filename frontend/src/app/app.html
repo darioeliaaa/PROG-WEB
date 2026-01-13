@@ -6,19 +6,17 @@
   <app-sidebar *ngIf="!isMarketSection"></app-sidebar>
 
   <div class="main-content"
-       style="flex-grow: 1;
-              display: flex;
-              flex-direction: column;
-              min-width: 0; /* FONDAMENTALE per il fix della dashboard che si stringe */
-              background-color: #f8fafc;">
+       style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0; background-color: #f8fafc; height: 100vh;">
 
-    <div style="height: 100%; overflow-y: auto; display: flex; flex-direction: column;">
+    <app-header style="flex-shrink: 0; z-index: 100;"></app-header>
 
-      <app-header></app-header>
+    <div #scrollContainer
+         style="flex-grow: 1;
+                overflow-y: auto;
+                padding: 20px;
+                position: relative;">
 
-      <div style="padding: 20px; flex-grow: 1;">
-        <router-outlet></router-outlet>
-      </div>
+      <router-outlet></router-outlet>
 
     </div>
 
