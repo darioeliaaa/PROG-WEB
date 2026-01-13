@@ -3,6 +3,8 @@ package com.example.backend.repository;
 import com.example.backend.entity.User; // <--- ASSICURATI DI AVERE QUESTO IMPORT
 import com.example.backend.entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
@@ -16,4 +18,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
   // ✅ 3. NUOVO: Serve per verificare se un codice esiste già
   boolean existsByInviteCode(String inviteCode);
+
+  List<Wallet> findAllByMembers_Id(Long userId);
 }
