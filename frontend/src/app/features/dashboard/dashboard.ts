@@ -6,8 +6,6 @@ import { Router } from '@angular/router';
 import { InvestmentSummary } from './investment-summary/investment-summary';
 import { BudgetOverview } from './budget-overview/budget-overview';
 import { YearlyHistory } from './yearly-history/yearly-history';
-
-// ✅ NOVITÀ: Importiamo il componente Movimenti per usarlo nel modale
 import { Movimenti } from '../movimenti/movimenti';
 
 // Services
@@ -18,7 +16,6 @@ import { WalletService } from '../../services/wallet.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // ✅ NOVITÀ: Aggiungi 'Movimenti' qui negli imports
   imports: [CommonModule, InvestmentSummary, BudgetOverview, YearlyHistory, Movimenti],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -28,12 +25,19 @@ export class Dashboard implements OnInit {
   currentDate: Date = new Date();
   profilePercentage: number = 0;
 
-  // Variabile per gestire l'apertura/chiusura del modale
-  isModalOpen: boolean = false; // ✅ NOVITÀ
+  // Modali
+  isModalOpen: boolean = false;
+  isHistoryOpen: boolean = false;
 
-  // Dati grafici
+  // Dati
   datiMensili: any = { transactions: [], totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
+
+  // Contenitori Dati
   transazioniTotali: any[] = [];
+  recentTransactions: any[] = [];
+
+  // ✅ NUOVO: Variabile per il saldo che non cambia col mese
+  saldoTotaleReale: number = 0;
 
   constructor(
     private transactionService: TransactionService,
@@ -52,45 +56,56 @@ export class Dashboard implements OnInit {
     return this.currentDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
   }
 
-  // --- GESTIONE MODALE (POPUP) --- ✅ NOVITÀ
-
-  openModal() {
-    this.isModalOpen = true; // Apre il popup
-  }
-
-  closeModal() {
-    this.isModalOpen = false; // Chiude il popup
-  }
-
-  // Chiamata quando il componente figlio <app-movimenti> emette l'evento (saved)
-  handleTransactionSaved() {
-    this.isModalOpen = false; // Chiudi modale
-    this.caricaDati(); // Ricarica tutti i dati e aggiorna i grafici!
-  }
-
-  // --------------------------------
-
-  checkProfileStatus() {
-    const userId = this.userService.getCurrentUserId();
-    if (userId) {
-      this.userService.getProfileStatus(userId).subscribe({
-        next: (data) => {
-          this.profilePercentage = data.completionPercentage;
-        },
-        error: (err) => console.error("Errore stato profilo:", err)
-      });
-    }
-  }
-
   goToProfile() {
     this.router.navigate(['/profilo']);
   }
 
+  // --- GESTIONE MODALI ---
+  openHistory() {
+    this.isHistoryOpen = true;
+    if (this.transazioniTotali) {
+      this.transazioniTotali.sort((a: any, b: any) =>
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+    }
+  }
+  closeHistory() { this.isHistoryOpen = false; }
+
+  openModal() { this.isModalOpen = true; }
+  closeModal() { this.isModalOpen = false; }
+  handleTransactionSaved() {
+    this.isModalOpen = false;
+    this.caricaDati(); // Ricarica tutto quando salvi
+  }
+
+  // --- LOGICA DATI ---
+  checkProfileStatus() {
+    const userId = this.userService.getCurrentUserId();
+    if (userId) {
+      this.userService.getProfileStatus(userId).subscribe({
+        next: (data) => this.profilePercentage = data.completionPercentage
+      });
+    }
+  }
+
+  // ✅ FIX: BLOCCO DATE FUTURE
   cambiaMese(delta: number) {
-    const nuovaData = new Date(this.currentDate);
-    nuovaData.setMonth(nuovaData.getMonth() + delta);
-    this.currentDate = nuovaData;
-    this.filtraDatiLocali();
+    const oggi = new Date();
+    const testDate = new Date(this.currentDate);
+
+    // Se proviamo ad andare avanti (delta > 0)
+    if (delta > 0) {
+      // Controlliamo se siamo già nel mese corrente (o futuro)
+      if (testDate.getFullYear() === oggi.getFullYear() &&
+        testDate.getMonth() >= oggi.getMonth()) {
+        return; // BLOCCA: Non andare nel futuro
+      }
+    }
+
+    // Se tutto ok, cambia mese
+    testDate.setMonth(testDate.getMonth() + delta);
+    this.currentDate = testDate;
+    this.filtraDatiLocali(); // Aggiorna solo i grafici mensili
   }
 
   caricaDati() {
@@ -99,51 +114,79 @@ export class Dashboard implements OnInit {
 
     this.walletService.getUserWallets(userId).subscribe({
       next: (wallets) => {
-        if (!wallets || wallets.length === 0) {
-          console.warn("Nessun wallet trovato.");
-          return;
-        }
-
+        if (!wallets || wallets.length === 0) return;
         const mainWalletId = wallets[0].id;
 
         this.transactionService.getTransactionsByWallet(mainWalletId).subscribe({
           next: (allTransactions) => {
-            this.transazioniTotali = allTransactions;
-            this.filtraDatiLocali(); // Aggiorna i calcoli
+            // 1. Salviamo TUTTE le transazioni
+            this.transazioniTotali = allTransactions.sort((a: any, b: any) =>
+              new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+
+            // ✅ 2. CALCOLO SALDO REALE (Totale assoluto, indipendente dal mese)
+            this.calcolaSaldoTotaleAssoluto();
+
+            // 3. Estrai ultimi 5 movimenti
+            this.recentTransactions = this.transazioniTotali.slice(0, 5);
+
+            // 4. Filtra i dati per i grafici del mese corrente
+            this.filtraDatiLocali();
           },
-          error: (err) => console.error("Errore download transazioni:", err)
+          error: (err) => console.error("Errore transazioni:", err)
         });
-      },
-      error: (err:any) => console.error("Errore caricamento wallet:", err)
+      }
     });
+  }
+
+  // ✅ NUOVA FUNZIONE: Calcola il saldo su TUTTO lo storico
+  calcolaSaldoTotaleAssoluto() {
+    let tot = 0;
+    this.transazioniTotali.forEach((t: any) => {
+      if (t.type === 'ENTRATA') tot += Number(t.amount);
+      if (t.type === 'USCITA') tot -= Number(t.amount);
+    });
+    this.saldoTotaleReale = tot;
   }
 
   filtraDatiLocali() {
     if (!this.transazioniTotali) return;
-
     const meseTarget = this.currentDate.getMonth();
     const annoTarget = this.currentDate.getFullYear();
 
+    // Filtra SOLO per i grafici mensili
     const filtered = this.transazioniTotali.filter((t: any) => {
       const d = new Date(t.date);
       return d.getMonth() === meseTarget && d.getFullYear() === annoTarget;
     });
 
-    let entrate = 0;
-    let uscite = 0;
+    let entrateMese = 0;
+    let usciteMese = 0;
 
     filtered.forEach((t: any) => {
-      if (t.type === 'ENTRATA') entrate += Number(t.amount);
-      if (t.type === 'USCITA') uscite += Number(t.amount);
+      if (t.type === 'ENTRATA') entrateMese += Number(t.amount);
+      if (t.type === 'USCITA') usciteMese += Number(t.amount);
     });
 
+    // Questi dati servono SOLO ai grafici del mese (app-budget-overview)
     this.datiMensili = {
       transactions: filtered,
-      totaleEntrate: entrate,
-      totaleUscite: uscite,
-      saldo: entrate - uscite
+      totaleEntrate: entrateMese,
+      totaleUscite: usciteMese,
+      saldo: entrateMese - usciteMese // Questo è il flusso di cassa mensile, non il saldo totale
     };
 
     this.cd.detectChanges();
+  }
+
+  getCategoryIcon(category: string): string {
+    const cat = category ? category.toLowerCase() : '';
+    if (cat.includes('casa')) return '🏠';
+    if (cat.includes('spesa')) return '🛒';
+    if (cat.includes('svago')) return '🎉';
+    if (cat.includes('auto')) return '🚗';
+    if (cat.includes('salute')) return '❤️';
+    if (cat.includes('stipendio')) return '💰';
+    return '📄';
   }
 }

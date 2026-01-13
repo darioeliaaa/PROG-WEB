@@ -13,81 +13,97 @@ export class InvestmentSummary implements OnChanges {
   @Input() currentDate!: Date;
   @Input() tutteLeTransazioni: any[] = [];
 
+  // ✅ NUOVO INPUT: Riceve il saldo reale (assoluto) dalla Dashboard
+  @Input() saldoReale: number = 0;
+
   totaleEntrate: number = 0;
   totaleUscite: number = 0;
+  // Non serve calcolarlo qui se usiamo quello passato dal padre,
+  // ma per sicurezza lo aggiorniamo nel metodo sotto.
   saldoAttuale: number = 0;
 
-  // NUOVO: Array per contenere i dati degli ultimi 6 mesi
   trendData: { label: string; value: number; heightPercent: number; isCurrent: boolean }[] = [];
 
   ngOnChanges(changes: SimpleChanges) {
-    // Ricalcola tutto ogni volta che cambiano i dati o la data
-    if (changes['currentDate'] || changes['tutteLeTransazioni']) {
-      this.calcoloPatrimonioAttuale();
+    // Ricalcola se cambiano le transazioni o il saldo passato
+    // NOTA: Non ricalcoliamo sui cambi di 'currentDate' per mantenere i totali fissi!
+    if (changes['tutteLeTransazioni'] || changes['saldoReale']) {
+      this.calcolaTotaliGlobali();
       this.calcoloTrendUltimi6Mesi();
     }
   }
 
-  // 1. Calcolo del saldo ad oggi (quello che avevi già)
-  calcoloPatrimonioAttuale(): void {
-    const datiAdOggi = this.calcoloSaldoAllaData(this.currentDate);
-    this.totaleEntrate = datiAdOggi.entrate;
-    this.totaleUscite = datiAdOggi.uscite;
-    this.saldoAttuale = datiAdOggi.saldo;
+  // 1. Calcolo dei totali ASSOLUTI (Indipendenti dal mese selezionato)
+  calcolaTotaliGlobali(): void {
+    // Usiamo il saldo passato dal padre per coerenza massima
+    this.saldoAttuale = this.saldoReale;
+
+    this.totaleEntrate = 0;
+    this.totaleUscite = 0;
+
+    if (!this.tutteLeTransazioni) return;
+
+    // Somma su TUTTO lo storico senza guardare le date
+    this.tutteLeTransazioni.forEach(t => {
+      const importo = Number(t.amount);
+      if (t.type === 'ENTRATA') this.totaleEntrate += importo;
+      else if (t.type === 'USCITA') this.totaleUscite += importo;
+    });
   }
 
-  // 2. NUOVO: Calcolo lo storico degli ultimi 6 mesi
+  // 2. Calcolo lo storico degli ultimi 6 mesi (Rispetto a OGGI, non alla data selezionata)
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
     const trendTemp = [];
-    let maxSaldo = 0;
+    let maxValoreAssoluto = 0; // Per scalare le barre (usiamo valore assoluto per gestire anche saldi negativi)
 
-    // Ciclo per gli ultimi 6 mesi (da -5 a 0)
+    // Usiamo OGGI come ancora, così il grafico non cambia se navighi indietro
+    const oggi = new Date();
+
     for (let i = mesi - 1; i >= 0; i--) {
-      const dataTarget = new Date(this.currentDate);
-      dataTarget.setMonth(dataTarget.getMonth() - i);
+      // Calcoliamo il mese target partendo da oggi
+      const dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - i, 1);
 
-      // Impostiamo la data all'ultimo giorno di quel mese per prendere tutte le transazioni
-      // (trick: giorno 0 del mese successivo = ultimo giorno mese corrente)
-      const fineMese = new Date(dataTarget.getFullYear(), dataTarget.getMonth() + 1, 0);
+      const mese = dataTarget.getMonth();
+      const anno = dataTarget.getFullYear();
 
-      const risultato = this.calcoloSaldoAllaData(fineMese);
+      // Filtriamo le transazioni ESCLUSIVAMENTE di quel mese
+      // (Qui calcoliamo il flusso di cassa mensile per il grafico, non il saldo accumulato)
+      const transazioniMese = this.tutteLeTransazioni.filter(t => {
+        const d = new Date(t.date);
+        return d.getMonth() === mese && d.getFullYear() === anno;
+      });
 
-      // Salviamo il saldo massimo trovato per calcolare le percentuali delle barre
-      if (risultato.saldo > maxSaldo) maxSaldo = risultato.saldo;
+      // Calcolo saldo DEL MESE (Entrate - Uscite di quel mese)
+      let saldoMese = 0;
+      transazioniMese.forEach(t => {
+        if(t.type === 'ENTRATA') saldoMese += Number(t.amount);
+        if(t.type === 'USCITA') saldoMese -= Number(t.amount);
+      });
+
+      if (Math.abs(saldoMese) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoMese);
 
       trendTemp.push({
-        label: fineMese.toLocaleString('it-IT', { month: 'short' }), // "gen", "feb"
-        value: risultato.saldo,
-        heightPercent: 0, // Lo calcoliamo dopo
-        isCurrent: i === 0 // L'ultimo è il mese corrente
+        label: dataTarget.toLocaleString('it-IT', { month: 'short' }),
+        value: saldoMese,
+        heightPercent: 0,
+        isCurrent: i === 0
       });
     }
 
-    // Normalizziamo le altezze (La barra più alta sarà 100%)
-    this.trendData = trendTemp.map(item => ({
-      ...item,
-      heightPercent: maxSaldo > 0 ? (item.value / maxSaldo) * 100 : 0
-    }));
-  }
+    // Normalizziamo le altezze
+    this.trendData = trendTemp.map(item => {
+      let percent = 0;
+      if (maxValoreAssoluto > 0) {
+        percent = (Math.abs(item.value) / maxValoreAssoluto) * 100;
+      }
+      // Un minimo di altezza per le barre visibili ma piccole
+      if (item.value !== 0 && percent < 10) percent = 10;
 
-  // Funzione Helper: Calcola il saldo accumulato fino a una certa data
-  private calcoloSaldoAllaData(dataLimite: Date) {
-    let entrate = 0;
-    let uscite = 0;
-
-    if (!this.tutteLeTransazioni) return { entrate: 0, uscite: 0, saldo: 0 };
-
-    this.tutteLeTransazioni.forEach(t => {
-      const dataT = new Date(t.date);
-      // Se la transazione è successiva alla data limite, ignorala
-      if (dataT > dataLimite) return;
-
-      const importo = Number(t.amount);
-      if (t.type === 'ENTRATA') entrate += importo;
-      else if (t.type === 'USCITA') uscite += importo;
+      return {
+        ...item,
+        heightPercent: percent
+      };
     });
-
-    return { entrate, uscite, saldo: entrate - uscite };
   }
 }
