@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -33,37 +34,54 @@ public class WalletService {
   // --- 1. CREAZIONE WALLET (Con Generazione Codice) ---
   @Transactional
   public Wallet createSharedWallet(Long userId, String name) {
-    User user = userRepository.findById(userId).orElseThrow();
+    User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
     Wallet wallet = new Wallet();
     wallet.setName(name);
     wallet.setPersonal(false);
     wallet.setAdmin(user);
-
-    // Generazione codice univoco
     wallet.setInviteCode(generateUniqueInviteCode());
 
-    // Gestione relazione
+    // 1. Salviamo PRIMA il wallet per assicurarci che abbia un ID e esista nel DB
+    wallet = walletRepository.save(wallet);
+
+    // 2. Aggiorniamo le relazioni in memoria
     wallet.getMembers().add(user);
     user.getWallets().add(wallet);
 
-    return walletRepository.save(wallet);
+    // 3. PASSAGGIO CRUCIALE MANCANTE:
+    // Poiché User è il "proprietario" della relazione (@JoinTable è su User),
+    // dobbiamo salvare l'utente per scrivere la riga nella tabella ponte 'user_wallets'.
+    userRepository.save(user);
+
+    return wallet;
   }
 
   // --- 2. JOIN WALLET TRAMITE CODICE (Nuovo Metodo) ---
   @Transactional
   public Wallet joinWalletByCode(String inviteCode, Long userId) {
+    // 1. Trova il wallet e l'utente
     Wallet wallet = walletRepository.findByInviteCode(inviteCode)
       .orElseThrow(() -> new RuntimeException("Codice invito non valido!"));
 
     User user = userRepository.findById(userId)
       .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-    if (!user.getWallets().contains(wallet)) {
-      user.getWallets().add(wallet);
-      wallet.getMembers().add(user);
-      userRepository.save(user); // Salva l'utente per aggiornare la relazione
+    // 2. Controllo manuale per evitare duplicati (più sicuro del .contains)
+    boolean isAlreadyMember = wallet.getMembers().stream()
+      .anyMatch(m -> m.getId().equals(userId));
+
+    if (isAlreadyMember) {
+      throw new RuntimeException("Sei già membro di questo wallet!");
     }
+
+    // 3. Aggiungi la relazione
+    wallet.getMembers().add(user);
+    user.getWallets().add(wallet);
+
+    // 4. Salva l'utente (proprietario della relazione)
+    userRepository.save(user);
+
     return wallet;
   }
 
@@ -187,5 +205,9 @@ public class WalletService {
       guest.getWallets().add(wallet);
       userRepository.save(guest);
     }
+  }
+
+  public List<Wallet> findWalletsByUserId(Long userId) {
+    return walletRepository.findAllByMembers_Id(userId);
   }
 }
