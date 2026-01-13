@@ -28,11 +28,9 @@ public class WalletController {
   // --- GET USER WALLETS ---
   @GetMapping("/user/{userId}")
   public ResponseEntity<?> getUserWallets(@PathVariable Long userId) {
-    User user = userRepository.findById(userId).orElse(null);
-    if (user == null) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(user.getWallets());
+    // Invece di chiedere all'utente, chiediamo direttamente alla tabella dei wallet
+    // Questo risolve il problema "lista vuota" o "non aggiornata"
+    return ResponseEntity.ok(walletService.findWalletsByUserId(userId));
   }
 
   // --- CREA WALLET CONDIVISO ---
