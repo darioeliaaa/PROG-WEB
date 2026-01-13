@@ -381,3 +381,316 @@
 
   .text-box p { display: none; }
 }
+
+/* =========================================
+   ===== 8. SEZIONE MOVIMENTI (UNIFIED ELITE) =====
+   ========================================= */
+
+.transactions-container {
+  width: 100%;
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+
+/* --- LA CARD UNICA --- */
+.transactions-unified-card {
+  background: #ffffff;
+  border-radius: 28px; /* Curve molto morbide */
+  padding: 25px;
+  /* Ombra complessa per effetto profondità */
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.02); /* Bordo sottilissimo */
+  position: relative;
+  overflow: hidden;
+}
+
+/* HEADER DENTRO LA CARD */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-header-row h2 {
+  font-size: 1.35rem;
+  color: #0f172a;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle-badge {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* Link elegante */
+.btn-text-link {
+  background: transparent;
+  border: none;
+  color: #6366f1;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-text-link:hover {
+  color: #4338ca;
+  transform: translateX(2px);
+}
+
+/* --- LISTA E RIGHE --- */
+.unified-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.unified-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 10px; /* Padding interno per hover */
+  border-radius: 16px; /* Arrotondamento all'hover */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border-bottom: 1px solid #f8fafc; /* Linea separatrice quasi invisibile */
+}
+
+/* Rimuovi bordo ultimo elemento */
+.unified-row:last-child {
+  border-bottom: none;
+}
+
+/* EFFETTO HOVER "ELITE" */
+.unified-row:hover {
+  background-color: #f8fafc;
+  transform: scale(1.01);
+}
+
+/* --- PARTE SINISTRA --- */
+.row-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* ICONA GLOW (Il tocco di classe) */
+.icon-glow-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: transform 0.2s;
+
+  /* Default: Grigio Sfumato */
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #475569;
+}
+
+/* Colore Icona per ENTRATE */
+.unified-row.is-positive .icon-glow-box {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); /* Glow verde */
+}
+
+/* Colore Icona per USCITE (Default nel loop se non è positiva) */
+.unified-row:not(.is-positive) .icon-glow-box {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+  color: #be123c;
+  /* box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15); Glow rosso (opzionale, togli se troppo forte) */
+}
+
+.unified-row:hover .icon-glow-box {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* TESTI */
+.text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.row-desc {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.row-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.row-cat {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.separator {
+  font-size: 0.6rem;
+  opacity: 0.5;
+}
+
+/* --- PARTE DESTRA (IMPORTO) --- */
+.row-amount {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+
+.row-amount small {
+  font-size: 0.75em;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-left: 1px;
+}
+
+.row-amount.income { color: #10b981; }
+.row-amount.expense { color: #1e293b; } /* Nero elegante per spese, o usa #f43f5e per rosso */
+
+/* EMPTY STATE */
+.empty-state-elegant {
+  text-align: center;
+  padding: 40px 0;
+  color: #94a3b8;
+}
+.empty-icon-box {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  opacity: 0.3;
+}
+/* =========================================
+   ===== 9. MODALE STORICO (BLURRED) =====
+   ========================================= */
+
+/* Sfondo a tutto schermo con SFOCATURA */
+.history-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+
+  /* Colore scuro semitrasparente + BLUR INTENSO */
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(14px); /* <--- QUESTO FA LA MAGIA */
+  -webkit-backdrop-filter: blur(14px); /* Safari support */
+
+  z-index: 3000; /* Sopra a tutto */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* La Card Centrale Alta */
+.history-card {
+  background: #ffffff;
+  width: 90%;
+  max-width: 600px;
+  height: 85vh; /* Molto alta */
+  border-radius: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header del Modale */
+.history-header {
+  padding: 25px 30px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0; /* Non si schiaccia */
+}
+
+.h-titles h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.h-titles p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Bottone Chiudi Rotondo */
+.close-history-btn {
+  background: #f8fafc;
+  border: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.close-history-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* AREA LISTA SCORREVOLE */
+.history-list-scroll {
+  flex: 1; /* Occupa tutto lo spazio rimasto */
+  overflow-y: auto; /* SCROLL ABILITATO */
+  padding: 15px 25px;
+}
+
+/* Stilizzazione Scrollbar (Chrome/Safari/Edge) */
+.history-list-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.history-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.history-list-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+  border: 2px solid #ffffff; /* Bordo bianco per staccare */
+}
+
+/* Animazione entrata dal basso */
+@keyframes slideUpModal {
+  from { transform: translateY(50px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}

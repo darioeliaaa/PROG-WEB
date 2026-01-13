@@ -7,22 +7,16 @@
     </div>
 
     <div class="header-controls">
-
       <button class="btn-add-funds" (click)="openModal()">
         <div class="icon-circle">+</div>
         <span>Aggiungi Fondi</span>
       </button>
 
       <div class="month-selector">
-        <button class="nav-arrow" (click)="cambiaMese(-1)">
-          <span class="arrow-icon">❮</span>
-        </button>
+        <button class="nav-arrow" (click)="cambiaMese(-1)"><span class="arrow-icon">❮</span></button>
         <span class="date-badge">{{ titoloMese | titlecase }}</span>
-        <button class="nav-arrow" (click)="cambiaMese(1)">
-          <span class="arrow-icon">❯</span>
-        </button>
+        <button class="nav-arrow" (click)="cambiaMese(1)"><span class="arrow-icon">❯</span></button>
       </div>
-
     </div>
   </header>
 
@@ -50,24 +44,105 @@
   </div>
 
   <section class="chart-section fade-in">
-    <app-investment-summary [currentDate]="currentDate" [tutteLeTransazioni]="transazioniTotali"></app-investment-summary>
+    <app-investment-summary
+      [currentDate]="currentDate"
+      [tutteLeTransazioni]="transazioniTotali"
+      [saldoReale]="saldoTotaleReale">
+    </app-investment-summary>
   </section>
 
-  <section class="chart-section fade-in" style="animation-delay: 0.1s;">
-    <app-budget-overview [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview>
+  <section class="transactions-container fade-in" style="animation-delay: 0.1s;">
+    <div class="transactions-unified-card">
+      <div class="card-header-row">
+        <div class="title-group">
+          <h2>Ultimi Movimenti</h2>
+          <span class="subtitle-badge">Recenti</span>
+        </div>
+        <button class="btn-text-link" (click)="openHistory()">Vedi tutto</button>
+      </div>
+
+      <div class="unified-list">
+        <div *ngIf="recentTransactions.length === 0" class="empty-state-elegant">
+          <div class="empty-icon-box">📂</div>
+          <p>Nessun movimento recente</p>
+        </div>
+
+        <div *ngFor="let t of recentTransactions" class="unified-row" [class.is-positive]="t.type === 'ENTRATA'">
+          <div class="row-left">
+            <div class="icon-glow-box">{{ getCategoryIcon(t.category) }}</div>
+            <div class="text-group">
+              <span class="row-desc">{{ t.description }}</span>
+              <div class="row-sub">
+                <span class="row-cat">{{ t.category | titlecase }}</span>
+                <span class="separator">•</span>
+                <span class="row-date">{{ t.date | date:'d MMM' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row-right">
+            <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
+              {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.0-0' }}<small>,{{ (t.amount % 1).toFixed(2).substring(2) }}</small> €
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="chart-section fade-in" style="animation-delay: 0.2s;">
+    <app-budget-overview [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview>
+  </section>
+
+  <section class="chart-section fade-in" style="animation-delay: 0.3s;">
     <app-yearly-history [currentDate]="currentDate" [allTransactions]="transazioniTotali"></app-yearly-history>
   </section>
 
-  <div class="modal-overlay fade-in" *ngIf="isModalOpen">
-    <div class="modal-content">
+  <div class="modal-overlay fade-in" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3>Nuovo Movimento</h3>
         <button class="close-btn" (click)="closeModal()">✕</button>
       </div>
-      <app-movimenti (close)="closeModal()" (saved)="handleTransactionSaved()"></app-movimenti>
+      <app-movimenti (saved)="handleTransactionSaved()"></app-movimenti>
+    </div>
+  </div>
+
+
+  <div class="history-overlay fade-in" *ngIf="isHistoryOpen" (click)="closeHistory()">
+    <div class="history-card" (click)="$event.stopPropagation()">
+
+      <div class="history-header">
+        <div class="h-titles">
+          <h2>Storico Completo</h2>
+          <p>Tutti i movimenti dal primo giorno</p>
+        </div>
+        <button class="close-history-btn" (click)="closeHistory()">✕</button>
+      </div>
+
+      <div class="history-list-scroll">
+        <div *ngFor="let t of transazioniTotali" class="unified-row" [class.is-positive]="t.type === 'ENTRATA'">
+
+          <div class="row-left">
+            <div class="icon-glow-box">{{ getCategoryIcon(t.category) }}</div>
+            <div class="text-group">
+              <span class="row-desc">{{ t.description }}</span>
+              <div class="row-sub">
+                <span class="row-cat">{{ t.category | titlecase }}</span>
+                <span class="separator">•</span>
+                <span class="row-date">{{ t.date | date:'d MMM yyyy' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row-right">
+            <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
+              {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.0-0' }}<small>,{{ (t.amount % 1).toFixed(2).substring(2) }}</small> €
+            </span>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
