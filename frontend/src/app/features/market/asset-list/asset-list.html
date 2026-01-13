@@ -1,7 +1,7 @@
 <div class="market-container">
 
   <header class="market-header">
-    <h2>Listino:  {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
+    <h2>Listino: {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
   </header>
 
   <div *ngIf="loading" class="loading-state">
@@ -9,98 +9,69 @@
   </div>
 
   <div class="tv-list" *ngIf="!loading && assets.length > 0">
-
     <div class="tv-row header-row">
       <div class="col-symbol">Asset</div>
       <div class="col-price">Prezzo</div>
       <div class="col-change">Var %</div>
-
       <div class="col-stats mobile-hide">Statistiche 24h</div>
       <div class="col-market mobile-hide">Fondamentali</div>
-
       <div class="col-action">Azioni</div>
     </div>
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
-
-      <div class="col-symbol"
-           [routerLink]="['/market/chart', asset.symbol]"
-           title="Clicca per il grafico">
-
-        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'"
-             class="small-logo"
-             alt="logo">
-
+      <div class="col-symbol" [routerLink]="['/market/chart', asset.symbol]" title="Clicca per il grafico">
+        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'" class="small-logo" alt="logo">
         <div class="symbol-info">
           <span class="ticker">{{ asset.symbol }}</span>
           <span class="full-name">{{ asset.name }}</span>
           <span class="industry-badge" *ngIf="asset.industry">{{ asset.industry }}</span>
         </div>
       </div>
-
       <div class="col-price">
         <span class="main-price">{{ asset.currentPrice | currency: (asset.currency || 'USD') }}</span>
       </div>
-
       <div class="col-change">
         <div class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent > 0 ? '▲' : '▼' }} {{ asset.changePercent | number:'1.2-2' }}%
         </div>
-        <small class="change-value" [class.text-up]="asset.changeValue >= 0" [class.text-down]="asset.changeValue < 0">
-          {{ asset.changeValue > 0 ? '+' : ''}}{{ asset.changeValue | number:'1.2-2' }}
-        </small>
       </div>
-
       <div class="col-stats mobile-hide">
-        <div class="stat-row"><span>Open:</span> <strong>{{ asset.openPrice | number:'1.2-2' }}</strong></div>
         <div class="stat-row"><span>High:</span> <strong>{{ asset.highPrice | number:'1.2-2' }}</strong></div>
         <div class="stat-row"><span>Low:</span> <strong>{{ asset.lowPrice | number:'1.2-2' }}</strong></div>
       </div>
-
       <div class="col-market mobile-hide">
         <div class="stat-row" *ngIf="asset.marketCap">
-          <span>Mkt Cap:</span>
-          <strong>{{ asset.marketCap | number }} M</strong>
-        </div>
-        <div class="stat-row">
-          <span>Prev. Cl:</span>
-          <span style="color: #666">{{ asset.prevClosePrice | number:'1.2-2' }}</span>
+          <span>Mkt Cap:</span> <strong>{{ asset.marketCap | number }} M</strong>
         </div>
       </div>
-
       <div class="col-action">
         <button class="btn-trade" (click)="openTradePanel(asset)">Trade</button>
       </div>
-
     </div>
   </div>
-
-  <div *ngIf="!loading && assets.length === 0" class="empty-state">
-    Nessun asset trovato in questa categoria.
-  </div>
-
 </div>
+
 <div class="modal-overlay" *ngIf="isTradeModalOpen">
-  <div class="trade-card-stylish"> <div class="stylish-header">
-    <div class="asset-pill">
-      <img [src]="selectedAsset?.logoUrl || 'assets/icons/default-asset.png'" class="mini-logo">
-      <span>{{ selectedAsset?.symbol }}</span>
+  <div class="trade-card-stylish">
+
+    <div class="stylish-header">
+      <div class="header-left">
+        <div class="asset-pill">
+          <img [src]="selectedAsset?.logoUrl || 'assets/icons/default-asset.png'" class="mini-logo">
+          <span>{{ selectedAsset?.symbol }}</span>
+        </div>
+        <h3>Nuovo Ordine</h3>
+      </div>
+
+      <div class="holding-badge">
+        Possedute: <strong>{{ getMyQuantity(selectedAsset?.symbol) | number:'1.0-4' }}</strong>
+      </div>
     </div>
-    <h3>Nuovo Ordine</h3>
-  </div>
 
     <div class="form-group">
       <div class="toggle-buttons">
-        <button type="button"
-                [class.active]="tradeAction === 'BUY'"
-                (click)="setAction('BUY')"
-                class="btn-toggle income"> <span>▲</span> Acquista
-        </button>
-        <button type="button"
-                [class.active]="tradeAction === 'SELL'"
-                (click)="setAction('SELL')"
-                class="btn-toggle expense"> <span>▼</span> Vendi
-        </button>
+        <button type="button" [class.active]="tradeAction === 'BUY'" (click)="setAction('BUY')" class="btn-toggle income"> <span>▲</span> Acquista </button>
+        <button type="button" [class.active]="tradeAction === 'SELL'" (click)="setAction('SELL')" class="btn-toggle expense"> <span>▼</span> Vendi </button>
       </div>
     </div>
 
@@ -109,40 +80,35 @@
       <div class="amount-wrapper">
         <input type="number"
                [(ngModel)]="tradeQuantity"
+               (input)="onQuantityChange()"
                class="big-input"
                [ngClass]="{'text-green': tradeAction === 'BUY', 'text-red': tradeAction === 'SELL'}"
-               placeholder="0"
-               min="0.01">
+               placeholder="0" min="0">
       </div>
     </div>
 
-    <div class="grid-row-2">
-
-      <div class="form-group">
-        <label>Prezzo Attuale</label>
-        <div class="glass-readonly">
-          {{ selectedAsset?.currentPrice | currency:'USD' }}
-        </div>
+    <div class="center-input-section" style="margin-top: 15px;">
+      <label>IMPORTO (€)</label>
+      <div class="amount-wrapper small-wrapper">
+        <input type="number"
+               [(ngModel)]="tradeAmount"
+               (input)="onAmountChange()"
+               class="big-input small-input"
+               placeholder="0.00">
+        <span class="currency-suffix">€</span>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label>Totale Stimato</label>
-        <div class="glass-readonly bold-text">
-          {{ estimatedTotal | currency:'USD' }}
-        </div>
-      </div>
-
+    <div class="info-row">
+      <span>Prezzo Attuale:</span>
+      <strong>{{ selectedAsset?.currentPrice | currency:'USD' }}</strong>
     </div>
 
     <div class="form-actions">
       <button type="button" (click)="closeTradePanel()" class="btn-secondary">Annulla</button>
-
-      <button type="button"
-              class="btn-primary"
-              (click)="confirmTrade()"
-              [disabled]="isProcessing || tradeQuantity <= 0">
-        <span *ngIf="!isProcessing">Conferma</span>
-        <span *ngIf="isProcessing">...</span>
+      <button type="button" class="btn-primary" (click)="confirmTrade()" [disabled]="isProcessing || !tradeQuantity || tradeQuantity <= 0">
+        <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'Acquisto' : 'Vendita' }}</span>
+        <span *ngIf="isProcessing">Esecuzione...</span>
       </button>
     </div>
 

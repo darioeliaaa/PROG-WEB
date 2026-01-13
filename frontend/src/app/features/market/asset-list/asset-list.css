@@ -505,3 +505,59 @@ label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; 
 /* Animazioni */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Badge quante ne ho */
+.holding-badge {
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  margin-left: auto; /* Lo spinge a destra */
+}
+
+.stylish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Nuovo Input Euro */
+.small-wrapper {
+  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.small-input {
+  font-size: 1.6rem !important; /* Un po' più piccolo dell'altro */
+  color: #334155 !important;
+}
+
+.currency-suffix {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: #94a3b8;
+  font-weight: bold;
+}
+
+/* Riga info prezzo */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px dashed #e2e8f0;
+  margin-bottom: 20px;
+  color: #64748b;
+  font-size: 0.95rem;
+}

@@ -1,16 +1,15 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Importalo
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MarketService, MarketAsset } from '../market.service';
 import { UserService } from '../../../services/user.service';
-import { RouterModule } from '@angular/router';
-import {  Router } from '@angular/router';
+import { PortfolioService } from '../../../services/portfolio.service'; // <--- IMPORTANTE
 
 @Component({
   selector: 'app-asset-list',
   standalone: true,
-  imports: [CommonModule,RouterModule,FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './asset-list.html',
   styleUrls: ['./asset-list.css']
 })
@@ -20,40 +19,61 @@ export class AssetListComponent implements OnInit {
   currentType: string = '';
   loading = false;
 
+  // Dati Utente: Mappa Simbolo -> Quantità (Es. "AAPL" -> 10)
+  myPortfolioAssets: Map<string, number> = new Map();
+
+  // Variabili Modale Trade
   isTradeModalOpen = false;
   isProcessing = false;
   selectedAsset: any = null;
   tradeAction: 'BUY' | 'SELL' = 'BUY';
-  tradeQuantity: number = 0; // Quantità inserita
-  currentHolding: number = 0;
+
+  // Variabili per il calcolo doppio
+  tradeQuantity: number | null = null; // Quante azioni
+  tradeAmount: number | null = null;   // Quanti euro
 
   constructor(
     private route: ActivatedRoute,
     private marketService: MarketService,
-    private cd: ChangeDetectorRef,
-    private userService: UserService, // <--- NUOVO
+    private userService: UserService,
+    private portfolioService: PortfolioService, // <--- INIETTATO
     private router: Router,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.route.data.subscribe(data => {
       this.currentType = data['type'];
       this.loadAssets();
+      this.loadMyPortfolio(); // <--- Carichiamo il portafoglio all'avvio
+    });
+  }
+
+  // 1. SCARICA IL PORTAFOGLIO PER SAPERE COSA HAI
+  loadMyPortfolio() {
+    const userId = this.userService.getCurrentUserId();
+    if (!userId) return;
+
+    this.portfolioService.getPortfolio(userId).subscribe({
+      next: (data) => {
+        // Creiamo una mappa veloce per cercare i simboli
+        if (data && data.assets) {
+          data.assets.forEach(asset => {
+            this.myPortfolioAssets.set(asset.symbol, asset.quantity);
+          });
+        }
+      }
     });
   }
 
   loadAssets() {
     this.loading = true;
     this.assets = [];
-
     this.marketService.getAssetsByType(this.currentType).subscribe({
       next: (res) => {
         this.assets = res;
         this.loading = false;
-
         this.cd.detectChanges();
-
-        console.log(`Dati caricati per ${this.currentType}:`, this.assets);
       },
       error: (err) => {
         console.error("Errore download market:", err);
@@ -62,10 +82,14 @@ export class AssetListComponent implements OnInit {
       }
     });
   }
+
+  // --- GESTIONE MODALE E CALCOLI ---
+
   openTradePanel(asset: any) {
     this.selectedAsset = asset;
     this.tradeAction = 'BUY';
-    this.tradeQuantity = 0; // Reset input
+    this.tradeQuantity = null; // Reset
+    this.tradeAmount = null;   // Reset
     this.isTradeModalOpen = true;
   }
 
@@ -78,63 +102,79 @@ export class AssetListComponent implements OnInit {
     this.tradeAction = action;
   }
 
-  get estimatedTotal(): number {
-    if (!this.selectedAsset || !this.tradeQuantity) return 0;
-    return this.selectedAsset.currentPrice * this.tradeQuantity;
+  // 🔢 CALCOLO 1: Scrivo la Quantità -> Calcola gli Euro
+  onQuantityChange() {
+    if (this.tradeQuantity && this.selectedAsset) {
+      // Euro = Quantità * Prezzo (Arrotondato a 2 decimali)
+      this.tradeAmount = Number((this.tradeQuantity * this.selectedAsset.currentPrice).toFixed(2));
+    } else {
+      this.tradeAmount = null;
+    }
+  }
+
+  // 💶 CALCOLO 2: Scrivo gli Euro -> Calcola la Quantità
+  onAmountChange() {
+    if (this.tradeAmount && this.selectedAsset) {
+      // Quantità = Euro / Prezzo (Arrotondato a 4 decimali per crypto/frazionari)
+      this.tradeQuantity = Number((this.tradeAmount / this.selectedAsset.currentPrice).toFixed(4));
+    } else {
+      this.tradeQuantity = null;
+    }
+  }
+
+  // Helper per l'HTML: Restituisce quante azioni ho di questo asset
+  getMyQuantity(symbol: string): number {
+    return this.myPortfolioAssets.get(symbol) || 0;
   }
 
   confirmTrade() {
     // 1. Validazione input
-    if (!this.selectedAsset || this.tradeQuantity <= 0) return;
+    if (!this.selectedAsset || !this.tradeQuantity || this.tradeQuantity <= 0) return;
 
-    // 2. Recupero ID Utente dal Service
+    // 2. Recupero ID Utente
     const currentUserId = this.userService.getCurrentUserId();
-
-    // Se l'utente non è loggato, lo mandiamo al login
     if (!currentUserId) {
       alert("Devi effettuare il login per fare trading!");
       this.router.navigate(['/login']);
       return;
     }
 
+    // Attivo lo spinner di caricamento sul bottone
     this.isProcessing = true;
 
-    // 3. Creazione Oggetto per il Backend (TradeRequestDTO)
+    // 3. Creazione Oggetto richiesta
     const request = {
-      userId: currentUserId,                 // ID Utente reale
-      symbol: this.selectedAsset.symbol,     // Simbolo (es. AAPL)
-      assetName: this.selectedAsset.name,    // Nome (es. Apple Inc.)
-      quantity: this.tradeQuantity,          // Quante ne compri
-      priceAtTransaction: this.selectedAsset.currentPrice, // Prezzo attuale
-      action: this.tradeAction               // "BUY" o "SELL"
+      userId: currentUserId,
+      symbol: this.selectedAsset.symbol,
+      assetName: this.selectedAsset.name,
+      quantity: this.tradeQuantity,
+      priceAtTransaction: this.selectedAsset.currentPrice,
+      action: this.tradeAction
     };
 
     console.log('Invio Ordine al Backend:', request);
 
-// CAMBIA QUESTO: da this.marketService.buyAsset(request) a:
     this.marketService.tradeAsset(request).subscribe({
       next: (response) => {
-        console.log('Risposta Backend:', response);
         this.isProcessing = false;
-        this.closeTradePanel();
 
-        // Messaggio di successo
         const tipoOperazione = this.tradeAction === 'BUY' ? 'Acquisto' : 'Vendita';
         alert(`✅ ${tipoOperazione} di ${this.selectedAsset.symbol} completato con successo!`);
 
-        // Qui potresti chiamare this.loadAssets() se volessi aggiornare qualcosa,
-        // ma per ora va bene così.
+        this.closeTradePanel();
+
+        this.loadMyPortfolio();
+        this.loadAssets();
+        this.cd.detectChanges();
       },
       error: (err) => {
+        // --- ERRORE ---
         console.error('Errore Backend:', err);
         this.isProcessing = false;
 
-        // Mostra il messaggio di errore specifico che arriva da Java (es. "Fondi insufficienti")
         const errorMsg = err.error && err.error.error ? err.error.error : "Errore durante la transazione";
         alert("❌ Transazione fallita: " + errorMsg);
       }
     });
   }
-
-
 }
