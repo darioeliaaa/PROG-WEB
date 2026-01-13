@@ -5,6 +5,7 @@ import { Login } from './features/auth/login/login';
 import { Profilo } from './features/Profilo/profilo';
 import { MarketHomeComponent } from './features/market/market-home/market-home';
 import { AssetListComponent } from './features/market/asset-list/asset-list';
+import { GestioneWallet} from './features/GestioneWallet/gestione-wallet';
 
 import { StockChart } from './features/market/stock-chart/stock-chart';
 import {SettingsComponent} from './features/settings/settings';
@@ -40,5 +41,6 @@ export const routes: Routes = [
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
   { path: 'settings', component: SettingsComponent },
-  { path: 'wallet', component: WalletComponent }
+  { path: 'wallet', component: WalletComponent },
+  { path: 'gestioneWallet', component: GestioneWallet },
 ];
