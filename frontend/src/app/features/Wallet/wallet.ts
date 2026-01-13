@@ -1,50 +1,96 @@
-import { Component, OnInit } from '@angular/core';
-import { WalletService} from '../../services/wallet.service';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- AGGIUNTO ChangeDetectorRef
+import { WalletService } from '../../services/wallet.service';
 import { Wallet } from '../../models/wallet.model';
-import {NgIf, NgFor} from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-wallet',
   templateUrl: './wallet.html',
+  standalone: true,
   imports: [
     NgIf,
-    NgFor
+    NgFor,
+    FormsModule
   ],
   styleUrls: ['./wallet.css']
 })
-
 export class WalletComponent implements OnInit {
+
   wallets: Wallet[] = [];
   loading = true;
-  userId: number =1;
-  showCreate=false;
+  userId: number | null = null;
 
-  constructor(private walletService: WalletService) {
-  }
+  showCreate = false;
+  showJoin = false;
+  inviteCodeInput: string = '';
+
+  constructor(
+    private walletService: WalletService,
+    private cdr: ChangeDetectorRef // <--- INIEZIONE FONDAMENTALE PER AGGIORNARE LA VISTA
+  ) {}
 
   ngOnInit() {
-    this.loadWallets();
+    this.initUser();
+  }
+
+  // Funzione di inizializzazione robusta
+  initUser() {
+    const storedId = localStorage.getItem('userId');
+
+    if (storedId) {
+      this.userId = Number(storedId);
+      this.loadWallets();
+    } else {
+      // FIX PER "DEVO RICARICARE":
+      // Se l'ID non c'è (magari il login sta ancora finendo di scrivere),
+      // aspettiamo 500ms e riproviamo.
+      console.warn("ID non trovato subito, riprovo tra 500ms...");
+      setTimeout(() => {
+        const retryId = localStorage.getItem('userId');
+        if (retryId) {
+          this.userId = Number(retryId);
+          this.loadWallets();
+        } else {
+          console.error("Errore: Impossibile trovare l'utente. Effettua il login.");
+          this.loading = false;
+        }
+      }, 500);
+    }
   }
 
   loadWallets() {
+    if (!this.userId) return;
+
     this.loading = true;
     this.walletService.getUserWallets(this.userId).subscribe({
       next: (res) => {
+        // Filtriamo i wallet condivisi
         this.wallets = res.filter(wallet => !wallet.personal);
         this.loading = false;
+
+        // AGGIORNAMENTO FORZATO DELLA GRAFICA
+        // Risolve il problema "va lento" o "non vedo le cose"
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        console.error("Errore caricamento wallet:", err);
+        this.cdr.detectChanges(); // Aggiorna anche in caso di errore
       }
     });
   }
 
   createWallet(name: string): void {
     const trimmedName = name.trim();
-    if (!trimmedName) return;
+    if (!trimmedName || !this.userId) return;
 
     this.walletService.createWallet(this.userId, trimmedName).subscribe({
-      next: () => this.loadWallets()
+      next: () => {
+        this.loadWallets();
+        this.showCreate = false;
+      },
+      error: (err) => console.error('Errore creazione wallet:', err)
     });
   }
 
@@ -52,56 +98,40 @@ export class WalletComponent implements OnInit {
     const name = nameInput.value.trim();
     if (!name) return;
     this.createWallet(name);
-    this.showCreate = false;
-    nameInput.value = ''; // opzionale: pulire input
+    nameInput.value = '';
   }
 
-  /** Rinomina un wallet (solo admin) */
-  renameWallet(walletId: number, adminId: number, newName: string): void {
-    this.walletService.renameWallet(walletId, adminId, newName).subscribe({
-      next: () => this.loadWallets(),
-      error: (err) => console.error('Errore rinomina wallet:', err)
-    });
-  }
+  handleJoinWallet() {
+    if (!this.inviteCodeInput || this.inviteCodeInput.trim().length < 6) {
+      alert("Inserisci un codice valido di 6 caratteri");
+      return;
+    }
+    if (!this.userId) {
+      alert("Errore utente. Riprova a fare login.");
+      return;
+    }
 
-  /** Aggiorna il budget (solo admin) */
-  updateBudget(walletId: number, adminId: number, budget: number): void {
-    this.walletService.updateBudget(walletId, adminId, budget).subscribe({
-      next: () => this.loadWallets(),
-      error: (err) => console.error('Errore aggiornamento budget:', err)
-    });
-  }
-
-  /** Rimuove un membro dal wallet */
-  removeMember(walletId: number, adminId: number, memberId: number): void {
-    this.walletService.removeMember(walletId, adminId, memberId).subscribe({
-      next: () => this.loadWallets(),
-      error: (err) => console.error('Errore rimozione membro:', err)
+    this.walletService.joinWalletByCode(this.inviteCodeInput.toUpperCase().trim(), this.userId).subscribe({
+      next: (wallet) => {
+        alert(`Unito con successo a: ${wallet.name}`);
+        this.loadWallets();
+        this.showJoin = false;
+        this.inviteCodeInput = '';
+      },
+      error: (err) => {
+        console.error("Errore join wallet:", err);
+        alert("Codice non valido o sei già membro.");
+      }
     });
   }
 
   leaveWallet(walletId: number): void {
-    // per ora usiamo userId come adminId (poi lo miglioreremo)
-    this.walletService.removeMember(walletId, this.userId, this.userId).subscribe({
-      next: () => this.loadWallets(),
-      error: err => console.error('Errore abbandono wallet', err)
-    });
+    if (!this.userId) return;
+    if(confirm("Vuoi davvero uscire da questo gruppo?")) {
+      this.walletService.removeMember(walletId, this.userId, this.userId).subscribe({
+        next: () => this.loadWallets(),
+        error: err => console.error('Errore uscita wallet', err)
+      });
+    }
   }
-
-  enterWallet(walletId: number) {
-    this.walletService.joinWallet(walletId, this.userId).subscribe({
-      next: (wallet: Wallet) => {
-        // Aggiorna solo il wallet appena entrato nella lista
-        const index = this.wallets.findIndex(w => w.id === wallet.id);
-        if (index >= 0) {
-          this.wallets[index] = wallet; // aggiorna i membri
-        } else {
-          this.wallets.push(wallet); // aggiunge se non presente
-        }
-      },
-      error: err => console.error('Errore entrata wallet', err)
-    });
-  }
-
-
 }

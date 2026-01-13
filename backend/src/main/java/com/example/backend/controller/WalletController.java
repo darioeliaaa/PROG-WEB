@@ -1,15 +1,14 @@
 package com.example.backend.controller;
 
-import com.example.backend.entity.User; // <--- AGGIUNTO
+import com.example.backend.entity.User;
 import com.example.backend.entity.Wallet;
-import com.example.backend.repository.UserRepository; // <--- AGGIUNTO
+import com.example.backend.repository.UserRepository;
 import com.example.backend.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -20,32 +19,41 @@ public class WalletController {
   private final WalletService walletService;
 
   @Autowired
-  private UserRepository userRepository; // <--- FONDAMENTALE PER TROVARE L'UTENTE
+  private UserRepository userRepository;
 
   public WalletController(WalletService walletService) {
     this.walletService = walletService;
   }
 
-  // --- QUESTO È IL METODO CHE MANCAVA ---
+  // --- GET USER WALLETS ---
   @GetMapping("/user/{userId}")
   public ResponseEntity<?> getUserWallets(@PathVariable Long userId) {
-    // Cerchiamo l'utente nel database
     User user = userRepository.findById(userId).orElse(null);
-
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
-
-    // Restituiamo la lista dei suoi wallet
     return ResponseEntity.ok(user.getWallets());
   }
-  // --------------------------------------
 
-  // Crea wallet condiviso
+  // --- CREA WALLET CONDIVISO ---
+  // NOTA: Ho rinominato il parametro in 'walletName' perché il tuo frontend manda '?walletName=...'
   @PostMapping("/user/{userId}/create")
-  public Wallet create(@PathVariable Long userId, @RequestParam String name) {
-    return walletService.createSharedWallet(userId, name);
+  public Wallet create(@PathVariable Long userId, @RequestParam String walletName) {
+    return walletService.createSharedWallet(userId, walletName);
   }
+
+  // --- ✅ NUOVO ENDPOINT: UNISCITI TRAMITE CODICE ---
+  // Questo è quello che viene chiamato dal tasto "Unisciti" del frontend
+  @PostMapping("/join-by-code")
+  public ResponseEntity<Wallet> joinByCode(
+    @RequestParam String inviteCode,
+    @RequestParam Long userId
+  ) {
+    Wallet wallet = walletService.joinWalletByCode(inviteCode, userId);
+    return ResponseEntity.ok(wallet);
+  }
+  // --------------------------------------------------
+
   // Trasferimento soldi tra wallet
   @PostMapping("/transfer")
   public ResponseEntity<String> transfer(@RequestParam Long userId, @RequestParam Long fromId,
@@ -53,7 +61,8 @@ public class WalletController {
     walletService.transferMoney(userId, fromId, toId, amount);
     return ResponseEntity.ok("Trasferimento completato");
   }
-  // Invito amico
+
+  // Invito amico (vecchio metodo tramite username)
   @PostMapping("/{walletId}/invite/{username}")
   public ResponseEntity<String> invite(@PathVariable Long walletId, @PathVariable String username) {
     walletService.inviteByUsername(walletId, username);
@@ -86,13 +95,10 @@ public class WalletController {
     return ResponseEntity.ok("Stato del portafoglio aggiornato");
   }
 
+  // Endpoint legacy per join tramite ID (puoi mantenerlo o rimuoverlo)
   @PostMapping("/{walletId}/join")
-  public ResponseEntity<Wallet> joinWallet(
-    @PathVariable Long walletId,
-    @RequestParam Long userId) {  // <-- ID dell'utente che vuole entrare
+  public ResponseEntity<Wallet> joinWallet(@PathVariable Long walletId, @RequestParam Long userId) {
     Wallet wallet = walletService.joinWallet(walletId, userId);
     return ResponseEntity.ok(wallet);
   }
-
-
 }

@@ -1,72 +1,111 @@
 <div class="market-home-container">
 
-  <section class="market-section">
-    <div class="section-header">
-      <h2>Azioni in tendenza</h2>
-      <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
-    </div>
+  <div class="market-home-container">
 
-    <div class="revolut-grid">
-      <div *ngFor="let asset of topStocks"
-           class="ball-card"
-           [routerLink]="['/market/chart', asset.symbol]"
-           title="Vedi grafico di {{ asset.symbol }}">
+    <div class="visual-carousel-container" *ngIf="newsList.length > 0">
 
-        <div class="icon-wrapper">
-          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
-               class="round-logo"
-               alt="{{ asset.symbol }}">
+      <div class="visual-track">
+
+        <div *ngFor="let news of newsList"
+             class="visual-news-card"
+             [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
+
+          <a [href]="news.url" target="_blank" class="visual-card-link">
+            <div class="visual-overlay">
+              <span class="visual-source">{{ news.source.name }}</span>
+              <h3 class="visual-title">{{ news.title }}</h3>
+            </div>
+          </a>
         </div>
 
-        <span class="ticker-symbol">{{ asset.symbol }}</span>
+        <div *ngFor="let news of newsList"
+             class="visual-news-card"
+             [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
 
-        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent | number:'1.2-2' }}%
-        </span>
-      </div>
-    </div>
-  </section>
+          <a [href]="news.url" target="_blank" class="visual-card-link">
 
-  <section class="market-section">
-    <div class="section-header">
-      <h2>ETF Principali</h2>
-      <a routerLink="/market/etf" class="see-all-btn">Vedi tutto →</a>
-    </div>
+            <div class="card-badge">NEWS</div>
 
-    <div class="revolut-grid">
-      <div *ngFor="let asset of topEtf"
-           class="ball-card"
-           [routerLink]="['/market/chart', asset.symbol]">
-        <div class="icon-wrapper">
-          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+            <div class="visual-overlay">
+              <div class="source-wrapper">
+                <span class="source-dot"></span>
+                <span class="visual-source">{{ news.source.name }}</span>
+              </div>
+              <h3 class="visual-title">{{ news.title }}</h3>
+            </div>
+          </a>
         </div>
-        <span class="ticker-symbol">{{ asset.symbol }}</span>
-        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent | number:'1.2-2' }}%
-        </span>
+
       </div>
     </div>
-  </section>
+    <section class="market-section">
+      <div class="section-header">
+        <h2>Azioni in tendenza</h2>
+        <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
+      </div>
 
-  <section class="market-section">
-    <div class="section-header">
-      <h2>Crypto in tendenza</h2>
-      <a routerLink="/market/crypto" class="see-all-btn">Vedi tutto →</a>
-    </div>
+      <div class="revolut-grid">
+        <div *ngFor="let asset of topStocks"
+             class="ball-card"
+             [routerLink]="['/market/chart', asset.symbol]"
+             title="Vedi grafico di {{ asset.symbol }}">
 
-    <div class="revolut-grid">
-      <div *ngFor="let asset of topCrypto"
-           class="ball-card"
-           [routerLink]="['/market/chart', asset.symbol]">
-        <div class="icon-wrapper">
-          <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+          <div class="icon-wrapper">
+            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
+                 class="round-logo"
+                 alt="{{ asset.symbol }}">
+          </div>
+
+          <span class="ticker-symbol">{{ asset.symbol }}</span>
+
+          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
         </div>
-        <span class="ticker-symbol">{{ asset.symbol }}</span>
-        <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+      </div>
+    </section>
+
+    <section class="market-section">
+      <div class="section-header">
+        <h2>ETF Principali</h2>
+        <a routerLink="/market/etf" class="see-all-btn">Vedi tutto →</a>
+      </div>
+
+      <div class="revolut-grid">
+        <div *ngFor="let asset of topEtf"
+             class="ball-card"
+             [routerLink]="['/market/chart', asset.symbol]">
+          <div class="icon-wrapper">
+            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+          </div>
+          <span class="ticker-symbol">{{ asset.symbol }}</span>
+          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent | number:'1.2-2' }}%
         </span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
+    <section class="market-section">
+      <div class="section-header">
+        <h2>Crypto in tendenza</h2>
+        <a routerLink="/market/crypto" class="see-all-btn">Vedi tutto →</a>
+      </div>
+
+      <div class="revolut-grid">
+        <div *ngFor="let asset of topCrypto"
+             class="ball-card"
+             [routerLink]="['/market/chart', asset.symbol]">
+          <div class="icon-wrapper">
+            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+          </div>
+          <span class="ticker-symbol">{{ asset.symbol }}</span>
+          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
+        </div>
+      </div>
+    </section>
+
+  </div>
 </div>

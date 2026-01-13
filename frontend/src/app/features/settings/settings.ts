@@ -1,119 +1,78 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Per usare ngModel
-import { WalletService } from '../../../app/services/wallet.service';
-import {Profilo} from '../Profilo/profilo';
+import { FormsModule } from '@angular/forms';
+import { SettingsService } from './settings.service';
+import { ChangeDetectorRef } from '@angular/core';
+import {UserService} from '../../services/user.service';
 
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, Profilo],
+  imports: [CommonModule, FormsModule],
   templateUrl: './settings.html',
   styleUrl: './settings.css'
 })
 export class SettingsComponent implements OnInit {
-  activeTab: string = 'profilo';
-  userWallets: any[] = [];
-  userId: number = 1; // Temporaneo: qui andrà l'ID dell'utente loggato
-  selectedWallet: any = null;
-  members: any[] = [];
-  showCreateForm: boolean = false;
-  newWallet: any = { name: '', monthlyBudget: 0 };
-  newUserEmail: string = '';
 
-  constructor(private walletService: WalletService) {}
+  userId: number = 6; // Usiamo l'ID 6 che abbiamo verificato funzionare
 
-  ngOnInit() {
-    this.loadWallets();
+  // Struttura dati pulita (senza darkmode)
+  systemSettings = {
+    language: 'it',
+    currency: 'EUR',
+    privacyMode: false,
+    budgetAlerts: true
+  };
+
+  constructor(
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef,
+    private userService: UserService,) {}
+
+  ngOnInit(): void {
+    const idLoggato = this.userService.getCurrentUserId();
+
+    if (idLoggato) {
+      this.userId = idLoggato;
+      console.log("Settings: ID recuperato correttamente:", this.userId);
+      this.loadRemoteSettings(); // Carica solo se l'ID esiste
+    } else {
+      // Invece di usare il 6, diamo un errore o reindirizziamo al login
+      console.error("ERRORE: Nessun utente loggato trovato nel sistema!");
+      // Opzionale: alert("Devi effettuare il login per vedere questa pagina");
+      // Opzionale: this.router.navigate(['/login']);
+    }
   }
 
-  loadWallets() {
-    this.walletService.getUserWallets(this.userId).subscribe({
-      next: (data) => this.userWallets = data,
-      error: (err) => console.error('Errore nel caricamento wallet', err)
-    });
-  }
-
-  setTab(tabName: string) {
-    this.activeTab = tabName;
-    this.selectedWallet = null; // Chiude il pannello gestione se cambi tab
-    this.showCreateForm = false;
-  }
-
-  openManage(wallet: any) {
-    this.selectedWallet = { ...wallet }; // Creiamo una copia per non modificare l'originale subito
-    this.walletService.getWalletMembers(wallet.id).subscribe({
+  loadRemoteSettings(): void {
+    this.settingsService.getSettings(this.userId).subscribe({
       next: (data) => {
-        this.members = data; // Popoliamo la variabile che hai appena creato
-      },
-      error: (err) => console.error('Errore nel caricamento membri', err)
-    });
-  }
+        console.log("Dati dal DB:", data);
 
-  saveWalletSettings() {
-    if (!this.selectedWallet) return;
+        // Assegnazione forzata
+        this.systemSettings.language = data.language;
+        this.systemSettings.currency = data.currency;
+        this.systemSettings.privacyMode = data.privacyMode;
+        this.systemSettings.budgetAlerts = data.budgetAlerts;
 
-    const walletId = this.selectedWallet.id;
-    const adminId = this.userId;
-    const newName = this.selectedWallet.name;
-    const newBudget = this.selectedWallet.monthlyBudget;
+        // 3. Forza Angular a rinfrescare i pulsanti sulla pagina
+        this.cdr.detectChanges();
 
-    // 1. Chiamata per rinominare il portafoglio
-    this.walletService.renameWallet(walletId, adminId, newName).subscribe({
-      next: () => {
-        // 2. Se il nome è ok, aggiorniamo il budget
-        this.walletService.updateBudget(walletId, adminId, newBudget).subscribe({
-          next: () => {
-            alert('Impostazioni salvate con successo!');
-            this.loadWallets(); // Ricarica la lista per vedere i nomi aggiornati
-            this.selectedWallet = null; // Torna alla lista
-          },
-          error: (err) => {
-            console.error(err);
-            alert('Errore durante l\'aggiornamento del budget.');
-          }
-        });
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Errore durante il salvataggio del nome: ' + (err.error || 'Riprova più tardi'));
+        console.log("Stato finale UI:", this.systemSettings.privacyMode);
       }
     });
   }
-  removeUser(memberId: number) {
-    if (!this.selectedWallet) return;
 
-    const confermato = confirm("Sei sicuro di voler rimuovere questo utente dal portafoglio?");
-
-    if (confermato) {
-      this.walletService.removeMember(this.selectedWallet.id, this.userId, memberId).subscribe({
-        next: () => {
-          // Aggiorniamo la lista locale dei membri senza ricaricare tutto
-          this.members = this.members.filter(m => m.id !== memberId);
-          alert('Utente rimosso correttamente.');
-        },
-        error: (err) => alert('Errore nella rimozione dell\'utente.')
-      });
-    }
-  }
-  createNewWallet() {
-    if (!this.newWallet.name || this.newWallet.monthlyBudget <= 0) {
-      alert("Per favore, inserisci un nome e un budget validi.");
-      return;
-    }
-
-    // Chiamata al service
-    this.walletService.createWallet(this.userId, this.newWallet).subscribe({
-      next: (res: any) => {
-        alert("Portafoglio creato con successo!");
-        this.showCreateForm = false; // Chiude il form
-        this.newWallet = { name: '', monthlyBudget: 0 }; // Resetta i campi
-        this.loadWallets(); // Ricarica la lista per vedere il nuovo wallet
+  saveSettings(): void {
+    console.log("Invio questi dati al server:", this.systemSettings);
+    this.settingsService.updateSettings(this.userId, this.systemSettings).subscribe({
+      next: (res) => {
+        alert("Impostazioni salvate con successo!");
       },
-      error: (err: any) => {
-        console.error(err);
-        alert("Errore durante la creazione del portafoglio.");
+      error: (err) => {
+        console.error("Errore nel salvataggio:", err);
+        alert("Errore durante il salvataggio.");
       }
     });
   }

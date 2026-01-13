@@ -4,35 +4,52 @@
   </header>
 
   <div class="wallet-header">
-    <h2>Wallet condivisi</h2>
-    <button class="btn-primary" (click)="showCreate = true">+ Crea nuovo wallet</button>
+    <h2>Wallet Condivisi</h2>
+
+    <div class="header-actions">
+      <button class="btn-primary" (click)="showCreate = !showCreate; showJoin = false">
+        {{ showCreate ? 'Chiudi' : '+ Crea nuovo' }}
+      </button>
+
+      <button class="btn-secondary" (click)="showJoin = !showJoin; showCreate = false">
+        {{ showJoin ? 'Chiudi' : '🔗 Unisciti' }}
+      </button>
+    </div>
   </div>
 
-  <!-- SEZIONE PER JOIN WALLET -->
-  <div class="join-wallet">
-    <input type="text" placeholder="ID Wallet" #walletIdInput>
-    <button class="btn-primary" (click)="enterWallet(+walletIdInput.value); walletIdInput.value=''">
-      Entra nel wallet
-    </button>
+  <div *ngIf="showCreate" class="action-box slide-in">
+    <h3>Crea un nuovo gruppo</h3>
+    <div class="input-group">
+      <input type="text" placeholder="Nome del wallet (es. Viaggio Estivo)" #walletNameInput>
+      <button class="btn-primary" (click)="handleCreateWallet(walletNameInput)">Crea</button>
+    </div>
   </div>
 
-
-  <div *ngIf="showCreate" class="create-box">
-    <input type="text" placeholder="Nome wallet" #walletName>
-    <div class="create-actions">
-      <button class="btn-primary" (click)="handleCreateWallet(walletName); showCreate = false">Crea</button>
-      <button class="btn-secondary" (click)="showCreate = false">Annulla</button>
+  <div *ngIf="showJoin" class="action-box slide-in">
+    <h3>Unisciti a un gruppo esistente</h3>
+    <p class="hint">Inserisci il codice di 6 caratteri fornito dall'amministratore.</p>
+    <div class="input-group">
+      <input
+        type="text"
+        placeholder="Codice Invito (es. A1B2C3)"
+        [(ngModel)]="inviteCodeInput"
+        maxlength="6"
+        style="text-transform: uppercase; letter-spacing: 2px; font-weight: bold;"
+      >
+      <button class="btn-primary" (click)="handleJoinWallet()">Entra</button>
     </div>
   </div>
 
   <p *ngIf="loading" class="loading">Caricamento wallet...</p>
 
   <div *ngIf="!loading && wallets.length === 0" class="empty">
-    <p>Non hai ancora nessun wallet in comune</p>
+    <p>Non fai parte di nessun wallet condiviso.</p>
+    <p>Creane uno nuovo o fatti dare un codice invito!</p>
   </div>
 
   <div *ngIf="wallets.length > 0" class="wallet-list">
     <div *ngFor="let wallet of wallets" class="wallet-card">
+
       <div class="wallet-top">
         <h3>{{ wallet.name }}</h3>
         <span class="badge" [class.inactive]="!wallet.active">
@@ -40,19 +57,26 @@
         </span>
       </div>
 
-      <div class="members">
-        <span
-          class="member-icon" *ngFor="let member of wallet.members">👤</span>
+      <div class="invite-code-box">
+        <span class="label">CODICE INVITO:</span>
+        <span class="code">{{ wallet.inviteCode || 'N/A' }}</span>
       </div>
 
+      <div class="info-row">
+        <div class="members">
+          <span class="member-count">👥 {{ wallet.members.length }} Membri</span>
+        </div>
 
-      <p *ngIf="wallet.monthlyBudget !== null" class="budget">
-        💰 Budget mensile: {{ wallet.monthlyBudget }} €
-      </p>
+        <p *ngIf="wallet.monthlyBudget" class="budget">
+          💰 Budget: {{ wallet.monthlyBudget }} €
+        </p>
+      </div>
 
-      <button class="btn-link">
-        Apri wallet->
-      </button>
+      <div class="card-footer">
+        <button class="btn-link">Apri dettagli →</button>
+        <button class="btn-danger-link" (click)="leaveWallet(wallet.id)">Esci</button>
+      </div>
+
     </div>
   </div>
 </div>
