@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,14 +131,21 @@ public class MarketService {
   // ----------------------------------------------------------------
   // UTILITY: Prezzo Singolo (usato da InvestmentService se serve)
   // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+  // UTILITY VELOCE: Prezzo Singolo dalla Cache
+  // ----------------------------------------------------------------
   public double getCurrentPrice(String symbol) {
-    String url = String.format("%s/quote?symbol=%s&token=%s", BASE_URL, symbol, API_KEY);
-    try {
-      FinnhubQuote quote = restTemplate.getForObject(url, FinnhubQuote.class);
-      return quote != null ? quote.c : 0.0;
-    } catch (Exception e) {
-      return 0.0;
+    if (symbol == null) return 0.0;
+
+    // 1. CERCA NELLA CACHE (Memoria RAM - Istantaneo)
+    for (AssetQuoteDTO asset : cachedData) {
+      if (asset.getSymbol().equalsIgnoreCase(symbol)) {
+        return asset.getCurrentPrice();
+      }
     }
+
+    System.out.println("⚠️ CACHE MISS: Prezzo non trovato in memoria per " + symbol + ". Restituisco 0 per velocità.");
+    return 0.0;
   }
 
   // ================================================================
@@ -159,4 +170,10 @@ public class MarketService {
     public double marketCapitalization;
     public double shareOutstanding;
   }
+  @Scheduled(fixedRate = 900000)
+  public void clearPriceCache() {
+    System.out.println("⏰ MARKET TIMER: Svuoto la cache dei prezzi. Al prossimo click scaricherò dati aggiornati.");
+    this.cachedData.clear();
+  }
+
 }
