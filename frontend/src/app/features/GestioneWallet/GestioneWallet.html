@@ -38,7 +38,21 @@
       <div class="form-group" *ngIf="selectedWallet">
         <label for="monthlyBudget">Budget mensile (per membro)</label>
         <input type="number" id="monthlyBudget" [(ngModel)]="selectedWallet.monthlyBudget" name="monthlyBudget" placeholder="Inserisci budget">
-        <button type="button" (click)="updateBudget()" class="btn-save">Salva budget</button>
+      </div>
+
+      <div class="form-group" *ngIf="selectedWallet">
+        <label for="maxTransfer">Limite massimo prelievo (per operazione)</label>
+        <input
+          type="number"
+          id="maxTransfer"
+          name="maxTransferLimit"
+          [(ngModel)]="selectedWallet.maxTransferLimit"
+          placeholder="Es: 50">
+        <small style="color: #64748b; font-size: 0.8rem;">Lascia vuoto o 0 per nessun limite.</small>
+      </div>
+
+      <div class="form-group full-width" *ngIf="selectedWallet">
+        <button type="button" (click)="saveSettings()" class="btn-save">Salva Impostazioni</button>
       </div>
 
       <!-- MEMBRI -->
@@ -46,11 +60,11 @@
         <label>Membri del wallet</label>
         <ul class="members-list">
           <li *ngFor="let m of selectedWallet.members">
-            {{ m.username }}
+            <span class="member-name">{{ m.username }}</span>
             <button
               *ngIf="m.id !== currentUserId"
               type="button"
-              class="btn-cancel"
+              class="btn-remove-small"
               (click)="removeMember(m.id)">
               Rimuovi
             </button>
@@ -60,9 +74,11 @@
 
       <!-- ELIMINA WALLET -->
       <div class="form-group full-width" *ngIf="selectedWallet">
-        <button type="button" class="btn-cancel big" (click)="deleteWallet()">
-          Elimina Wallet
-        </button>
+        <div class="danger-zone">
+          <button type="button" class="btn-danger" (click)="deleteWallet()">
+            🗑️ Elimina Wallet Definitivamente
+          </button>
+        </div>
       </div>
     </div>
   </form>

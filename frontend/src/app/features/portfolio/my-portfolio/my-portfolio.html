@@ -1,177 +1,198 @@
 <div class="portfolio-page">
 
-  <header class="page-header">
-    <div>
-      <h1>Il mio Patrimonio</h1>
-      <p>Panoramica completa dei tuoi investimenti</p>
-    </div>
-    <button routerLink="/market" class="btn-action">
-      + Investi
-    </button>
-  </header>
+  <div class="modal-overlay" *ngIf="!isLoggedIn">
+    <div class="login-prompt-card stylish-lock-card">
 
-  <div *ngIf="loading" class="spinner-container">
-    <div class="spinner"></div>
-    <span>Calcolo patrimonio in corso...</span>
-  </div>
-
-  <div *ngIf="!loading && portfolio" class="dashboard-content fade-in">
-
-    <div class="summary-cards">
-      <div class="card glass-card highlight-card">
-        <div class="card-label">Valore Totale</div>
-        <div class="big-value">{{ portfolio.currentTotalValue + portfolio.availableCash | currency:'EUR' }}</div>
-        <div class="sub-label">Include <span class="text-blue">{{ portfolio.availableCash | currency:'EUR' }}</span> cash</div>
+      <div class="lock-icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M9 12l2 2 4-4"></path>
+        </svg>
       </div>
 
-      <div class="card glass-card" [class.profit-bg]="portfolio.totalProfit >= 0" [class.loss-bg]="portfolio.totalProfit < 0">
-        <div class="card-label">P&L Totale</div>
-        <div class="big-value" [class.text-green]="portfolio.totalProfit >= 0" [class.text-red]="portfolio.totalProfit < 0">
-          {{ portfolio.totalProfit > 0 ? '+' : '' }}{{ portfolio.totalProfit | currency:'EUR' }}
-        </div>
-        <div class="badge" [class.up]="portfolio.totalProfitPercent >= 0" [class.down]="portfolio.totalProfitPercent < 0">
-          {{ portfolio.totalProfitPercent | number:'1.2-2' }}%
-        </div>
-      </div>
+      <h3>Area Riservata</h3>
+      <p>Autenticati per accedere alla tua Dashboard, gestire le tue finanze e visualizzare i grafici dettagliati.</p>
 
-      <div class="card glass-card">
-        <div class="card-label">Investito</div>
-        <div class="big-value text-muted">{{ portfolio.totalInvested | currency:'EUR' }}</div>
-      </div>
-    </div>
-
-    <div class="charts-section" *ngIf="portfolio.assets.length > 0">
-      <div class="chart-card glass-card">
-        <h3>Allocazione</h3>
-        <div class="chart-wrapper">
-          <canvas baseChart [data]="pieChartData" [type]="pieChartType" [options]="pieChartOptions"></canvas>
-        </div>
-      </div>
-      <div class="chart-card glass-card">
-        <h3>Performance</h3>
-        <div class="chart-wrapper">
-          <canvas baseChart [data]="barChartData" [type]="barChartType" [options]="barChartOptions"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="table-section glass-card">
-      <h3>I tuoi Asset</h3>
-      <div class="table-responsive">
-        <table class="portfolio-table">
-          <thead>
-          <tr>
-            <th>Asset</th>
-            <th>Prezzo Medio</th>
-            <th>Prezzo Oggi</th>
-            <th>Quantità</th>
-            <th>Valore</th>
-            <th>Profitto</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let asset of portfolio.assets">
-            <td>
-              <div class="asset-info">
-                <span class="symbol-pill">{{ pulisciSimbolo(asset.symbol) }}</span>
-                <span class="asset-name">{{ asset.name }}</span>
-              </div>
-            </td>
-            <td>{{ asset.avgBuyPrice | currency:'USD' }}</td>
-            <td>{{ asset.currentPrice | currency:'USD' }}</td>
-            <td>{{ asset.quantity | number:'1.0-4' }}</td>
-            <td class="bold">{{ asset.currentValue | currency:'EUR' }}</td>
-            <td>
-              <div [class.text-green]="asset.profit >= 0" [class.text-red]="asset.profit < 0" style="font-weight: 500;">
-                {{ asset.profit > 0 ? '+' : '' }}{{ asset.profit | currency:'EUR' }}
-                <br><small>{{ asset.profitPercent | number:'1.2-2' }}%</small>
-              </div>
-            </td>
-            <td>
-              <button (click)="openTradePanel(asset)" class="btn-mini">Trade</button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <div *ngIf="portfolio.assets.length === 0" class="empty-state">
-          <p>Nessun investimento attivo.</p>
-          <button routerLink="/market" class="btn-primary">Vai al Market</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="trade-modal-backdrop" *ngIf="isTradeModalOpen">
-    <div class="trade-modal">
-
-      <div class="stylish-header">
-        <div class="header-left">
-          <h2>{{ pulisciSimbolo(selectedAsset?.symbol) }}</h2>
-          <span class="asset-name-small">{{ selectedAsset?.name }}</span>
-        </div>
-        <div class="holding-badge">
-          Possiedi: {{ selectedAsset?.quantity | number:'1.0-4' }}
-        </div>
-      </div>
-
-      <div class="toggle-buttons">
-        <button class="btn-toggle income"
-                [class.active]="tradeAction === 'BUY'"
-                (click)="setAction('BUY')">
-          Acquista
-        </button>
-        <button class="btn-toggle expense"
-                [class.active]="tradeAction === 'SELL'"
-                (click)="setAction('SELL')">
-          Vendi
-        </button>
-      </div>
-
-      <div class="center-input-section">
-        <label>Quantità da {{ tradeAction === 'BUY' ? 'Acquistare' : 'Vendere' }}</label>
-        <div class="amount-wrapper">
-          <input type="number"
-                 class="big-input"
-                 [class.text-green]="tradeAction === 'BUY'"
-                 [class.text-red]="tradeAction === 'SELL'"
-                 [(ngModel)]="tradeQuantity"
-                 (input)="onQuantityChange()"
-                 placeholder="0.00">
-        </div>
-      </div>
-
-      <div class="info-row">
-        <span>Prezzo di Mercato</span>
-        <span class="bold-text">{{ selectedAsset?.currentPrice | currency:'USD' }}</span>
-      </div>
-
-      <div class="form-group">
-        <label>Controvalore Stimato</label>
-        <div class="amount-wrapper small-wrapper">
-          <input type="number"
-                 class="big-input small-input"
-                 [(ngModel)]="tradeAmount"
-                 (input)="onAmountChange()"
-                 placeholder="0.00">
-          <span class="currency-suffix">€</span>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn-secondary" (click)="closeTradePanel()">Annulla</button>
-        <button class="btn-primary"
-                [disabled]="!tradeQuantity || tradeQuantity <= 0 || isProcessing"
-                (click)="confirmTrade()">
-          <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'Acquisto' : 'Vendita' }}</span>
-          <span *ngIf="isProcessing">Elaborazione...</span>
-        </button>
-      </div>
+      <button class="btn-auth-lock" routerLink="/login">
+        Accedi ora
+      </button>
 
     </div>
   </div>
 
-</div>
 
+  <div [class.blurred-content]="!isLoggedIn">
 
+    <header class="page-header">
+      <div>
+        <h1>Il mio Patrimonio</h1>
+        <p>Panoramica completa dei tuoi investimenti</p>
+      </div>
+      <button routerLink="/market" class="btn-action">
+        + Investi
+      </button>
+    </header>
+
+    <div *ngIf="loading" class="spinner-container">
+      <div class="spinner"></div>
+      <span>Calcolo patrimonio in corso...</span>
+    </div>
+
+    <div *ngIf="!loading && portfolio" class="dashboard-content fade-in">
+
+      <div class="summary-cards">
+        <div class="card glass-card highlight-card">
+          <div class="card-label">Valore Totale</div>
+          <div class="big-value">{{ portfolio.currentTotalValue + portfolio.availableCash | currency:'EUR' }}</div>
+          <div class="sub-label">Include <span class="text-blue">{{ portfolio.availableCash | currency:'EUR' }}</span> cash</div>
+        </div>
+
+        <div class="card glass-card" [class.profit-bg]="portfolio.totalProfit >= 0" [class.loss-bg]="portfolio.totalProfit < 0">
+          <div class="card-label">P&L Totale</div>
+          <div class="big-value" [class.text-green]="portfolio.totalProfit >= 0" [class.text-red]="portfolio.totalProfit < 0">
+            {{ portfolio.totalProfit > 0 ? '+' : '' }}{{ portfolio.totalProfit | currency:'EUR' }}
+          </div>
+          <div class="badge" [class.up]="portfolio.totalProfitPercent >= 0" [class.down]="portfolio.totalProfitPercent < 0">
+            {{ portfolio.totalProfitPercent | number:'1.2-2' }}%
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-label">Investito</div>
+          <div class="big-value text-muted">{{ portfolio.totalInvested | currency:'EUR' }}</div>
+        </div>
+      </div>
+
+      <div class="charts-section" *ngIf="portfolio.assets.length > 0">
+        <div class="chart-card glass-card">
+          <h3>Allocazione</h3>
+          <div class="chart-wrapper">
+            <canvas baseChart [data]="pieChartData" [type]="pieChartType" [options]="pieChartOptions"></canvas>
+          </div>
+        </div>
+        <div class="chart-card glass-card">
+          <h3>Performance</h3>
+          <div class="chart-wrapper">
+            <canvas baseChart [data]="barChartData" [type]="barChartType" [options]="barChartOptions"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-section glass-card">
+        <h3>I tuoi Asset</h3>
+        <div class="table-responsive">
+          <table class="portfolio-table">
+            <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Prezzo Medio</th>
+              <th>Prezzo Oggi</th>
+              <th>Quantità</th>
+              <th>Valore</th>
+              <th>Profitto</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let asset of portfolio.assets">
+              <td>
+                <div class="asset-info">
+                  <span class="symbol-pill">{{ pulisciSimbolo(asset.symbol) }}</span>
+                  <span class="asset-name">{{ asset.name }}</span>
+                </div>
+              </td>
+              <td>{{ asset.avgBuyPrice | currency:'USD' }}</td>
+              <td>{{ asset.currentPrice | currency:'USD' }}</td>
+              <td>{{ asset.quantity | number:'1.0-4' }}</td>
+              <td class="bold">{{ asset.currentValue | currency:'EUR' }}</td>
+              <td>
+                <div [class.text-green]="asset.profit >= 0" [class.text-red]="asset.profit < 0" style="font-weight: 500;">
+                  {{ asset.profit > 0 ? '+' : '' }}{{ asset.profit | currency:'EUR' }}
+                  <br><small>{{ asset.profitPercent | number:'1.2-2' }}%</small>
+                </div>
+              </td>
+              <td>
+                <button (click)="openTradePanel(asset)" class="btn-mini">Trade</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <div *ngIf="portfolio.assets.length === 0" class="empty-state">
+            <p>Nessun investimento attivo.</p>
+            <button routerLink="/market" class="btn-primary">Vai al Market</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="trade-modal-backdrop" *ngIf="isTradeModalOpen">
+      <div class="trade-modal">
+
+        <div class="stylish-header">
+          <div class="header-left">
+            <h2>{{ pulisciSimbolo(selectedAsset?.symbol) }}</h2>
+            <span class="asset-name-small">{{ selectedAsset?.name }}</span>
+          </div>
+          <div class="holding-badge">
+            Possiedi: {{ selectedAsset?.quantity | number:'1.0-4' }}
+          </div>
+        </div>
+
+        <div class="toggle-buttons">
+          <button class="btn-toggle income"
+                  [class.active]="tradeAction === 'BUY'"
+                  (click)="setAction('BUY')">
+            Acquista
+          </button>
+          <button class="btn-toggle expense"
+                  [class.active]="tradeAction === 'SELL'"
+                  (click)="setAction('SELL')">
+            Vendi
+          </button>
+        </div>
+
+        <div class="center-input-section">
+          <label>Quantità da {{ tradeAction === 'BUY' ? 'Acquistare' : 'Vendere' }}</label>
+          <div class="amount-wrapper">
+            <input type="number"
+                   class="big-input"
+                   [class.text-green]="tradeAction === 'BUY'"
+                   [class.text-red]="tradeAction === 'SELL'"
+                   [(ngModel)]="tradeQuantity"
+                   (input)="onQuantityChange()"
+                   placeholder="0.00">
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span>Prezzo di Mercato</span>
+          <span class="bold-text">{{ selectedAsset?.currentPrice | currency:'USD' }}</span>
+        </div>
+
+        <div class="form-group">
+          <label>Controvalore Stimato</label>
+          <div class="amount-wrapper small-wrapper">
+            <input type="number"
+                   class="big-input small-input"
+                   [(ngModel)]="tradeAmount"
+                   (input)="onAmountChange()"
+                   placeholder="0.00">
+            <span class="currency-suffix">€</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" (click)="closeTradePanel()">Annulla</button>
+          <button class="btn-primary"
+                  [disabled]="!tradeQuantity || tradeQuantity <= 0 || isProcessing"
+                  (click)="confirmTrade()">
+            <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'Acquisto' : 'Vendita' }}</span>
+            <span *ngIf="isProcessing">Elaborazione...</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div> </div>

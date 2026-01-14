@@ -16,8 +16,13 @@ export class WalletService {
     return this.http.put(`${this.apiUrl}/${walletId}/rename?adminId=${adminId}&newName=${newName}`, {});
   }
 
-  updateBudget(walletId: number, adminId: number, budget: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${walletId}/budget?adminId=${adminId}&budget=${budget}`, {});
+  updateSettings(walletId: number, adminId: number, budget: number, maxTransfer: number): Observable<any> {
+    // Nota: inviamo entrambi i valori
+    let url = `${this.apiUrl}/${walletId}/settings?adminId=${adminId}`;
+    if (budget != null) url += `&budget=${budget}`;
+    if (maxTransfer != null) url += `&maxTransfer=${maxTransfer}`;
+
+    return this.http.put(url, {});
   }
 
   removeMember(walletId: number, adminId: number, memberId: number): Observable<any> {

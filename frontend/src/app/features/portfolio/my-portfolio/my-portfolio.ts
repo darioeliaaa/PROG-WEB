@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PortfolioService, PortfolioOverview } from '../../../services/portfolio.service';
 import { UserService } from '../../../services/user.service';
-import { MarketService } from '../../market/market.service'; // Controlla il percorso se è giusto
+import { MarketService } from '../../market/market.service';
 
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
@@ -22,6 +22,9 @@ export class MyPortfolioComponent implements OnInit {
   portfolio: PortfolioOverview | null = null;
   loading = true;
 
+  // 🔒 Variabile di stato login
+  isLoggedIn = false;
+
   // Variabili Trading
   isTradeModalOpen = false;
   selectedAsset: any = null;
@@ -31,7 +34,6 @@ export class MyPortfolioComponent implements OnInit {
   isProcessing = false;
 
   // --- CONFIGURAZIONE GRAFICI ---
-  // Inizializziamo subito con dati vuoti per evitare errori
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
@@ -58,18 +60,24 @@ export class MyPortfolioComponent implements OnInit {
     private portfolioService: PortfolioService,
     private userService: UserService,
     private marketService: MarketService,
-    private cd: ChangeDetectorRef, // <--- Il nostro migliore amico
-
-  ) {Chart.register(...registerables);}
+    private cd: ChangeDetectorRef,
+  ) {
+    Chart.register(...registerables);
+  }
 
   ngOnInit() {
     const userId = this.userService.getCurrentUserId();
-    console.log("👤 OnInit - User ID:", userId); // <--- CONTROLLA QUESTO IN CONSOLE
 
+    // 1. Controlla se loggato e aggiorna la variabile per l'HTML
+    this.isLoggedIn = !!userId;
+    console.log("👤 OnInit - User ID:", userId, "Logged In:", this.isLoggedIn);
+
+    // FIX ERRORE TS2345: Controlliamo direttamente 'userId'
+    // TypeScript capisce che dentro questo IF, userId è un numero e non null.
     if (userId) {
       this.loadPortfolio(userId);
     } else {
-      console.warn("⚠️ Nessun utente trovato dopo il refresh!");
+      // 🔒 Se NON loggato, ferma il caricamento per mostrare il blocco
       this.loading = false;
       this.cd.detectChanges();
     }
@@ -77,27 +85,20 @@ export class MyPortfolioComponent implements OnInit {
 
   loadPortfolio(userId: number) {
     this.loading = true;
-    this.cd.detectChanges(); // Mostra spinner
+    this.cd.detectChanges();
 
     this.portfolioService.getPortfolio(userId).subscribe({
       next: (data) => {
-        // 1. Salviamo i dati grezzi
         this.portfolio = data;
-
-        // 2. Nascondiamo il loading SUBITO.
-        // Questo fa apparire i contenitori vuoti nel DOM (div dei grafici).
         this.loading = false;
-        this.cd.detectChanges(); // Forza Angular a creare i <div> nella pagina
+        this.cd.detectChanges();
 
-        // 3. ORA prepariamo i grafici, ma dentro un piccolo timeout.
-        // Questo dà al browser quei 10ms necessari per calcolare la larghezza dei div.
         setTimeout(() => {
-          if (this.portfolio) { // Controllo di sicurezza
+          if (this.portfolio) {
             this.setupCharts(this.portfolio);
-            this.cd.detectChanges(); // Aggiorna la vista finale con i grafici pieni
-            console.log("✅ Grafici renderizzati dopo timeout");
+            this.cd.detectChanges();
           }
-        }, 50); // 50 millisecondi di ritardo sono invisibili all'occhio ma salvano il rendering
+        }, 50);
       },
       error: (err) => {
         console.error('Errore portfolio:', err);
@@ -119,12 +120,10 @@ export class MyPortfolioComponent implements OnInit {
       values.push(data.availableCash);
     }
 
-    // 🔥 TRUCCO: Creare un NUOVO oggetto invece di modificarlo
-    // Questo dice a Chart.js: "Ehi, è cambiato tutto, ridisegna!"
     this.pieChartData = {
-      labels: [...labels], // Copia array
+      labels: [...labels],
       datasets: [{
-        data: [...values], // Copia array
+        data: [...values],
         backgroundColor: [
           '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
           '#8b5cf6', '#ec4899', '#6366f1', '#cbd5e1'
@@ -168,29 +167,23 @@ export class MyPortfolioComponent implements OnInit {
   }
 
   // --- TRADING LOGIC ---
-
   openTradePanel(asset: any) {
-    console.log("Apro pannello per:", asset.symbol);
     this.selectedAsset = asset;
     this.tradeAction = 'BUY';
     this.tradeQuantity = null;
     this.tradeAmount = null;
-
-    this.isTradeModalOpen = true; // Imposto a true
-
-    // 🔥 FIX FONDAMENTALE: Forza Angular a mostrare subito la modale
+    this.isTradeModalOpen = true;
     this.cd.detectChanges();
   }
 
   closeTradePanel() {
     this.isTradeModalOpen = false;
     this.selectedAsset = null;
-    this.cd.detectChanges(); // Pulisce subito la vista
+    this.cd.detectChanges();
   }
 
   setAction(action: 'BUY' | 'SELL') {
     this.tradeAction = action;
-    // Ricalcolo i valori se cambio azione (opzionale, ma utile per UI)
     this.cd.detectChanges();
   }
 
@@ -200,7 +193,7 @@ export class MyPortfolioComponent implements OnInit {
     } else {
       this.tradeAmount = null;
     }
-    this.cd.detectChanges(); // Aggiorna input Euro in tempo reale
+    this.cd.detectChanges();
   }
 
   onAmountChange() {
@@ -209,17 +202,16 @@ export class MyPortfolioComponent implements OnInit {
     } else {
       this.tradeQuantity = null;
     }
-    this.cd.detectChanges(); // Aggiorna input Quantità in tempo reale
+    this.cd.detectChanges();
   }
 
   confirmTrade() {
     if (!this.selectedAsset || !this.tradeQuantity || this.tradeQuantity <= 0) return;
-
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
 
     this.isProcessing = true;
-    this.cd.detectChanges(); // Mostra "Elaborazione..." sul bottone
+    this.cd.detectChanges();
 
     const request = {
       userId: userId,
@@ -235,8 +227,6 @@ export class MyPortfolioComponent implements OnInit {
         this.isProcessing = false;
         alert('Transazione completata!');
         this.closeTradePanel();
-
-        // Ricarica tutto per aggiornare grafici e tabella
         this.loadPortfolio(userId);
       },
       error: (err) => {
