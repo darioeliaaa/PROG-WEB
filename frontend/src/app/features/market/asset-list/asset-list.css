@@ -561,3 +561,60 @@ label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; 
   color: #64748b;
   font-size: 0.95rem;
 }
+/* asset-list.css */
+
+/* Stile per la Card di Login */
+.login-prompt-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 380px; /* Più piccolo della modale trade */
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  animation: slideInUp 0.3s ease-out;
+  position: relative;
+}
+
+.icon-warning {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  background: #f1f5f9;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-prompt-card h3 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.login-prompt-card p {
+  color: #64748b;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Animazione di entrata */
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

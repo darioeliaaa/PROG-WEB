@@ -18,6 +18,8 @@ export class AssetListComponent implements OnInit {
   assets: MarketAsset[] = [];
   currentType: string = '';
   loading = false;
+  isLoggedIn: boolean = false;
+  showLoginModal = false;
 
   // Dati Utente: Mappa Simbolo -> Quantità (Es. "AAPL" -> 10)
   myPortfolioAssets: Map<string, number> = new Map();
@@ -42,11 +44,23 @@ export class AssetListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // 1. Controlliamo SUBITO se l'utente è loggato
+    const userId = this.userService.getCurrentUserId();
+    this.isLoggedIn = !!userId; // Diventa true se c'è un ID, false se null
+
     this.route.data.subscribe(data => {
       this.currentType = data['type'];
       this.loadAssets();
-      this.loadMyPortfolio(); // <--- Carichiamo il portafoglio all'avvio
+      if (this.isLoggedIn) {
+        this.loadMyPortfolio();
+      }
     });
+  }
+
+
+
+  closeLoginModal() {
+    this.showLoginModal = false;
   }
 
   // 1. SCARICA IL PORTAFOGLIO PER SAPERE COSA HAI
@@ -86,10 +100,17 @@ export class AssetListComponent implements OnInit {
   // --- GESTIONE MODALE E CALCOLI ---
 
   openTradePanel(asset: any) {
+    // 1. CONTROLLO LOGIN: Se non c'è l'ID utente, fermati e mostra il popup
+    if (!this.userService.getCurrentUserId()) {
+      this.showLoginModal = true;
+      return; // <--- ESCI DALLA FUNZIONE, non apre il trade panel
+    }
+
+    // 2. SE LOGGATO: Procedi normalmente
     this.selectedAsset = asset;
     this.tradeAction = 'BUY';
-    this.tradeQuantity = null; // Reset
-    this.tradeAmount = null;   // Reset
+    this.tradeQuantity = null;
+    this.tradeAmount = null;
     this.isTradeModalOpen = true;
   }
 

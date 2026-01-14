@@ -114,3 +114,24 @@
 
   </div>
 </div>
+
+<div class="modal-overlay" *ngIf="showLoginModal">
+  <div class="login-prompt-card">
+
+    <div class="icon-warning">🔒</div>
+
+    <h3>Accesso Richiesto</h3>
+    <p>Per acquistare o vendere asset devi accedere al tuo account.</p>
+
+    <div class="prompt-actions">
+      <button routerLink="/login" class="btn-primary full-width">
+        Vai al Login
+      </button>
+
+      <button (click)="closeLoginModal()" class="btn-secondary full-width">
+        Chiudi
+      </button>
+    </div>
+
+  </div>
+</div>
