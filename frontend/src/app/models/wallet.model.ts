@@ -6,6 +6,7 @@ export interface Wallet {
   personal: boolean;
   admin: User;
   monthlyBudget: number | null;
+  maxTransferLimit: number | null;
   active: boolean;
   members: User[];
 
