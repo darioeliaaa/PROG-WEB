@@ -48,7 +48,7 @@
         <div *ngFor="let asset of topStocks"
              class="ball-card"
              [routerLink]="['/market/chart', asset.symbol]"
-             title="Vedi grafico di {{ asset.symbol }}">
+             title="Vedi grafico di {{ pulisciSimbolo(asset.symbol) }}">
 
           <div class="icon-wrapper">
             <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
@@ -56,7 +56,7 @@
                  alt="{{ asset.symbol }}">
           </div>
 
-          <span class="ticker-symbol">{{ asset.symbol }}</span>
+          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
 
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent | number:'1.2-2' }}%
@@ -78,7 +78,7 @@
           <div class="icon-wrapper">
             <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
           </div>
-          <span class="ticker-symbol">{{ asset.symbol }}</span>
+          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent | number:'1.2-2' }}%
         </span>
@@ -99,7 +99,7 @@
           <div class="icon-wrapper">
             <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
           </div>
-          <span class="ticker-symbol">{{ asset.symbol }}</span>
+          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent | number:'1.2-2' }}%
         </span>

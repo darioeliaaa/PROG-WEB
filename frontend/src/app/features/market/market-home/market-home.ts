@@ -103,4 +103,14 @@ export class MarketHomeComponent implements OnInit {
       }
     });
   }
+  pulisciSimbolo(simbolo: string): string {
+    if (!simbolo) return '';
+
+    // 1. Prende solo quello dopo i due punti (es. toglie "BINANCE:")
+    let nomePulito = simbolo.includes(':') ? simbolo.split(':')[1] : simbolo;
+
+    // 2. Toglie suffissi comuni come USDT, USD, EUR
+    // Nota: l'ordine è importante (USDT prima di USD)
+    return nomePulito.replace('USDT', '').replace('USD', '').replace('EUR', '');
+  }
 }
