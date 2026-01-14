@@ -3,7 +3,9 @@ package com.example.backend.repository;
 import com.example.backend.entity.User; // <--- ASSICURATI DI AVERE QUESTO IMPORT
 import com.example.backend.entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Modifying; // ✅ IMPORTANTE
+import org.springframework.data.jpa.repository.Query;     // ✅ IMPORTANTE
+import org.springframework.data.repository.query.Param;   // ✅ IMPORTANTE
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +22,14 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
   boolean existsByInviteCode(String inviteCode);
 
   List<Wallet> findAllByMembers_Id(Long userId);
+
+  // 1. Per rimuovere un singolo membro (senza impazzire con gli oggetti Java)
+  @Modifying
+  @Query(value = "DELETE FROM user_wallets WHERE wallet_id = :walletId AND user_id = :userId", nativeQuery = true)
+  void detachMember(@Param("walletId") Long walletId, @Param("userId") Long userId);
+
+  // 2. Per rimuovere TUTTI i membri prima di cancellare il wallet
+  @Modifying
+  @Query(value = "DELETE FROM user_wallets WHERE wallet_id = :walletId", nativeQuery = true)
+  void detachAllMembers(@Param("walletId") Long walletId);
 }
