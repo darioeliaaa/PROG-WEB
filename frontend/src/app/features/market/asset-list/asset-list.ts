@@ -198,6 +198,38 @@ export class AssetListComponent implements OnInit {
       }
     });
   }
+  // Aggiungi questo metodo nella classe AssetListComponent
+
+  handleImgError(event: any, symbol: string) {
+    // 1. Capiamo se è una crypto o un'azione per scegliere l'icona giusta
+    const isCrypto = symbol.includes('BINANCE') || this.currentType === 'CRYPTO';
+
+    // 2. URL Fallback (Icona Generica)
+    const fallbackIcon = isCrypto
+      ? 'https://cdn-icons-png.flaticon.com/512/12192/12192349.png' // Icona Moneta
+      : 'https://cdn-icons-png.flaticon.com/512/10103/10103216.png'; // Icona Grafico/Stock
+
+    // 3. Tentativo "Intelligente" (Opzionale): Proviamo a indovinare il logo se quello del DB è rotto
+    // Se l'immagine rotta NON era già il nostro tentativo smart, proviamo Clearbit/Cryptologos
+    const currentSrc = event.target.src;
+
+    if (isCrypto && !currentSrc.includes('cryptologos.cc')) {
+      // Prova Cryptologos
+      const cleanName = this.pulisciSimbolo(symbol).toLowerCase();
+      event.target.src = `https://cryptologos.cc/logos/${cleanName}-${cleanName}-logo.png?v=029`;
+    }
+    else if (!isCrypto && !currentSrc.includes('clearbit')) {
+      // Prova Clearbit per le azioni
+      event.target.src = `https://logo.clearbit.com/${symbol.toLowerCase()}.com`;
+    }
+    else {
+      // Se anche i tentativi intelligenti falliscono, metti l'icona generica
+      event.target.src = fallbackIcon;
+    }
+
+    // Evita loop infiniti se anche l'icona di fallback dovesse mancare
+    event.target.onerror = null;
+  }
   pulisciSimbolo(simbolo: string): string {
     if (!simbolo) return '';
 

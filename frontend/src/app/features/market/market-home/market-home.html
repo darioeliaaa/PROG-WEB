@@ -1,15 +1,26 @@
 <div class="market-home-container">
 
-  <div class="market-home-container">
+  <div *ngIf="loading && newsList.length === 0 && topStocks.length === 0" class="loader-container">
+    <div class="spinner"></div>
+    <p>Analisi dei mercati in corso...</p>
+  </div>
+
+  <div *ngIf="hasError" class="error-box">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <p>Impossibile recuperare i dati di mercato.</p>
+      <button class="btn-retry" (click)="caricaDatiParalleli()">Riprova</button>
+    </div>
+  </div>
+
+  <div *ngIf="!hasError" class="content-fade-in">
 
     <div class="visual-carousel-container" *ngIf="newsList.length > 0">
-
       <div class="visual-track">
 
         <div *ngFor="let news of newsList"
              class="visual-news-card"
              [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
-
           <a [href]="news.url" target="_blank" class="visual-card-link">
             <div class="visual-overlay">
               <span class="visual-source">{{ news.source.name }}</span>
@@ -21,11 +32,8 @@
         <div *ngFor="let news of newsList"
              class="visual-news-card"
              [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
-
           <a [href]="news.url" target="_blank" class="visual-card-link">
-
             <div class="card-badge">NEWS</div>
-
             <div class="visual-overlay">
               <div class="source-wrapper">
                 <span class="source-dot"></span>
@@ -38,13 +46,18 @@
 
       </div>
     </div>
+
     <section class="market-section">
       <div class="section-header">
         <h2>Azioni in tendenza</h2>
         <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
       </div>
 
-      <div class="revolut-grid">
+      <div *ngIf="topStocks.length === 0" style="padding: 20px; text-align: center; color: #888;">
+        <small>Caricamento azioni...</small>
+      </div>
+
+      <div class="revolut-grid" *ngIf="topStocks.length > 0">
         <div *ngFor="let asset of topStocks"
              class="ball-card"
              [routerLink]="['/market/chart', asset.symbol]"
@@ -53,14 +66,15 @@
           <div class="icon-wrapper">
             <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
                  class="round-logo"
-                 alt="{{ asset.symbol }}">
+                 alt="{{ asset.symbol }}"
+                 (error)="handleImgError($event, asset.symbol)">
           </div>
 
           <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
 
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent | number:'1.2-2' }}%
-        </span>
+            {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
+          </span>
         </div>
       </div>
     </section>
@@ -71,17 +85,23 @@
         <a routerLink="/market/etf" class="see-all-btn">Vedi tutto →</a>
       </div>
 
-      <div class="revolut-grid">
+      <div *ngIf="topEtf.length === 0" style="padding: 20px; text-align: center; color: #888;">
+        <small>Caricamento ETF...</small>
+      </div>
+
+      <div class="revolut-grid" *ngIf="topEtf.length > 0">
         <div *ngFor="let asset of topEtf"
              class="ball-card"
              [routerLink]="['/market/chart', asset.symbol]">
           <div class="icon-wrapper">
-            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
+                 class="round-logo"
+                 (error)="handleImgError($event, asset.symbol)">
           </div>
           <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent | number:'1.2-2' }}%
-        </span>
+            {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
+          </span>
         </div>
       </div>
     </section>
@@ -92,17 +112,23 @@
         <a routerLink="/market/crypto" class="see-all-btn">Vedi tutto →</a>
       </div>
 
-      <div class="revolut-grid">
+      <div *ngIf="topCrypto.length === 0" style="padding: 20px; text-align: center; color: #888;">
+        <small>Caricamento Crypto...</small>
+      </div>
+
+      <div class="revolut-grid" *ngIf="topCrypto.length > 0">
         <div *ngFor="let asset of topCrypto"
              class="ball-card"
              [routerLink]="['/market/chart', asset.symbol]">
           <div class="icon-wrapper">
-            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'" class="round-logo">
+            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
+                 class="round-logo"
+                 (error)="handleImgError($event, asset.symbol)">
           </div>
           <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent | number:'1.2-2' }}%
-        </span>
+            {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
+          </span>
         </div>
       </div>
     </section>

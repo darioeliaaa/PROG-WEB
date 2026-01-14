@@ -9,6 +9,7 @@
   </div>
 
   <div class="tv-list" *ngIf="!loading && assets.length > 0">
+
     <div class="tv-row header-row">
       <div class="col-symbol">Asset</div>
       <div class="col-price">Prezzo</div>
@@ -19,31 +20,42 @@
     </div>
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
+
       <div class="col-symbol" [routerLink]="['/market/chart', asset.symbol]" title="Clicca per il grafico">
-        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'" class="small-logo" alt="logo">
+
+        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'"
+             class="small-logo"
+             alt="logo"
+             (error)="handleImgError($event, asset.symbol)">
+
         <div class="symbol-info">
           <span class="ticker">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="full-name">{{ asset.name }}</span>
           <span class="industry-badge" *ngIf="asset.industry">{{ asset.industry }}</span>
         </div>
       </div>
+
       <div class="col-price">
         <span class="main-price">{{ asset.currentPrice | currency: (asset.currency || 'USD') }}</span>
       </div>
+
       <div class="col-change">
         <div class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
           {{ asset.changePercent > 0 ? '▲' : '▼' }} {{ asset.changePercent | number:'1.2-2' }}%
         </div>
       </div>
+
       <div class="col-stats mobile-hide">
         <div class="stat-row"><span>High:</span> <strong>{{ asset.highPrice | number:'1.2-2' }}</strong></div>
         <div class="stat-row"><span>Low:</span> <strong>{{ asset.lowPrice | number:'1.2-2' }}</strong></div>
       </div>
+
       <div class="col-market mobile-hide">
         <div class="stat-row" *ngIf="asset.marketCap">
           <span>Mkt Cap:</span> <strong>{{ asset.marketCap | number }} M</strong>
         </div>
       </div>
+
       <div class="col-action">
         <button class="btn-trade" (click)="openTradePanel(asset)">Trade</button>
       </div>
@@ -57,7 +69,9 @@
     <div class="stylish-header">
       <div class="header-left">
         <div class="asset-pill">
-          <img [src]="selectedAsset?.logoUrl || 'assets/icons/default-asset.png'" class="mini-logo">
+          <img [src]="selectedAsset?.logoUrl || 'assets/icons/default-asset.png'"
+               class="mini-logo"
+               (error)="handleImgError($event, selectedAsset?.symbol)">
           <span>{{ selectedAsset?.symbol }}</span>
         </div>
         <h3>Nuovo Ordine</h3>
