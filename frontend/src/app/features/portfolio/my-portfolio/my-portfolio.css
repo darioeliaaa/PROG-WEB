@@ -239,4 +239,156 @@
 .btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
 
 .btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
-.btn-secondary:hover { background: #f1f5f9; }
+.btn-secondary:hover {
+  background: #f1f5f9;}
+
+.blurred-content {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.4s ease;
+}
+
+/* 2. OVERLAY (Stile Screenshot: Luminoso e Sfuocato) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  /* Z-INDEX 50:
+     Sta SOTTO la Sidebar (solitamente 1000) e l'Header (100).
+     In questo modo la sidebar rimane cliccabile e nitida,
+     mentre il contenuto viene coperto.
+  */
+  z-index: 50;
+
+  /* --- MODIFICA KEY: STILE LUMINOSO --- */
+  /* Invece di scuro, usiamo un bianco/grigio molto trasparente */
+  background: rgba(255, 255, 255, 0.6);
+
+  /* Blur intenso per l'effetto "Vetro Smerigliato" */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* 3. CARD LOGIN (Bianca, Shadow morbida) */
+.login-prompt-card.stylish-lock-card {
+  background: #ffffff;
+  width: 90%;
+  max-width: 400px; /* Leggermente più larga come in foto */
+  border-radius: 32px; /* Curve molto accentuate */
+  padding: 50px 40px;
+  text-align: center;
+
+  /* Ombra molto morbida e diffusa (stile moderno) */
+  box-shadow: 0 20px 60px -10px rgba(71, 85, 105, 0.15);
+  border: 1px solid rgba(255,255,255,0.8); /* Bordo sottile per definizione */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* Animazione dal basso */
+  animation: slideUpModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Cerchio Icona (Viola sfumato) */
+.lock-icon-circle {
+  width: 80px;
+  height: 80px;
+  /* Gradiente Viola stile Sidebar */
+  background: linear-gradient(135deg, #9F9FFC 0%, #7373f3 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  /* Glow colorato sotto l'icona */
+  box-shadow: 0 10px 25px rgba(115, 115, 243, 0.35);
+  color: white;
+}
+
+/* Icona SVG dentro il cerchio */
+.lock-icon-circle svg {
+  width: 36px;
+  height: 36px;
+  stroke-width: 2px;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Titolo "Area Riservata" */
+.stylish-lock-card h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b; /* Grigio scuro, quasi nero */
+  margin: 10px 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+/* Paragrafo descrittivo */
+.stylish-lock-card p {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.95rem;
+  color: #64748b; /* Grigio medio */
+  line-height: 1.5;
+  margin: 0 0 35px 0;
+  padding: 0 10px;
+}
+
+/* Bottone "Accedi ora" */
+.btn-auth-lock {
+  background: linear-gradient(135deg, #8E8EFA 0%, #6363f1 100%);
+  color: white;
+  border: none;
+  padding: 18px 0; /* Bottone alto come in foto */
+  width: 100%;
+  border-radius: 18px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+
+  /* Ombra colorata sotto il bottone */
+  box-shadow: 0 10px 20px rgba(99, 99, 241, 0.25);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-auth-lock:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(99, 99, 241, 0.4);
+}
+
+.btn-auth-lock:active {
+  transform: scale(0.98);
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(40px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
