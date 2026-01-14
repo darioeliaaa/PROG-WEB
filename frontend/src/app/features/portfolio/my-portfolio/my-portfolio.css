@@ -42,11 +42,11 @@
 .page-header p { color: #64748b; margin-top: 5px; }
 
 .btn-action {
-  background: #2563eb; color: white; border: none; padding: 12px 24px;
+  background: #7D7DFA; color: white; border: none; padding: 12px 24px;
   border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
   box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }
-.btn-action:hover { background: #1d4ed8; transform: translateY(-2px); }
+.btn-action:hover { background: #7D7DFA; transform: translateY(-2px); }
 
 /* CARDS E STRUTTURA */
 .glass-card {
@@ -66,14 +66,14 @@
 }
 
 /* Stili specifici per le card */
-.highlight-card { border-left: 5px solid #2563eb; }
+.highlight-card { border-left: 5px solid #7D7DFA; }
 .profit-bg { border-left: 5px solid #10b981; background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%); }
 .loss-bg { border-left: 5px solid #ef4444; background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); }
 
 .card-label { text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: #64748b; font-weight: 600; }
 .big-value { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin: 10px 0; }
 .sub-label { font-size: 0.9rem; color: #94a3b8; }
-.text-blue { color: #2563eb; font-weight: 600; }
+.text-blue { color: #7D7DFA; font-weight: 600; }
 
 .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
 .badge.up { background: #d1fae5; color: #065f46; }
@@ -108,7 +108,7 @@
 .text-muted { color: #94a3b8; }
 
 .btn-mini {
-  padding: 8px 16px; background: #eff6ff; color: #2563eb; border: none;
+  padding: 8px 16px; background: #eff6ff; color: #7D7DFA; border: none;
   border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
   transition: 0.2s;
 }
@@ -116,7 +116,7 @@
 
 .empty-state { text-align: center; padding: 40px; }
 .spinner-container { text-align: center; padding: 50px; color: #64748b; display: flex; flex-direction: column; align-items: center; gap: 10px;}
-.spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
+.spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #7D7DFA; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* ... IL TUO CSS DELLA PAGINA (Header, Cards, Tabelle) RIMANE UGUALE ... */
@@ -234,8 +234,8 @@
 .btn-primary, .btn-secondary {
   flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.2s;
 }
-.btn-primary { background: #2563eb; color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
-.btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+.btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+.btn-primary:hover { background: #7D7DFA; transform: translateY(-2px); }
 .btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
 
 .btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
