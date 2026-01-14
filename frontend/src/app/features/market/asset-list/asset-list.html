@@ -116,22 +116,28 @@
 </div>
 
 <div class="modal-overlay" *ngIf="showLoginModal">
-  <div class="login-prompt-card">
+  <div class="login-prompt-card stylish-lock-card">
 
-    <div class="icon-warning">🔒</div>
+    <button class="close-icon-btn" (click)="closeLoginModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
 
-    <h3>Accesso Richiesto</h3>
-    <p>Per acquistare o vendere asset devi accedere al tuo account.</p>
-
-    <div class="prompt-actions">
-      <button routerLink="/login" class="btn-primary full-width">
-        Vai al Login
-      </button>
-
-      <button (click)="closeLoginModal()" class="btn-secondary full-width">
-        Chiudi
-      </button>
+    <div class="lock-icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
     </div>
+
+    <h3>Area Riservata</h3>
+    <p>Autenticati per accedere alla tua Dashboard, gestire le tue finanze e visualizzare i grafici dettagliati.</p>
+
+    <button class="btn-auth-lock" routerLink="/login">
+      Accedi ora
+    </button>
 
   </div>
 </div>

@@ -10,6 +10,8 @@
   display: flex;
   flex-direction: column;
   padding: 24px 12px;
+  position: relative; /* Rende valido lo z-index qui sotto */
+  z-index: 1000;
 
   /* SFONDO GRADIENTE (Identico alla Sidebar Principale) */
   background: linear-gradient(180deg, #8E8EFA 0%, #7D7DFA 100%);

@@ -1,12 +1,14 @@
+
 /* =========================================
-   1. STRUTTURA GENERALE & SFONDO
+   1. STRUTTURA GENERALE
    ========================================= */
 :host {
   display: block;
-  background-color: #f8fafc; /* Slate-50: Grigio chiarissimo freddo */
+  /* position: relative;  <-- RIMUOVI QUESTO se c'era */
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: #334155; /* Slate-700 */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #334155;
+  background-color: #f8fafc;
 }
 
 .market-container {
@@ -15,606 +17,285 @@
   padding: 40px 20px;
 }
 
-/* Contenitore Header "Glass" */
+/* =========================================
+   2. HEADER "GLASS"
+   ========================================= */
 .market-header {
-  /* Layout */
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  /* Spaziatura */
   padding: 24px 32px;
   margin-bottom: 30px;
-
-  /* Stile Vetro & Bordo */
-  background: rgba(255, 255, 255, 0.85); /* Bianco all'85% */
-  backdrop-filter: blur(12px);            /* Sfocatura dello sfondo sottostante */
-  border: 1px solid rgba(255, 255, 255, 0.6); /* Bordo semi-trasparente */
-  border-radius: 24px;                    /* Curve morbide */
-
-  /* Ombra soffice */
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.03),
-    0 4px 6px -2px rgba(0, 0, 0, 0.01);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
 }
 
-/* Tipografia del Titolo */
 .market-header h2 {
-  font-size: 1.75rem;       /* Grande ma non enorme */
-  font-weight: 800;         /* Extra Bold */
-  color: #0f172a;           /* Slate-900 (Nero Inchiostro) */
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
-  letter-spacing: -0.03em;  /* Tracking stretto (lettere vicine) */
-  line-height: 1.2;
-
-  /* Setup per la barretta laterale */
-  display: flex;
-  align-items: center;
+  letter-spacing: -0.03em;
   position: relative;
-  padding-left: 24px; /* Spazio riservato alla barretta */
+  padding-left: 24px;
 }
 
-/* La Barretta "Accent" (Gradiente + Glow) */
+/* Barretta colorata a sinistra del titolo */
 .market-header h2::before {
   content: '';
   position: absolute;
   left: 0;
-
-  /* Dimensioni */
-  height: 32px; /* Altezza fissa per essere elegante */
-  width: 6px;   /* Larghezza sottile */
-
-  /* Stile "Pillola" */
+  height: 32px;
+  width: 6px;
   border-radius: 10px;
-
-  /* Colore: Gradiente da Indigo a Viola */
   background: linear-gradient(180deg, #4f46e5 0%, #818cf8 100%);
-
-  /* Effetto Luce (Glow) */
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
 }
 
 /* =========================================
-   2. LA TABELLA (CARD PRINCIPALE)
+   3. TABELLA ASSET (TV LIST)
    ========================================= */
 .tv-list {
   background: white;
-  border-radius: 24px; /* Curve ampie e moderne */
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); /* Ombra profonda ma soffice */
-  border: 1px solid #f1f5f9; /* Bordo sottilissimo */
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
   overflow: hidden;
+  position: relative;
+  z-index: 1; /* Assicura che stia sotto la modale */
 }
 
-/* --- GRID LAYOUT --- */
 .tv-row {
   display: grid;
-  /* Definizione colonne: Simbolo | Prezzo | Var% | Stats | MarketCap | Azione */
   grid-template-columns: 2fr 1.2fr 1.2fr 1.5fr 1.2fr 100px;
   align-items: center;
   padding: 20px 30px;
   border-bottom: 1px solid #f1f5f9;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transizione fluida */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Header della tabella */
 .header-row {
   background-color: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  padding-top: 15px;
-  padding-bottom: 15px;
-
-  /* Tipografia Header */
-  color: #64748b; /* Slate-500 */
+  color: #64748b;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-/* Hover sulla riga (Effetto "Sollevamento") */
 .item-row {
   cursor: pointer;
-  position: relative;
 }
 
 .item-row:hover {
   background-color: #ffffff;
-  transform: translateY(-2px) scale(1.002); /* Leggerissimo zoom e lift */
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* Ombra che appare on-hover */
-  z-index: 10; /* Porta la riga sopra le altre */
+  transform: translateY(-2px) scale(1.002);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  z-index: 10;
   border-color: transparent;
 }
 
-/* =========================================
-   3. STILE DELLE COLONNE
-   ========================================= */
+/* --- COLONNE --- */
+.col-symbol { display: flex; align-items: center; gap: 16px; }
+.small-logo { width: 48px; height: 48px; border-radius: 12px; padding: 4px; background: white; border: 1px solid #e2e8f0; object-fit: contain; }
+.symbol-info { display: flex; flex-direction: column; gap: 2px; }
+.ticker { font-weight: 700; color: #0f172a; font-size: 1.1rem; }
+.full-name { font-size: 0.85rem; color: #64748b; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.industry-badge { display: inline-flex; font-size: 0.65rem; font-weight: 700; color: #6366f1; background: #eef2ff; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; }
 
-/* COL 1: SIMBOLO E LOGO */
-.col-symbol {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+.col-price { font-size: 1.1rem; font-weight: 700; color: #0f172a; font-variant-numeric: tabular-nums; }
 
-.small-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px; /* "Squircle" (quadrato arrotondato) stile iOS */
-  padding: 4px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  object-fit: contain;
-}
-
-.symbol-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ticker {
-  font-weight: 700;
-  color: #0f172a;
-  font-size: 1.1rem;
-}
-
-.full-name {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-}
-
-/* Badge Settore */
-.industry-badge {
-  display: inline-flex;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #6366f1; /* Indigo */
-  background: #eef2ff;
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-top: 4px;
-  width: fit-content;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* COL 2: PREZZO */
-.col-price {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-
-  /* 🔥 FONDAMENTALE: Allinea i numeri (0-9 hanno la stessa larghezza) */
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-/* COL 3: VARIAZIONE (Badge Pillola) */
 .col-change .badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  border-radius: 9999px; /* Pillola perfetta */
-  font-size: 0.85rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  min-width: 85px; /* Larghezza minima fissa per allineamento */
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 12px; border-radius: 9999px;
+  font-size: 0.85rem; font-weight: 700; min-width: 85px;
 }
+.badge.up { background-color: #dcfce7; color: #166534; }
+.badge.down { background-color: #fee2e2; color: #991b1b; }
 
-/* Colori moderni (Sfondo pastello + Testo scuro) */
-.badge.up {
-  background-color: #dcfce7; /* Verde menta chiaro */
-  color: #166534;          /* Verde foresta scuro */
-}
+.stat-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 6px; color: #94a3b8; padding-right: 25px; }
+.stat-row strong { color: #475569; font-weight: 600; }
 
-.badge.down {
-  background-color: #fee2e2; /* Rosso rosa chiaro */
-  color: #991b1b;          /* Rosso rubino scuro */
-}
-
-.change-value {
-  display: block;
-  font-size: 0.75rem;
-  margin-top: 6px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.8;
-  padding-left: 4px;
-}
-
-.text-up { color: #16a34a; }
-.text-down { color: #dc2626; }
-
-/* COL 4 & 5: DATI SECONDARI */
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  margin-bottom: 6px;
-  color: #94a3b8; /* Slate-400 */
-  padding-right: 25px;
-}
-
-.stat-row strong {
-  color: #475569; /* Slate-600 */
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* COL 6: BOTTONE AZIONE */
 .btn-trade {
-  background-color: #4f46e5; /* Indigo-600 */
-  color: white;
-  border: none;
-  padding: 10px 0;
-  width: 100%;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); /* Ombra colorata */
+  background-color: #4f46e5; color: white; border: none; padding: 10px 0; width: 100%;
+  border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
 }
+.btn-trade:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
 
-.btn-trade:hover {
-  background-color: #4338ca; /* Indigo-700 */
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-}
-
-/* =========================================
-   4. STATI CARICAMENTO & VUOTO
-   ========================================= */
-.loading-state, .empty-state {
-  text-align: center;
-  padding: 100px 20px;
-  color: #94a3b8;
-  font-weight: 500;
-  background: white;
-  border-radius: 20px;
-  margin-top: 20px;
-}
-
-.spinner {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #4f46e5;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
+/* Loading & Empty */
+.loading-state, .empty-state { text-align: center; padding: 100px 20px; color: #94a3b8; font-weight: 500; background: white; border-radius: 20px; margin-top: 20px; }
+.spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 10px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================================
-   5. RESPONSIVE MOBILE
+   4. MODALE OVERLAY (Limitata al Componente)
    ========================================= */
-@media (max-width: 900px) {
-  /* Tablet: Nascondi Market Cap e Stats */
-  .col-market, .col-stats { display: none; }
+/* =========================================
+   4. MODALE OVERLAY (Fissa e Centrata)
+   ========================================= */
+.modal-overlay {
+  /* FISSA RISPETTO ALLO SCHERMO (VIEWPORT) */
+  position: fixed;
+  top: 0;
+  left: 0;
 
-  /* Griglia ridotta */
-  .tv-row { grid-template-columns: 2fr 1fr 1fr 100px; }
-}
+  /* Occupa tutto lo spazio visibile */
+  width: 100vw;
+  height: 100vh;
 
-@media (max-width: 600px) {
-  /* Mobile: Layout compatto */
-  .market-container { padding: 20px 10px; }
+  /* TRUCCO Z-INDEX:
+     50 è maggiore del contenuto della tabella (1),
+     ma minore dell'Header (100) e della Sidebar (1000).
+     Risultato: Copre i dati, ma Header e Sidebar restano cliccabili sopra.
+  */
+  z-index: 50;
 
-  .tv-list { border-radius: 16px; }
+  /* Sfondo e Sfocatura */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
-  .tv-row {
-    /* 3 Colonne: Info | Prezzi/Var | Bottone */
-    grid-template-columns: 1fr 100px 60px;
-    gap: 12px;
-    padding: 15px;
-  }
+  /* Centratura perfetta */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  /* Nascondi header row e classi mobile-hide */
-  .mobile-hide, .header-row { display: none; }
+  animation: fadeIn 0.3s ease-out;
 
-  /* Logo più piccolo */
-  .small-logo { width: 40px; height: 40px; }
-
-  /* Allinea prezzo a destra */
-  .col-price {
-    text-align: right;
-    font-size: 1rem;
-  }
-
-  /* Sposta variazione sotto il prezzo */
-  .col-change {
-    grid-column: 2;
-    align-items: flex-end;
-    margin-top: -4px;
-  }
-
-  /* Badge trasparente su mobile per pulizia */
-  .col-change .badge {
-    background: transparent;
-    padding: 0;
-    min-width: auto;
-    font-size: 0.85rem;
-  }
-
-  .badge.up { color: #16a34a; }
-  .badge.down { color: #dc2626; }
-
-  /* Bottone ridotto */
-  .btn-trade {
-    padding: 8px 0;
-    font-size: 0.75rem;
-    background: #f1f5f9;
-    color: #4f46e5;
-    box-shadow: none;
-  }
+  /* Impedisce che lo scroll del mouse si propaghi troppo facilmente (opzionale) */
+  overscroll-behavior: contain;
 }
 
 /* =========================================
-   TRADE MODAL STYLES (MATCHING TRANSACTION FORM)
+   5. TRADE CARD (Compravendita)
    ========================================= */
-
-/* Sfondo scuro (Backdrop) */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.2s ease-out;
-}
-
-/* La Card Centrale */
 .trade-card-stylish {
   background: #ffffff;
-  width: 90%;
-  max-width: 600px; /* Larghezza contenuta come il form */
-  border-radius: 24px;
-  padding: 30px;
+  width: 90%; max-width: 600px;
+  border-radius: 24px; padding: 30px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Spazio verticale tra gli elementi */
-  position: relative;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column; gap: 20px;
+  position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header Carino */
-.stylish-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-}
+.stylish-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.stylish-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+.asset-pill { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: #475569; }
+.mini-logo { width: 20px; height: 20px; border-radius: 50%; }
+.holding-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #64748b; border: 1px solid #e2e8f0; }
 
-.stylish-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #1e293b;
-}
-
-.asset-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f1f5f9;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #475569;
-}
-
-.mini-logo {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-}
-
-/* --- REPLICA ESATTA DEL TUO CSS --- */
-
-/* 1. Toggle */
-.toggle-buttons {
-  display: flex;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 12px;
-}
-.btn-toggle {
-  flex: 1; border: none; background: transparent; padding: 10px;
-  border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
-}
-/* Verde per Acquista (Income) */
+/* Toggles & Inputs */
+.toggle-buttons { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
+.btn-toggle { flex: 1; border: none; background: transparent; padding: 10px; border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
 .btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-/* Rosso per Vendi (Expense) */
 .btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-/* 2. Input Gigante */
-.center-input-section {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.center-input-section label {
-  font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700;
-}
-.amount-wrapper { position: relative; display: inline-block; width: 100%; text-align: center; }
+.center-input-section { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.center-input-section label { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700; }
+.amount-wrapper { position: relative; width: 100%; text-align: center; }
 
 .big-input {
   font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
   border: none; background: transparent; text-align: center; width: 100%;
-  outline: none; padding: 0 0 5px 0; margin: 0;
-  border-bottom: 2px solid #e2e8f0; /* Linea un po' più spessa */
-  border-radius: 0;
-  transition: border-color 0.3s ease;
-  color: #1e293b;
+  outline: none; padding: 0 0 5px 0; margin: 0; border-bottom: 2px solid #e2e8f0;
+  color: #1e293b; border-radius: 0;
 }
-
 .big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
 .big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
-
-/* Rimuove le frecce numeriche */
 .big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.big-input::placeholder { color: #cbd5e1; }
 
-/* 3. Griglia e Input Glass */
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; }
+.small-input { font-size: 1.6rem !important; color: #334155 !important; }
+.currency-suffix { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: #94a3b8; font-weight: bold; }
+.info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed #e2e8f0; margin-bottom: 20px; color: #64748b; font-size: 0.95rem; }
 
-.grid-row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-/* Stile per i campi sola lettura (Prezzo e Totale) */
-.glass-readonly {
-  width: 100%; height: 45px; padding: 0 15px;
-  border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;
-  font-size: 0.95rem; color: #475569;
-  display: flex; align-items: center; /* Centra verticalmente il testo */
-  box-sizing: border-box;
-}
-
-.bold-text { font-weight: 700; color: #1e293b; }
-
-/* 4. Bottoni */
 .form-actions { display: flex; gap: 15px; margin-top: 10px; }
-.btn-primary, .btn-secondary {
-  flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s;
-}
+.btn-primary, .btn-secondary { flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s; }
 .btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3); }
 .btn-primary:hover { background: #6464fa; transform: translateY(-1px); }
-.btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
-
 .btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
-.btn-secondary:hover { background: #f1f5f9; }
 
-/* Animazioni */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* Badge quante ne ho */
-.holding-badge {
-  background: #f1f5f9;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
-  margin-left: auto; /* Lo spinge a destra */
-}
-
-.stylish-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Nuovo Input Euro */
-.small-wrapper {
-  border-bottom: 1px solid #e2e8f0;
-  position: relative;
-}
-
-.small-input {
-  font-size: 1.6rem !important; /* Un po' più piccolo dell'altro */
-  color: #334155 !important;
-}
-
-.currency-suffix {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.4rem;
-  color: #94a3b8;
-  font-weight: bold;
-}
-
-/* Riga info prezzo */
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 0;
-  border-bottom: 1px dashed #e2e8f0;
-  margin-bottom: 20px;
-  color: #64748b;
-  font-size: 0.95rem;
-}
-/* asset-list.css */
-
-/* Stile per la Card di Login */
-.login-prompt-card {
+/* =========================================
+   6. LOGIN CARD (REPLICA IMMAGINE)
+   ========================================= */
+.login-prompt-card.stylish-lock-card {
   background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 20px;
   width: 100%;
-  max-width: 380px; /* Più piccolo della modale trade */
+  max-width: 380px;
+  border-radius: 32px; /* Curve ampie */
+  padding: 45px 35px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-  animation: slideInUp 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(100, 116, 139, 0.15);
   position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.icon-warning {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  background: #f1f5f9;
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
+/* Icona X di chiusura */
+.close-icon-btn {
+  position: absolute; top: 20px; right: 20px;
+  background: transparent; border: none; cursor: pointer;
+  color: #94a3b8; padding: 8px; border-radius: 50%;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.close-icon-btn:hover { background-color: #f1f5f9; color: #ef4444; }
+.close-icon-btn svg { width: 22px; height: 22px; }
+
+/* Icona Scudo con Gradiente */
+.lock-icon-circle {
+  width: 84px; height: 84px;
+  background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
   border-radius: 50%;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 25px rgba(115, 115, 243, 0.25);
+  color: white;
+}
+.lock-icon-circle svg { width: 38px; height: 38px; stroke-width: 2.5px; }
+
+/* Tipografia Card Login */
+.stylish-lock-card h3 {
+  font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 800;
+  color: #1e293b; margin: 0 0 12px 0; letter-spacing: -0.5px;
+}
+.stylish-lock-card p {
+  font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #64748b;
+  line-height: 1.6; margin: 0 0 35px 0; padding: 0 5px;
 }
 
-.login-prompt-card h3 {
-  font-size: 1.5rem;
-  color: #1e293b;
-  margin-bottom: 10px;
-  font-weight: 700;
+/* Bottone Accedi (Gradiente) */
+.btn-auth-lock {
+  background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
+  color: white; border: none; padding: 16px 0; width: 100%; border-radius: 16px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(115, 115, 243, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.btn-auth-lock:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(115, 115, 243, 0.4); }
+
+/* =========================================
+   7. ANIMAZIONI & RESPONSIVE
+   ========================================= */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Mobile */
+@media (max-width: 900px) {
+  .col-market, .col-stats { display: none; }
+  .tv-row { grid-template-columns: 2fr 1fr 1fr 100px; }
 }
 
-.login-prompt-card p {
-  color: #64748b;
-  margin-bottom: 30px;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.prompt-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.full-width {
-  width: 100%;
-  justify-content: center;
-}
-
-/* Animazione di entrata */
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (max-width: 600px) {
+  .market-container { padding: 20px 10px; }
+  .tv-row { grid-template-columns: 1fr 100px 60px; gap: 12px; padding: 15px; }
+  .mobile-hide, .header-row { display: none; }
+  .col-price { text-align: right; font-size: 1rem; }
+  .col-change { grid-column: 2; align-items: flex-end; margin-top: -4px; }
+  .col-change .badge { background: transparent; padding: 0; min-width: auto; }
+  .btn-trade { padding: 8px 0; font-size: 0.75rem; background: #f1f5f9; color: #4f46e5; box-shadow: none; }
+  .stylish-lock-card { padding: 30px 20px; }
 }
