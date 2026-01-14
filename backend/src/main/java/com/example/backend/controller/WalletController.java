@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap; // ✅ IMPORTANTE
+import java.util.Map;     // ✅ IMPORTANTE
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -28,72 +30,104 @@ public class WalletController {
   // --- GET USER WALLETS ---
   @GetMapping("/user/{userId}")
   public ResponseEntity<?> getUserWallets(@PathVariable Long userId) {
-    // Invece di chiedere all'utente, chiediamo direttamente alla tabella dei wallet
-    // Questo risolve il problema "lista vuota" o "non aggiornata"
-    return ResponseEntity.ok(walletService.findWalletsByUserId(userId));
+    User user = userRepository.findById(userId).orElse(null);
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(user.getWallets());
   }
 
-  // --- CREA WALLET CONDIVISO ---
-  // NOTA: Ho rinominato il parametro in 'walletName' perché il tuo frontend manda '?walletName=...'
+  // --- CREA WALLET ---
   @PostMapping("/user/{userId}/create")
   public Wallet create(@PathVariable Long userId, @RequestParam String walletName) {
     return walletService.createSharedWallet(userId, walletName);
   }
 
-  // --- ✅ NUOVO ENDPOINT: UNISCITI TRAMITE CODICE ---
-  // Questo è quello che viene chiamato dal tasto "Unisciti" del frontend
+  // --- JOIN BY CODE ---
   @PostMapping("/join-by-code")
-  public ResponseEntity<Wallet> joinByCode(
-    @RequestParam String inviteCode,
-    @RequestParam Long userId
-  ) {
+  public ResponseEntity<Wallet> joinByCode(@RequestParam String inviteCode, @RequestParam Long userId) {
     Wallet wallet = walletService.joinWalletByCode(inviteCode, userId);
     return ResponseEntity.ok(wallet);
   }
-  // --------------------------------------------------
 
-  // Trasferimento soldi tra wallet
-  @PostMapping("/transfer")
-  public ResponseEntity<String> transfer(@RequestParam Long userId, @RequestParam Long fromId,
-                                         @RequestParam Long toId, @RequestParam BigDecimal amount) {
-    walletService.transferMoney(userId, fromId, toId, amount);
-    return ResponseEntity.ok("Trasferimento completato");
+  // --- ✅ FIX 1: AGGIORNAMENTO BUDGET E LIMITI (IMPORTI) ---
+  // Ora restituisce un JSON, risolvendo l'errore sugli importi
+  @PutMapping("/{walletId}/settings")
+  public ResponseEntity<?> updateSettings(
+    @RequestParam Long adminId,
+    @PathVariable Long walletId,
+    @RequestParam(required = false) BigDecimal budget,
+    @RequestParam(required = false) BigDecimal maxTransfer
+  ) {
+    walletService.updateWalletLimits(adminId, walletId, budget, maxTransfer);
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Impostazioni aggiornate con successo!");
+    return ResponseEntity.ok(response);
   }
 
-  // Invito amico (vecchio metodo tramite username)
-  @PostMapping("/{walletId}/invite/{username}")
-  public ResponseEntity<String> invite(@PathVariable Long walletId, @PathVariable String username) {
-    walletService.inviteByUsername(walletId, username);
-    return ResponseEntity.ok("Invitato con successo");
-  }
-
-  @DeleteMapping("/{walletId}/remove-member/{memberId}")
-  public ResponseEntity<?> removeMember(@RequestParam Long adminId, @PathVariable Long walletId, @PathVariable Long memberId) {
-    walletService.removeMember(adminId, walletId, memberId);
-    return ResponseEntity.ok("Membro rimosso");
-  }
-
-  @DeleteMapping("/{walletId}")
-  public ResponseEntity<?> deleteWallet(@RequestParam Long adminId, @PathVariable Long walletId) {
-    walletService.deleteWallet(adminId, walletId);
-    return ResponseEntity.ok("Wallet eliminato");
-  }
-
-  // Endpoint per cambiare il budget
+  // (Mantieni questo per compatibilità se serve, ma convertilo a JSON)
   @PutMapping("/{walletId}/budget")
   public ResponseEntity<?> updateBudget(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam BigDecimal budget) {
     walletService.setWalletBudget(adminId, walletId, budget);
-    return ResponseEntity.ok("Budget aggiornato correttamente");
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Budget aggiornato!");
+    return ResponseEntity.ok(response);
   }
 
-  // Endpoint per attivare/disattivare il wallet
+  // --- ✅ FIX 2: RIMOZIONE MEMBRO ---
+  @DeleteMapping("/{walletId}/remove-member/{memberId}")
+  public ResponseEntity<?> removeMember(@RequestParam Long adminId, @PathVariable Long walletId, @PathVariable Long memberId) {
+    walletService.removeMember(adminId, walletId, memberId);
+
+    // Restituiamo un JSON valido
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Membro rimosso con successo");
+    return ResponseEntity.ok(response);
+  }
+
+  // --- ✅ FIX 3: ELIMINAZIONE WALLET ---
+  @DeleteMapping("/{walletId}")
+  public ResponseEntity<?> deleteWallet(@RequestParam Long adminId, @PathVariable Long walletId) {
+    walletService.deleteWallet(adminId, walletId);
+
+    // Restituiamo un JSON valido
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Wallet eliminato con successo");
+    return ResponseEntity.ok(response);
+  }
+
+  // --- Altri metodi (Converti anche questi se danno errore) ---
+
   @PutMapping("/{walletId}/status")
   public ResponseEntity<?> updateStatus(@RequestParam Long adminId, @PathVariable Long walletId, @RequestParam boolean active) {
     walletService.toggleWalletStatus(adminId, walletId, active);
-    return ResponseEntity.ok("Stato del portafoglio aggiornato");
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Stato aggiornato");
+    return ResponseEntity.ok(response);
   }
 
-  // Endpoint legacy per join tramite ID (puoi mantenerlo o rimuoverlo)
+  @PostMapping("/transfer")
+  public ResponseEntity<?> transfer(@RequestParam Long userId, @RequestParam Long fromId, @RequestParam Long toId, @RequestParam BigDecimal amount) {
+    walletService.transferMoney(userId, fromId, toId, amount);
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Trasferimento completato");
+    return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("/{walletId}/invite/{username}")
+  public ResponseEntity<?> invite(@PathVariable Long walletId, @PathVariable String username) {
+    walletService.inviteByUsername(walletId, username);
+
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Invitato con successo");
+    return ResponseEntity.ok(response);
+  }
+
+  // Legacy join
   @PostMapping("/{walletId}/join")
   public ResponseEntity<Wallet> joinWallet(@PathVariable Long walletId, @RequestParam Long userId) {
     Wallet wallet = walletService.joinWallet(walletId, userId);
