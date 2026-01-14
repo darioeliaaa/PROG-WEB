@@ -22,6 +22,9 @@ import { WalletService } from '../../services/wallet.service';
 })
 export class Dashboard implements OnInit {
 
+  // ✅ NUOVO: Variabile per gestire lo stato di login
+  isLoggedIn: boolean = false;
+
   currentDate: Date = new Date();
   profilePercentage: number = 0;
   userSettings: any = { currency: 'EUR', privacyMode: false };
@@ -30,14 +33,10 @@ export class Dashboard implements OnInit {
   isModalOpen: boolean = false;
   isHistoryOpen: boolean = false;
 
-  // Dati
+  // Dati (Inizializzati vuoti per l'utente non loggato)
   datiMensili: any = { transactions: [], totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
-
-  // Contenitori Dati
   transazioniTotali: any[] = [];
   recentTransactions: any[] = [];
-
-  // ✅ NUOVO: Variabile per il saldo che non cambia col mese
   saldoTotaleReale: number = 0;
 
   constructor(
@@ -49,28 +48,39 @@ export class Dashboard implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.caricaDati();
-    this.checkProfileStatus();
-    this.userService.userSettings$.subscribe({
-      next: (settings) => {
-        if (settings) {
-          this.userSettings = settings;
-          console.log("Dashboard: Impostazioni aggiornate in tempo reale!", settings);
-          this.cd.detectChanges(); // Forza Angular a ridisegnare la pagina
-        }
-      }
-    });
+    // 1. CONTROLLO IMMEDIATO DELLO STATO DI LOGIN
+    this.isLoggedIn = this.userService.isLoggedIn();
 
-    // Caricamento iniziale (per sicurezza)
-    this.caricaImpostazioniUtente();
+    // 2. CARICA I DATI **SOLO** SE L'UTENTE È LOGGATO
+    if (this.isLoggedIn) {
+
+      this.caricaDati();
+      this.checkProfileStatus();
+      this.caricaImpostazioniUtente();
+
+      // Sottoscrizione per aggiornamenti live delle impostazioni
+      this.userService.userSettings$.subscribe({
+        next: (settings) => {
+          if (settings) {
+            this.userSettings = settings;
+            this.cd.detectChanges();
+          }
+        }
+      });
+    }
+    // SE NON È LOGGATO: Non facciamo nulla.
+    // Le variabili restano vuote/zero e non partono chiamate API che darebbero errore.
   }
+
+  // ✅ NUOVO: Metodo per il bottone "Accedi" dell'overlay
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
   caricaImpostazioniUtente() {
     const userId = this.userService.getCurrentUserId();
     if (userId) {
-      // Carichiamo le impostazioni dal service
       this.userSettings = this.userService.getSettingsSync();
-
-      // Opzionale: restiamo in ascolto di cambiamenti live
       this.userService.loadUserSettings(userId);
     }
   }
@@ -87,9 +97,7 @@ export class Dashboard implements OnInit {
   openHistory() {
     this.isHistoryOpen = true;
     if (this.transazioniTotali) {
-      this.transazioniTotali.sort((a: any, b: any) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
+      this.ordinaTransazioni(this.transazioniTotali);
     }
   }
   closeHistory() { this.isHistoryOpen = false; }
@@ -98,7 +106,7 @@ export class Dashboard implements OnInit {
   closeModal() { this.isModalOpen = false; }
   handleTransactionSaved() {
     this.isModalOpen = false;
-    this.caricaDati(); // Ricarica tutto quando salvi
+    this.caricaDati();
   }
 
   // --- LOGICA DATI ---
@@ -111,24 +119,19 @@ export class Dashboard implements OnInit {
     }
   }
 
-  // ✅ FIX: BLOCCO DATE FUTURE
   cambiaMese(delta: number) {
     const oggi = new Date();
     const testDate = new Date(this.currentDate);
 
-    // Se proviamo ad andare avanti (delta > 0)
     if (delta > 0) {
-      // Controlliamo se siamo già nel mese corrente (o futuro)
       if (testDate.getFullYear() === oggi.getFullYear() &&
         testDate.getMonth() >= oggi.getMonth()) {
-        return; // BLOCCA: Non andare nel futuro
+        return;
       }
     }
-
-    // Se tutto ok, cambia mese
     testDate.setMonth(testDate.getMonth() + delta);
     this.currentDate = testDate;
-    this.filtraDatiLocali(); // Aggiorna solo i grafici mensili
+    this.filtraDatiLocali();
   }
 
   caricaDati() {
@@ -142,18 +145,16 @@ export class Dashboard implements OnInit {
 
         this.transactionService.getTransactionsByWallet(mainWalletId).subscribe({
           next: (allTransactions) => {
-            // 1. Salviamo TUTTE le transazioni
-            this.transazioniTotali = allTransactions.sort((a: any, b: any) =>
-              new Date(b.date).getTime() - new Date(a.date).getTime()
-            );
+            // 1. Ordina e salva TUTTE le transazioni
+            this.transazioniTotali = this.ordinaTransazioni(allTransactions);
 
-            // ✅ 2. CALCOLO SALDO REALE (Totale assoluto, indipendente dal mese)
+            // 2. Calcolo saldo reale
             this.calcolaSaldoTotaleAssoluto();
 
             // 3. Estrai ultimi 5 movimenti
             this.recentTransactions = this.transazioniTotali.slice(0, 5);
 
-            // 4. Filtra i dati per i grafici del mese corrente
+            // 4. Filtra i dati mese
             this.filtraDatiLocali();
           },
           error: (err) => console.error("Errore transazioni:", err)
@@ -162,7 +163,16 @@ export class Dashboard implements OnInit {
     });
   }
 
-  // ✅ NUOVA FUNZIONE: Calcola il saldo su TUTTO lo storico
+  // Helper per ordinare (Data + ID per spareggio)
+  ordinaTransazioni(lista: any[]) {
+    return lista.sort((a: any, b: any) => {
+      const dataA = new Date(a.date).getTime();
+      const dataB = new Date(b.date).getTime();
+      if (dataB !== dataA) return dataB - dataA;
+      return (b.id || 0) - (a.id || 0);
+    });
+  }
+
   calcolaSaldoTotaleAssoluto() {
     let tot = 0;
     this.transazioniTotali.forEach((t: any) => {
@@ -177,7 +187,6 @@ export class Dashboard implements OnInit {
     const meseTarget = this.currentDate.getMonth();
     const annoTarget = this.currentDate.getFullYear();
 
-    // Filtra SOLO per i grafici mensili
     const filtered = this.transazioniTotali.filter((t: any) => {
       const d = new Date(t.date);
       return d.getMonth() === meseTarget && d.getFullYear() === annoTarget;
@@ -191,14 +200,12 @@ export class Dashboard implements OnInit {
       if (t.type === 'USCITA') usciteMese += Number(t.amount);
     });
 
-    // Questi dati servono SOLO ai grafici del mese (app-budget-overview)
     this.datiMensili = {
       transactions: filtered,
       totaleEntrate: entrateMese,
       totaleUscite: usciteMese,
-      saldo: entrateMese - usciteMese // Questo è il flusso di cassa mensile, non il saldo totale
+      saldo: entrateMese - usciteMese
     };
-
     this.cd.detectChanges();
   }
 
