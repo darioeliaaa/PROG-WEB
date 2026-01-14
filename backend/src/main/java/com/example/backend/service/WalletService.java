@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 public class WalletService {
@@ -126,15 +128,20 @@ public class WalletService {
 
   @Transactional
   public void removeMember(Long adminId, Long walletId, Long memberToRemoveId) {
-    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+    Wallet wallet = walletRepository.findById(walletId)
+      .orElseThrow(() -> new RuntimeException("Wallet non trovato"));
+
     if (!wallet.getAdmin().getId().equals(adminId)) {
       throw new RuntimeException("Non hai i permessi di Admin!");
     }
-    User member = userRepository.findById(memberToRemoveId).orElseThrow();
-    wallet.getMembers().remove(member);
-    member.getWallets().remove(wallet);
-    walletRepository.save(wallet);
-    userRepository.save(member);
+
+    // Controlliamo solo che non si stia rimuovendo l'admin stesso (opzionale, ma buona prassi)
+    if(wallet.getAdmin().getId().equals(memberToRemoveId)){
+      throw new RuntimeException("L'admin non può essere rimosso, deve eliminare il wallet.");
+    }
+
+    // 1. Rimuovi la riga dalla tabella di collegamento - VIA SQL
+    walletRepository.detachMember(walletId, memberToRemoveId);
   }
 
   @Transactional
@@ -159,13 +166,23 @@ public class WalletService {
 
   @Transactional
   public void deleteWallet(Long adminId, Long walletId) {
-    Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+    Wallet wallet = walletRepository.findById(walletId)
+      .orElseThrow(() -> new RuntimeException("Wallet non trovato"));
+
     if (!wallet.getAdmin().getId().equals(adminId)) {
       throw new RuntimeException("Solo l'admin può eliminare il wallet!");
     }
     if (wallet.isPersonal()) {
       throw new RuntimeException("Non puoi eliminare il tuo wallet personale!");
     }
+
+    // 1. Elimina le transazioni (Vincolo chiave esterna)
+    transactionRepository.deleteByWalletId(walletId);
+
+    // 2. Scollega tutti i membri (Pulisce user_wallets) - VIA SQL
+    walletRepository.detachAllMembers(walletId);
+
+    // 3. Elimina il wallet definitivamente
     walletRepository.delete(wallet);
   }
 
@@ -174,6 +191,14 @@ public class WalletService {
     User user = userRepository.findById(userId).orElseThrow();
     Wallet fromWallet = walletRepository.findById(fromWalletId).orElseThrow();
     Wallet toWallet = walletRepository.findById(toWalletId).orElseThrow();
+
+    // ✅ CONTROLLO NUOVO: Verifica il limite (se impostato)
+    if (fromWallet.getMaxTransferLimit() != null && fromWallet.getMaxTransferLimit().compareTo(BigDecimal.ZERO) > 0) {
+      // Se l'importo da trasferire è maggiore del limite
+      if (amount.compareTo(fromWallet.getMaxTransferLimit()) > 0) {
+        throw new RuntimeException("Errore: L'importo supera il limite massimo di prelievo impostato dall'Admin (" + fromWallet.getMaxTransferLimit() + " €)");
+      }
+    }
 
     Transaction out = new Transaction();
     out.setDescription("Spostamento verso " + toWallet.getName());
@@ -205,6 +230,20 @@ public class WalletService {
       guest.getWallets().add(wallet);
       userRepository.save(guest);
     }
+  }
+
+  @Transactional
+  public void updateWalletLimits(Long adminId, Long walletId, BigDecimal budget, BigDecimal maxTransfer) {
+    Wallet wallet = walletRepository.findById(walletId)
+      .orElseThrow(() -> new RuntimeException("Wallet non trovato"));
+
+    if (!wallet.getAdmin().getId().equals(adminId)) {
+      throw new RuntimeException("Solo l'admin può modificare i limiti!");
+    }
+
+    wallet.setMonthlyBudget(budget);
+    wallet.setMaxTransferLimit(maxTransfer); // ✅ Salviamo il nuovo limite
+    walletRepository.save(wallet);
   }
 
   public List<Wallet> findWalletsByUserId(Long userId) {
