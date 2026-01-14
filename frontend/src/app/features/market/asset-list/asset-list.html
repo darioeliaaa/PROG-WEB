@@ -22,7 +22,7 @@
       <div class="col-symbol" [routerLink]="['/market/chart', asset.symbol]" title="Clicca per il grafico">
         <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'" class="small-logo" alt="logo">
         <div class="symbol-info">
-          <span class="ticker">{{ asset.symbol }}</span>
+          <span class="ticker">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="full-name">{{ asset.name }}</span>
           <span class="industry-badge" *ngIf="asset.industry">{{ asset.industry }}</span>
         </div>

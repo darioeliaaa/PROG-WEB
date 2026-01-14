@@ -118,3 +118,125 @@
 .spinner-container { text-align: center; padding: 50px; color: #64748b; display: flex; flex-direction: column; align-items: center; gap: 10px;}
 .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ... IL TUO CSS DELLA PAGINA (Header, Cards, Tabelle) RIMANE UGUALE ... */
+
+
+/* ============================================================
+   🔥 NUOVO STILE MODALE TRADING (Aggiornato)
+   ============================================================ */
+
+/* Sfondo scuro che copre tutto */
+.trade-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenitore Bianco della Modale */
+.trade-modal {
+  width: 90%;
+  max-width: 600px; /* Un po' più stretto per eleganza */
+  background: white;
+  padding: 30px;
+  border-radius: 24px; /* Più arrotondato */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); /* Animazione fluida */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* 1. HEADER */
+.stylish-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header-left { display: flex; flex-direction: column; }
+.header-left h2 { margin: 0; font-size: 1.5rem; color: #1e293b; }
+.asset-name-small { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+
+.holding-badge {
+  background: #f1f5f9; padding: 6px 12px; border-radius: 20px;
+  font-size: 0.75rem; color: #64748b; border: 1px solid #e2e8f0; font-weight: 600;
+}
+
+/* 2. TOGGLE (Acquista/Vendi) */
+.toggle-buttons {
+  display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px;
+}
+.btn-toggle {
+  flex: 1; border: none; background: transparent; padding: 12px;
+  border-radius: 12px; font-weight: 600; color: #64748b; cursor: pointer;
+  transition: 0.2s; font-size: 0.95rem;
+}
+/* Verde per Acquista */
+.btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+/* Rosso per Vendi */
+.btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+
+/* 3. INPUT GIGANTE (Quantità) */
+.center-input-section {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px 0;
+}
+.center-input-section label {
+  font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700;
+}
+.amount-wrapper { position: relative; width: 100%; text-align: center; }
+
+.big-input {
+  font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
+  border: none; background: transparent; text-align: center; width: 100%;
+  outline: none; padding: 0 0 5px 0; margin: 0;
+  border-bottom: 2px solid #e2e8f0;
+  transition: border-color 0.3s ease; color: #1e293b;
+}
+/* Colori dinamici dell'input */
+.big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
+.big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
+
+/* Rimuove frecce numeriche */
+.big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.big-input::placeholder { color: #cbd5e1; opacity: 0.5; }
+
+
+/* 4. INFO ROW (Prezzo) */
+.info-row {
+  display: flex; justify-content: space-between; padding: 15px 0;
+  border-bottom: 1px dashed #e2e8f0; color: #64748b; font-size: 0.95rem;
+}
+.bold-text { font-weight: 700; color: #1e293b; }
+
+
+/* 5. INPUT SECONDARIO (Euro) */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.85rem; font-weight: 600; color: #64748b; }
+
+.small-wrapper { border-bottom: 1px solid #e2e8f0; position: relative; }
+.small-input { font-size: 1.6rem !important; color: #334155 !important; padding-right: 30px; } /* Spazio per il simbolo € */
+.currency-suffix {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  font-size: 1.4rem; color: #94a3b8; font-weight: bold; pointer-events: none;
+}
+
+/* 6. BOTTONI AZIONE */
+.form-actions { display: flex; gap: 15px; margin-top: 10px; }
+.btn-primary, .btn-secondary {
+  flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.2s;
+}
+.btn-primary { background: #2563eb; color: white; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+.btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
+
+.btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
+.btn-secondary:hover { background: #f1f5f9; }
