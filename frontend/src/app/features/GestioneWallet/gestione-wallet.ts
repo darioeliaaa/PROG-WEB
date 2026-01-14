@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. Importa ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,54 +14,90 @@ import { User } from '../../models/user.model';
   templateUrl: './GestioneWallet.html',
   styleUrls: ['./GestioneWallet.css']
 })
-export class GestioneWallet implements OnInit{
+export class GestioneWallet implements OnInit {
   adminWallets: any[] = [];
   selectedWallet: any | null = null;
-  monthlyBudget: number | null = null;
   message: string = '';
   isError: boolean = false;
   currentUserId!: number;
   currentUserName: string = '';
   loading: boolean = false;
 
-  constructor(private walletService: WalletService, private router: Router, private UserService: UserService) {}
+  constructor(
+    private walletService: WalletService,
+    private router: Router,
+    private UserService: UserService,
+    private cdr: ChangeDetectorRef // ✅ 2. Inietta il rilevatore di modifiche
+  ) {}
 
   ngOnInit(): void {
+    this.initUser();
+  }
+
+  // ✅ 3. Logica di inizializzazione "Smart" (con retry)
+  initUser() {
     const userId = this.UserService.getCurrentUserId();
 
-    if (!userId) {
-      this.isError = true;
-      this.message = 'Utente non autenticato';
-      return;
+    if (userId) {
+      this.startPage(userId);
+    } else {
+      // Se l'ID non c'è subito, aspettiamo 500ms e riproviamo (risolve il problema del refresh)
+      setTimeout(() => {
+        const retryId = this.UserService.getCurrentUserId();
+        if (retryId) {
+          this.startPage(retryId);
+        } else {
+          this.isError = true;
+          this.message = 'Utente non autenticato. Effettua il login.';
+          this.loading = false;
+        }
+      }, 500);
     }
+  }
 
-    if(this.currentUserId){
-      this.UserService.getUserProfile(this.currentUserId).subscribe(user => {this.currentUserName = user.nome|| user.cognome || 'U';})
-    }
-
+  startPage(userId: number) {
     this.currentUserId = userId;
+
+    // Carica nome utente
+    this.UserService.getUserProfile(this.currentUserId).subscribe(user => {
+      this.currentUserName = user.nome || user.cognome || 'Admin';
+    });
+
+    // Carica i wallet
     this.loadAdminWallets();
   }
 
-  loadAdminWallets(){
+  loadAdminWallets() {
     this.loading = true;
-
     this.walletService.getUserWallets(this.currentUserId).subscribe({
       next: (wallets) => {
-        this.adminWallets = wallets.filter(w => w.admin && w.admin.id === this.currentUserId);
+        // Filtra: Solo Admin, Solo ID Corrente, NO Wallet Personali
+        this.adminWallets = wallets.filter(w =>
+          w.admin &&
+          w.admin.id === this.currentUserId &&
+          !w.personal
+        );
+
+        // Se la lista è vuota dopo il filtro, pulisci la selezione
+        if (this.adminWallets.length === 0) {
+          this.selectedWallet = null;
+        }
+
         this.loading = false;
+        this.cdr.detectChanges(); // ✅ 4. Forza l'aggiornamento grafico immediato
       },
-      error: () =>{
+      error: () => {
         this.isError = true;
         this.message = "Errore caricamento wallet";
         this.loading = false;
+        this.cdr.detectChanges(); // ✅ Aggiorna anche in caso di errore
       }
-      });
+    });
   }
 
   selectWallet(event: Event) {
     const selectEl = event.target as HTMLSelectElement;
-    const index = Number(selectEl.value); // valore dell'opzione selezionata
+    const index = Number(selectEl.value);
     if (!isNaN(index) && this.adminWallets[index]) {
       this.selectedWallet = this.adminWallets[index];
     } else {
@@ -69,32 +105,35 @@ export class GestioneWallet implements OnInit{
     }
   }
 
+  saveSettings(): void {
+    if (!this.selectedWallet) return;
 
+    // Prendiamo i valori (se vuoti manda 0)
+    const budget = this.selectedWallet.monthlyBudget || 0;
+    const limit = this.selectedWallet.maxTransferLimit || 0;
 
-  updateBudget(): void{
-    if (!this.selectedWallet || this.monthlyBudget === null) return;
-
-    this.walletService.updateBudget(
+    this.walletService.updateSettings(
       this.selectedWallet.id,
-      this.monthlyBudget,
-      this.currentUserId
+      this.currentUserId,
+      budget,
+      limit
     ).subscribe({
       next: () => {
-        this.message = 'Budget aggiornato!';
+        this.message = 'Impostazioni aggiornate con successo!';
         this.isError = false;
-        this.selectedWallet.monthlyBudget = this.monthlyBudget;
+        this.cdr.detectChanges(); // Aggiorna feedback
       },
-      error: () => {
-        this.message = 'Errore durante l\'aggiornamento del budget.';
+      error: (err) => {
+        console.error(err);
+        this.message = 'Errore salvataggio impostazioni.';
         this.isError = true;
-
+        this.cdr.detectChanges();
       }
     });
   }
 
-  removeMember(memberId: number): void{
+  removeMember(memberId: number): void {
     if (!this.selectedWallet) return;
-
     if (!confirm("Vuoi davvero rimuovere questo membro?")) return;
 
     this.walletService.removeMember(
@@ -103,20 +142,22 @@ export class GestioneWallet implements OnInit{
       memberId
     ).subscribe({
       next: () => {
+        // Rimuovi localmente dalla lista
         this.selectedWallet.members = this.selectedWallet.members.filter((m: { id: number; }) => m.id !== memberId);
         this.message = 'Membro rimosso!';
         this.isError = false;
+        this.cdr.detectChanges(); // Forza aggiornamento lista
       },
       error: () => {
         this.message = 'Errore durante la rimozione del membro.';
         this.isError = true;
+        this.cdr.detectChanges();
       }
     });
   }
 
-  deleteWallet(): void{
+  deleteWallet(): void {
     if (!this.selectedWallet) return;
-
     if (!confirm("ATTENZIONE: il wallet sarà eliminato definitivamente. Continuare?")) return;
 
     this.walletService.deleteWallet(
@@ -127,17 +168,14 @@ export class GestioneWallet implements OnInit{
         this.message = 'Wallet eliminato!';
         this.isError = false;
         this.selectedWallet = null;
-        this.loadAdminWallets();
+        this.loadAdminWallets(); // Ricarica la lista per mostrare la schermata vuota
       },
       error: () => {
         this.message = 'Errore durante l\'eliminazione del wallet.';
         this.isError = true;
+        this.cdr.detectChanges();
       }
     });
-  }
-
-  getMembersArray(wallet: Wallet | null): User[] {
-    return wallet ? Array.from(wallet.members) : [];
   }
 
   backToDashboard() {
