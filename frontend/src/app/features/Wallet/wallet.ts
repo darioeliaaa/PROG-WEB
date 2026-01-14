@@ -1,21 +1,23 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- AGGIUNTO ChangeDetectorRef
-import { WalletService } from '../../services/wallet.service';
-import { Wallet } from '../../models/wallet.model';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // <--- AGGIUNTO
+
+import { WalletService } from '../../services/wallet.service';
+import { UserService } from '../../services/user.service'; // <--- AGGIUNTO
+import { Wallet } from '../../models/wallet.model';
 
 @Component({
   selector: 'app-wallet',
   templateUrl: './wallet.html',
   standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    FormsModule
-  ],
+  imports: [NgIf, NgFor, FormsModule],
   styleUrls: ['./wallet.css']
 })
 export class WalletComponent implements OnInit {
+
+  // Variabile di controllo Login
+  isLoggedIn: boolean = false;
 
   wallets: Wallet[] = [];
   loading = true;
@@ -27,24 +29,39 @@ export class WalletComponent implements OnInit {
 
   constructor(
     private walletService: WalletService,
-    private cdr: ChangeDetectorRef // <--- INIEZIONE FONDAMENTALE PER AGGIORNARE LA VISTA
+    private userService: UserService, // <--- AGGIUNTO
+    private router: Router,           // <--- AGGIUNTO
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.initUser();
+    // 1. CONTROLLO LOGIN IMMEDIATO
+    this.isLoggedIn = this.userService.isLoggedIn();
+
+    // 2. CARICA I DATI SOLO SE LOGGATO
+    if (this.isLoggedIn) {
+      this.initUser();
+    } else {
+      // Se non è loggato, smettiamo di caricare (così non gira la rotellina a vuoto)
+      this.loading = false;
+    }
   }
 
-  // Funzione di inizializzazione robusta
+  // Tasto del blocco overlay
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  // Funzione di inizializzazione
   initUser() {
-    const storedId = localStorage.getItem('userId');
+    // Proviamo a prendere l'ID dal service prima, poi dal local storage
+    const serviceId = this.userService.getCurrentUserId();
+    const storedId = serviceId ? serviceId : Number(localStorage.getItem('userId'));
 
     if (storedId) {
-      this.userId = Number(storedId);
+      this.userId = storedId;
       this.loadWallets();
     } else {
-      // FIX PER "DEVO RICARICARE":
-      // Se l'ID non c'è (magari il login sta ancora finendo di scrivere),
-      // aspettiamo 500ms e riproviamo.
       console.warn("ID non trovato subito, riprovo tra 500ms...");
       setTimeout(() => {
         const retryId = localStorage.getItem('userId');
@@ -52,7 +69,7 @@ export class WalletComponent implements OnInit {
           this.userId = Number(retryId);
           this.loadWallets();
         } else {
-          console.error("Errore: Impossibile trovare l'utente. Effettua il login.");
+          console.error("Errore: Impossibile trovare l'utente.");
           this.loading = false;
         }
       }, 500);
@@ -68,15 +85,12 @@ export class WalletComponent implements OnInit {
         // Filtriamo i wallet condivisi
         this.wallets = res.filter(wallet => !wallet.personal);
         this.loading = false;
-
-        // AGGIORNAMENTO FORZATO DELLA GRAFICA
-        // Risolve il problema "va lento" o "non vedo le cose"
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.loading = false;
         console.error("Errore caricamento wallet:", err);
-        this.cdr.detectChanges(); // Aggiorna anche in caso di errore
+        this.cdr.detectChanges();
       }
     });
   }

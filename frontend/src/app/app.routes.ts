@@ -5,19 +5,17 @@ import { Login } from './features/auth/login/login';
 import { Profilo } from './features/Profilo/profilo';
 import { MarketHomeComponent } from './features/market/market-home/market-home';
 import { AssetListComponent } from './features/market/asset-list/asset-list';
-
 import { GestioneWallet} from './features/GestioneWallet/gestione-wallet';
-
 import { MyPortfolioComponent } from './features/portfolio/my-portfolio/my-portfolio';
-
-
-
 import { StockChart } from './features/market/stock-chart/stock-chart';
-import {SettingsComponent} from './features/settings/settings';
-import {WalletComponent} from './features/Wallet/wallet';
+import { SettingsComponent } from './features/settings/settings';
+import { WalletComponent } from './features/Wallet/wallet';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+  // ✅ MODIFICA QUI: Redirect a 'market' invece che 'dashboard'
+  { path: '', redirectTo: 'market', pathMatch: 'full' },
+
   { path: 'dashboard', component: Dashboard },
 
   {

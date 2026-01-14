@@ -21,3 +21,121 @@ body {
   box-sizing: inherit;
 }
 
+/* =========================================
+   🔒 BLOCCO UTENTE NON LOGGATO (Fixed & No Scroll)
+   ========================================= */
+
+/* =========================================
+   🔒 BLOCCO UTENTE NON LOGGATO (Premium Style)
+   ========================================= */
+
+/* 1. Il Box di Blocco (Overlay) */
+.auth-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Vetro più pulito e luminoso */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  padding: 50px 40px;
+  border-radius: 30px;
+  /* Ombra più morbida e diffusa */
+  box-shadow: 0 30px 60px -10px rgba(100, 100, 120, 0.2);
+  border: 1px solid rgba(255, 255, 255, 1);
+
+  width: 90%;
+  max-width: 420px;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 2. NUOVO: Medaglione Icona (Il tuo gradiente viola) */
+.lock-icon-circle {
+  width: 80px;
+  height: 80px;
+  /* Lo stesso gradiente della Top Bar */
+  background: linear-gradient(135deg, #7D7DFA 0%, #8E8EFA 100%);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+
+  /* Bagliore viola sotto */
+  box-shadow: 0 10px 25px rgba(125, 125, 250, 0.4);
+  color: white;
+}
+
+/* SVG dentro il cerchio */
+.lock-icon-circle svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2;
+}
+
+/* Testi */
+.auth-overlay h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #1e293b;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.auth-overlay p {
+  font-family: 'Inter', sans-serif;
+  color: #64748b;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 300px; /* Per mandare a capo bene il testo */
+}
+
+/* Bottone (Lo stesso, ma con hover migliorato) */
+.btn-auth-lock {
+  background: linear-gradient(90deg, #1e293b 0%, #334155 100%); /* Scuro per contrasto o Viola */
+  /* Oppure usa il viola se preferisci: background: linear-gradient(90deg, #7D7DFA 0%, #8E8EFA 100%); */
+  background: linear-gradient(90deg, #7D7DFA 0%, #8E8EFA 100%);
+
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3);
+}
+
+.btn-auth-lock:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(125, 125, 250, 0.5);
+}
+
+/* Contenuto Sfocato (Resta uguale a prima) */
+.blurred-content {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.4;
+  height: 100vh;
+  overflow: hidden;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -40%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
