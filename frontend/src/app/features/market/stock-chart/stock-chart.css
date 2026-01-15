@@ -157,7 +157,7 @@
    5. BOTTONE TRADE (HEADER)
    ========================================= */
 .btn-trade-action {
-  background-color: #4f46e5;
+  background-color: #7D7DFA;
   color: white;
   border: none;
   padding: 8px 20px;
@@ -167,105 +167,133 @@
   cursor: pointer;
   margin-left: auto; /* Spinge a destra se necessario */
   margin-right: 10px; /* Spazio dal tasto Back */
-  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(125, 125, 250, 0.3);
   transition: all 0.2s ease;
 }
 
 .btn-trade-action:hover {
-  background-color: #4338ca;
+  background-color: #6f6ffa;
   transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(125, 125, 250, 0.4);
 }
 
 /* =========================================
-   6. MODALE OVERLAY E STILI TRADE
-   (Copiati da asset-list.css per identicità)
+   STILE UNIFICATO TRADE MODAL (stile Portfolio)
    ========================================= */
-.modal-overlay {
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 50;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
+
+/* 1. SFONDO OVERLAY (Scuro e Sfuocato) */
+.trade-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Scuro come nel portfolio */
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   animation: fadeIn 0.3s ease-out;
 }
 
-.trade-card-stylish {
-  background: #ffffff;
-  width: 90%; max-width: 600px;
-  border-radius: 24px; padding: 30px;
+/* 2. CARD BIANCA CENTRALE */
+.trade-modal {
+  width: 90%;
+  max-width: 550px; /* Larghezza controllata */
+  background: white;
+  padding: 30px;
+  border-radius: 24px; /* Curve morbide */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  display: flex; flex-direction: column; gap: 20px;
-  position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.stylish-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.header-left { display: flex; flex-direction: column; gap: 8px; } /* Fix layout */
-.stylish-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+/* 3. HEADER INTERNO */
+.stylish-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header-left h2 { margin: 0; font-size: 1.5rem; color: #1e293b; font-weight: 800; }
+.header-left .asset-name-small { font-size: 0.85rem; color: #94a3b8; font-weight: 500; display: block; margin-top: 2px;}
 
-.asset-pill { display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: #475569; width: fit-content; }
-.mini-logo { width: 20px; height: 20px; border-radius: 50%; }
-.holding-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #64748b; border: 1px solid #e2e8f0; height: fit-content; }
+.holding-badge {
+  background: #f1f5f9; padding: 6px 12px; border-radius: 20px;
+  font-size: 0.75rem; color: #64748b; border: 1px solid #e2e8f0; font-weight: 600;
+}
 
-/* Toggles & Inputs */
-.toggle-buttons { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
-.btn-toggle { flex: 1; border: none; background: transparent; padding: 10px; border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+/* 4. TOGGLE BUTTONS (Acquista/Vendi) */
+.toggle-buttons {
+  display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px;
+}
+.btn-toggle {
+  flex: 1; border: none; background: transparent; padding: 12px;
+  border-radius: 12px; font-weight: 600; color: #64748b; cursor: pointer;
+  transition: 0.2s; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+/* Stati Attivi */
 .btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-.center-input-section { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.center-input-section label { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700; }
+/* 5. INPUT QUANTITÀ GIGANTE */
+.center-input-section {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px 0;
+}
+.center-input-section label {
+  font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700;
+}
 .amount-wrapper { position: relative; width: 100%; text-align: center; }
 
 .big-input {
   font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
   border: none; background: transparent; text-align: center; width: 100%;
-  outline: none; padding: 0 0 5px 0; margin: 0; border-bottom: 2px solid #e2e8f0;
-  color: #1e293b; border-radius: 0;
+  outline: none; padding: 0 0 5px 0; margin: 0;
+  border-bottom: 2px solid #e2e8f0;
+  color: #1e293b; transition: border-color 0.3s;
+  border-radius: 0; /* Importante per rimuovere curve default su iOS */
 }
+/* Colori Input Dinamici */
 .big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
 .big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
+.big-input::placeholder { color: #cbd5e1; opacity: 0.5; }
 
-.small-input { font-size: 1.6rem !important; color: #334155 !important; }
-.currency-suffix { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: #94a3b8; font-weight: bold; }
-.info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed #e2e8f0; margin-bottom: 20px; color: #64748b; font-size: 0.95rem; }
+/* 6. INPUT VALUTA (PICCOLO) E INFO */
+.form-group label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; }
+.small-wrapper { border-bottom: 1px solid #e2e8f0; position: relative; display: flex; align-items: center; }
+.small-input {
+  font-size: 1.5rem !important; color: #334155 !important;
+  border: none !important; text-align: left; padding: 5px 0; width: 100%; outline: none; font-weight: 600;
+}
+.currency-suffix { font-size: 1.5rem; color: #94a3b8; font-weight: 600; padding-right: 5px; }
 
+.info-row {
+  display: flex; justify-content: space-between; padding: 15px 0;
+  border-bottom: 1px dashed #e2e8f0; color: #64748b; font-size: 0.95rem;
+}
+.bold-text { font-weight: 700; color: #1e293b; }
+
+/* 7. BOTTONI AZIONE (Il Viola Portfolio) */
 .form-actions { display: flex; gap: 15px; margin-top: 10px; }
-.btn-primary, .btn-secondary { flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s; }
-.btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3); }
-.btn-primary:hover { background: #6464fa; transform: translateY(-1px); }
-.btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
 
-/* Login Modal Styles */
-.login-prompt-card.stylish-lock-card {
-  background: #ffffff; width: 100%; max-width: 380px;
-  border-radius: 32px; padding: 45px 35px; text-align: center;
-  box-shadow: 0 20px 60px rgba(100, 116, 139, 0.15);
-  position: relative; display: flex; flex-direction: column; align-items: center;
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+.btn-primary {
+  flex: 1; height: 50px; border-radius: 12px;
+  background: #7D7DFA; /* IL VIOLA ESATTO DEL PORTFOLIO */
+  color: white; border: none; font-weight: 600; font-size: 1rem;
+  cursor: pointer; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3);
+  transition: all 0.2s;
 }
-.close-icon-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: none; cursor: pointer; color: #94a3b8; padding: 8px; border-radius: 50%; display: flex; }
-.lock-icon-circle { width: 84px; height: 84px; background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: white; box-shadow: 0 12px 25px rgba(115, 115, 243, 0.25); }
-.lock-icon-circle svg { width: 38px; height: 38px; stroke-width: 2.5px; }
-.btn-auth-lock { background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%); color: white; border: none; padding: 16px 0; width: 100%; border-radius: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn-primary:hover { background: #6f6ffa; transform: translateY(-2px); }
+.btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
 
-/* =========================================
-   7. NASCONDI FRECCETTE INPUT NUMERICI
-   ========================================= */
-/* Per Chrome, Safari, Edge, Opera */
-.big-input::-webkit-outer-spin-button,
-.big-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.btn-secondary {
+  flex: 1; height: 50px; border-radius: 12px;
+  background: white; border: 1px solid #e2e8f0; color: #64748b;
+  font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s;
 }
+.btn-secondary:hover { background: #f8fafc; color: #334155; }
 
-/* Per Firefox */
-.big-input[type=number] {
-  -moz-appearance: textfield;
-}
+/* Rimuovi frecce input number */
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
 
-/* Animation */
+/* Animazioni */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
