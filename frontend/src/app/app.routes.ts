@@ -11,7 +11,6 @@ import { StockChart } from './features/market/stock-chart/stock-chart';
 import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
 
-// ✅ CONFLITTO RISOLTO: Ho incluso entrambi i componenti
 import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
 import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
 
