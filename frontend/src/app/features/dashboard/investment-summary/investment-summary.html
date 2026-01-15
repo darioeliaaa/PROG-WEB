@@ -12,8 +12,7 @@
 
     <div class="balance-amount" [class.negative-balance]="saldoAttuale < 0">
       <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-        {{ saldoAttuale | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
-      </ng-container>
+        {{ saldoAttuale | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}      </ng-container>
 
       <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">
         ••••••
@@ -24,7 +23,7 @@
       <span class="performance-badge positive">
         <i class="fa fa-arrow-up"></i>
         <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-           {{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}
+          {{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
         <small> Tot. Entrate</small>
@@ -33,7 +32,7 @@
       <span class="performance-badge negative">
         <i class="fa fa-arrow-down"></i>
         <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-           {{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}
+          {{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
         <small> Tot. Uscite</small>

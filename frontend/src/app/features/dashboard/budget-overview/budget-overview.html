@@ -19,7 +19,7 @@
             <p class="total">
               Totale:
               <strong *ngIf="!userSettings?.privacyMode">
-                +{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}
+                +{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
               </strong>
               <strong *ngIf="userSettings?.privacyMode">***</strong>
             </p>
@@ -38,7 +38,7 @@
             <p class="total">
               Totale:
               <strong *ngIf="!userSettings?.privacyMode">
-                -{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}
+                -{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
               </strong>
               <strong *ngIf="userSettings?.privacyMode">***</strong>
             </p>

@@ -82,7 +82,7 @@ export class Dashboard implements OnInit {
   // Metodo per convertire i valori al volo
   converti(valore: number): number {
     if (this.userSettings?.currency === 'USD') {
-      return Math.trunc(valore * this.tassoCambio);
+      return valore * this.tassoCambio;
     }
     return valore;
   }

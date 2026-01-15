@@ -74,7 +74,7 @@ export class InvestmentSummary implements OnInit, OnChanges {
 
     // Somma su TUTTO lo storico
     this.tutteLeTransazioni.forEach(t => {
-      const importoConvertito = Math.trunc(Number(t.amount) * multiplier);
+      const importoConvertito = Number(t.amount) * multiplier;
       if (t.type === 'ENTRATA') this.totaleEntrate += importoConvertito;
       else if (t.type === 'USCITA') this.totaleUscite += importoConvertito;
     });
@@ -101,7 +101,7 @@ export class InvestmentSummary implements OnInit, OnChanges {
 
       let saldoMese = 0;
       transazioniMese.forEach(t => {
-        const valoreConvertito = Math.trunc(Number(t.amount) * multiplier);
+        const valoreConvertito = Number(t.amount) * multiplier;
         if(t.type === 'ENTRATA') saldoMese += valoreConvertito;
         if(t.type === 'USCITA') saldoMese -= valoreConvertito;
       });

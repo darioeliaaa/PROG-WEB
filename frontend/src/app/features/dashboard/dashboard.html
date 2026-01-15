@@ -103,7 +103,12 @@
               </div>
               <div class="row-right">
                 <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
-                  {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.0-0' }}<small>,{{ (t.amount % 1).toFixed(2).substring(2) }}</small> €
+                  <ng-container *ngIf="!userSettings?.privacyMode">
+                    {{ t.type === 'ENTRATA' ? '+' : '-' }}
+                    {{ converti(t.amount) | number:'1.2-2' }}
+                    {{ userSettings?.currency === 'USD' ? '$' : '€' }}
+                  </ng-container>
+                  <ng-container *ngIf="userSettings?.privacyMode">***</ng-container>
                 </span>
               </div>
             </div>
