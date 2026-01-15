@@ -1,91 +1,111 @@
 <div class="locked-view-container">
 
   <div class="auth-overlay" *ngIf="!isLoggedIn">
-    <div class="lock-icon-circle">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
+    <div class="glass-box">
+      <div class="icon-circle-lock">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h3>Accesso Richiesto</h3>
+      <p>Accedi per visualizzare i tuoi portafogli.</p>
+      <button class="btn-auth" (click)="goToLogin()">Accedi Ora</button>
     </div>
-    <h3>Wallet Condivisi</h3>
-    <p>Autenticati per gestire i tuoi gruppi di spesa.</p>
-    <button class="btn-auth-lock" (click)="goToLogin()">Accedi ora</button>
   </div>
 
   <div [class.blurred-content]="!isLoggedIn">
-    <div class="dashboard-container">
+    <div class="main-container">
 
-      <header class="dashboard-header">
-        <h1>Gestisci i Wallet</h1>
+      <header class="page-header">
+        <div class="titles">
+          <h1>I tuoi Wallet</h1>
+          <p>Gestisci le spese e i gruppi condivisi</p>
+        </div>
+
+        <div class="header-buttons">
+          <button class="btn-secondary" (click)="showJoin = !showJoin; showCreate = false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Unisciti
+          </button>
+          <button class="btn-primary" (click)="showCreate = !showCreate; showJoin = false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuovo Wallet
+          </button>
+        </div>
       </header>
 
-      <div class="wallet-header">
-        <h2>I tuoi Gruppi</h2>
-        <div class="header-actions">
-          <button class="btn-primary" (click)="showCreate = !showCreate; showJoin = false">
-            {{ showCreate ? 'Chiudi' : '+ Crea nuovo' }}
-          </button>
-          <button class="btn-secondary" (click)="showJoin = !showJoin; showCreate = false">
-            {{ showJoin ? 'Chiudi' : '🔗 Unisciti' }}
-          </button>
+      <div *ngIf="showCreate" class="action-panel fade-in">
+        <div class="panel-title">Crea un nuovo gruppo</div>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Es. Casa Mare 2024" #walletNameInput>
+          <button class="btn-confirm" (click)="handleCreateWallet(walletNameInput)">Crea</button>
         </div>
       </div>
 
-      <div *ngIf="showCreate" class="action-box slide-in">
-        <h3>Crea un nuovo gruppo</h3>
-        <div class="input-group">
-          <input type="text" placeholder="Nome (es. Viaggio)" #walletNameInput>
-          <button class="btn-primary" (click)="handleCreateWallet(walletNameInput)">Crea</button>
+      <div *ngIf="showJoin" class="action-panel fade-in">
+        <div class="panel-title">Inserisci codice invito</div>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Codice (es. AB12CD)" [(ngModel)]="inviteCodeInput" class="uppercase">
+          <button class="btn-confirm" (click)="handleJoinWallet()">Entra</button>
         </div>
       </div>
 
-      <div *ngIf="showJoin" class="action-box slide-in">
-        <h3>Unisciti con codice</h3>
-        <div class="input-group">
-          <input type="text" placeholder="Codice (es. A1B2C3)" [(ngModel)]="inviteCodeInput" maxlength="6" style="text-transform: uppercase;">
-          <button class="btn-primary" (click)="handleJoinWallet()">Entra</button>
+      <div class="wallet-list">
+
+        <div *ngIf="!loading && wallets.length === 0" class="empty-state">
+          <div class="empty-icon-box">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <h3>Nessun Wallet</h3>
+          <p>Inizia creando un gruppo o unendoti a uno esistente.</p>
         </div>
-      </div>
 
-      <p *ngIf="loading && isLoggedIn" class="loading">Caricamento...</p>
+        <div *ngFor="let wallet of wallets" class="wallet-card"
+             [class.theme-admin]="isAdmin(wallet)"
+             [class.theme-member]="!isAdmin(wallet)"
+             (click)="openWallet(wallet.id)">
 
-      <div *ngIf="!loading && wallets.length === 0" class="empty">
-        <p>Non hai ancora nessun wallet.</p>
-      </div>
+          <div class="color-stripe"></div>
 
-      <div *ngIf="wallets.length > 0" class="wallet-list">
-        <div *ngFor="let wallet of wallets" class="wallet-card">
+          <div class="card-content">
 
-          <div class="wallet-top">
-            <h3>{{ wallet.name }}</h3>
-            <span class="badge" [class.inactive]="!wallet.active">
-              {{ wallet.active ? 'Attivo' : 'Inattivo' }}
-            </span>
+            <div class="card-header-row">
+              <div class="wallet-icon-box">
+                {{ wallet.name.charAt(0).toUpperCase() }}
+              </div>
+              <div class="wallet-texts">
+                <span class="badge" [class.badge-admin]="isAdmin(wallet)">
+                  {{ isAdmin(wallet) ? 'Amministratore' : 'Membro' }}
+                </span>
+                <h2>{{ wallet.name }}</h2>
+              </div>
+            </div>
+
+            <div class="card-stats-row">
+              <div class="stat-item">
+                <span class="label">Budget</span>
+                <span class="value">{{ wallet.monthlyBudget ? wallet.monthlyBudget + '€' : '∞' }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">Membri</span>
+                <div class="value-with-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  {{ wallet.members.length }}
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="invite-code-box">
-            <span class="label">CODICE:</span>
-            <span class="code">{{ wallet.inviteCode || '---' }}</span>
-          </div>
-
-          <div class="info-row">
-            <span>👥 {{ wallet.members.length }} Membri</span>
-            <span *ngIf="wallet.monthlyBudget">💰 {{ wallet.monthlyBudget }}€</span>
-          </div>
-
-          <div class="card-footer">
-            <button class="btn-link" (click)="openWallet(wallet.id)">
-              Apri dettagli →
+          <div class="card-actions">
+            <button class="btn-leave" (click)="$event.stopPropagation(); leaveWallet(wallet.id)" title="Esci dal gruppo">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
-
-            <button class="btn-danger-link" (click)="leaveWallet(wallet.id)">
-              Esci
-            </button>
+            <div class="arrow-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
           </div>
 
         </div>
+
       </div>
 
     </div>

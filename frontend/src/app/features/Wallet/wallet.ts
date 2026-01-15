@@ -1,24 +1,22 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // <--- AGGIUNTO
+import { Router } from '@angular/router';
 
 import { WalletService } from '../../services/wallet.service';
-import { UserService } from '../../services/user.service'; // <--- AGGIUNTO
+import { UserService } from '../../services/user.service';
 import { Wallet } from '../../models/wallet.model';
 
 @Component({
   selector: 'app-wallet',
   templateUrl: './wallet.html',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule],
+  imports: [NgIf, NgFor, FormsModule, CommonModule],
   styleUrls: ['./wallet.css']
 })
 export class WalletComponent implements OnInit {
 
-  // Variabile di controllo Login
   isLoggedIn: boolean = false;
-
   wallets: Wallet[] = [];
   loading = true;
   userId: number | null = null;
@@ -29,32 +27,25 @@ export class WalletComponent implements OnInit {
 
   constructor(
     private walletService: WalletService,
-    private userService: UserService, // <--- AGGIUNTO
-    private router: Router,           // <--- AGGIUNTO
+    private userService: UserService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    // 1. CONTROLLO LOGIN IMMEDIATO
     this.isLoggedIn = this.userService.isLoggedIn();
-
-    // 2. CARICA I DATI SOLO SE LOGGATO
     if (this.isLoggedIn) {
       this.initUser();
     } else {
-      // Se non è loggato, smettiamo di caricare (così non gira la rotellina a vuoto)
       this.loading = false;
     }
   }
 
-  // Tasto del blocco overlay
   goToLogin() {
     this.router.navigate(['/login']);
   }
 
-  // Funzione di inizializzazione
   initUser() {
-    // Proviamo a prendere l'ID dal service prima, poi dal local storage
     const serviceId = this.userService.getCurrentUserId();
     const storedId = serviceId ? serviceId : Number(localStorage.getItem('userId'));
 
@@ -62,14 +53,12 @@ export class WalletComponent implements OnInit {
       this.userId = storedId;
       this.loadWallets();
     } else {
-      console.warn("ID non trovato subito, riprovo tra 500ms...");
       setTimeout(() => {
         const retryId = localStorage.getItem('userId');
         if (retryId) {
           this.userId = Number(retryId);
           this.loadWallets();
         } else {
-          console.error("Errore: Impossibile trovare l'utente.");
           this.loading = false;
         }
       }, 500);
@@ -82,31 +71,46 @@ export class WalletComponent implements OnInit {
     this.loading = true;
     this.walletService.getUserWallets(this.userId).subscribe({
       next: (res) => {
-        // Filtriamo i wallet condivisi
-        this.wallets = res.filter(wallet => !wallet.personal);
+        // Filtra solo quelli non personali (condivisi)
+        this.wallets = res.filter(w => !w.personal);
         this.loading = false;
+        // Forza l'aggiornamento della grafica
         this.cdr.detectChanges();
       },
       error: (err) => {
+        console.error("Errore load:", err);
         this.loading = false;
-        console.error("Errore caricamento wallet:", err);
         this.cdr.detectChanges();
       }
     });
   }
 
+  isAdmin(wallet: any): boolean {
+    if (!this.userId) return false;
+    if (wallet.adminId) return wallet.adminId === this.userId;
+    if (wallet.members && wallet.members.length > 0) return wallet.members[0].id === this.userId;
+    return false;
+  }
+
+  // --- MODIFICA FONDAMENTALE QUI SOTTO ---
   createWallet(name: string): void {
     const trimmedName = name.trim();
     if (!trimmedName || !this.userId) return;
 
     this.walletService.createWallet(this.userId, trimmedName).subscribe({
       next: () => {
-        this.loadWallets();
+        // 1. Chiudi subito il pannello
         this.showCreate = false;
+
+        // 2. Aspetta 300ms che il DB finisca di scrivere, poi ricarica
+        setTimeout(() => {
+          this.loadWallets();
+        }, 300);
       },
-      error: (err) => console.error('Errore creazione wallet:', err)
+      error: (err) => console.error('Errore creazione:', err)
     });
   }
+  // ---------------------------------------
 
   handleCreateWallet(nameInput: HTMLInputElement) {
     const name = nameInput.value.trim();
@@ -116,35 +120,38 @@ export class WalletComponent implements OnInit {
   }
 
   handleJoinWallet() {
-    if (!this.inviteCodeInput || this.inviteCodeInput.trim().length < 6) {
-      alert("Inserisci un codice valido di 6 caratteri");
+    if (!this.inviteCodeInput || this.inviteCodeInput.length < 6) {
+      alert("Codice troppo corto");
       return;
     }
-    if (!this.userId) {
-      alert("Errore utente. Riprova a fare login.");
-      return;
-    }
+    if (!this.userId) return;
 
     this.walletService.joinWalletByCode(this.inviteCodeInput.toUpperCase().trim(), this.userId).subscribe({
       next: (wallet) => {
-        alert(`Unito con successo a: ${wallet.name}`);
-        this.loadWallets();
         this.showJoin = false;
         this.inviteCodeInput = '';
+
+        // Anche qui mettiamo un piccolo timeout per sicurezza
+        setTimeout(() => {
+          this.loadWallets();
+          alert(`Benvenuto in ${wallet.name}!`);
+        }, 300);
       },
-      error: (err) => {
-        console.error("Errore join wallet:", err);
-        alert("Codice non valido o sei già membro.");
-      }
+      error: () => alert("Codice non valido o sei già dentro.")
     });
   }
 
   leaveWallet(walletId: number): void {
     if (!this.userId) return;
-    if(confirm("Vuoi davvero uscire da questo gruppo?")) {
+    if(confirm("Uscire dal gruppo?")) {
       this.walletService.removeMember(walletId, this.userId, this.userId).subscribe({
-        next: () => this.loadWallets(),
-        error: err => console.error('Errore uscita wallet', err)
+        next: () => {
+          // Piccolo timeout anche qui per sicurezza
+          setTimeout(() => {
+            this.loadWallets();
+          }, 300);
+        },
+        error: err => console.error(err)
       });
     }
   }
