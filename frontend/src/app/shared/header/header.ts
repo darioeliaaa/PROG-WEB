@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
@@ -10,12 +10,14 @@ import { UserService } from '../../services/user.service';
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
 
   isLoggedIn: boolean = false;
   showMenu: boolean = false;
+  userSettings: any;
+  listaNotifiche: any[] = [];
 
-  constructor(public router: Router, public userService: UserService) {
+  constructor(public router: Router, public userService: UserService, private cdr: ChangeDetectorRef) {
 
     // 1. Prendi il valore iniziale direttamente dal Service (che ora è corretto subito)
     this.isLoggedIn = this.userService.isLoggedIn();
@@ -23,6 +25,29 @@ export class HeaderComponent {
     // 2. Iscriviti per i cambiamenti futuri (login/logout)
     this.userService.isLoggedIn$.subscribe(state => {
       this.isLoggedIn = state;
+      this.cdr.detectChanges();
+    });
+  }
+  get haNotificheNonLette(): boolean {
+    return this.listaNotifiche.length > 0;
+  }
+
+  ngOnInit() {
+    // 1. Carichiamo subito le impostazioni se già presenti nel Service
+    // Questo risolve il problema del bottone che non appare al caricamento
+    const currentSettings = this.userService.getSettingsSync();
+    if (currentSettings) {
+      this.userSettings = currentSettings;
+    }
+
+    // 2. Restiamo in ascolto per ogni cambiamento futuro
+    this.userService.userSettings$.subscribe(settings => {
+      if (settings) {
+        console.log("Header: Ricevute nuove impostazioni", settings);
+        this.userSettings = settings;
+        // ✅ Forza Angular a ridisegnare l'header per far apparire la campana
+        this.cdr.detectChanges();
+      }
     });
   }
 

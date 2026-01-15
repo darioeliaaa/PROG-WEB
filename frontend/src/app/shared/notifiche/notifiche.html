@@ -1,0 +1,47 @@
+<div class="light-container">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="layout-grid">
+
+    <aside class="hero-side">
+      <button class="back-link" (click)="backToDashboard()">
+        <i class="fa fa-arrow-left"></i> Torna alla Dashboard
+      </button>
+
+      <div class="icon-container">
+        <span class="bell-icon">🔔</span>
+      </div>
+
+      <h1>Centro <br><span class="gradient-text">Notifiche</span></h1>
+      <p class="subtitle">Monitora in tempo reale gli avvisi di budget e le attività dei tuoi wallet condivisi.</p>
+    </aside>
+
+    <main class="content-side">
+      <div class="notif-wrapper">
+
+        <div class="group-title">Avvisi di Sistema</div>
+
+        <div *ngIf="listaNotifiche.length === 0" class="empty-state-notif">
+          <div class="shield-box">🛡️</div>
+          <h3>Tutto sotto controllo</h3>
+          <p>Non hai ricevuto avvisi di sforamento budget. I tuoi wallet sono in perfetta salute!</p>
+        </div>
+
+        <div *ngIf="listaNotifiche.length > 0" class="notif-list">
+          <div *ngFor="let n of listaNotifiche" class="notif-card error-card">
+            <div class="notif-status-bar"></div>
+            <div class="notif-icon-small">⚠️</div>
+            <div class="notif-details">
+              <label>{{ n.titolo || 'Sforamento Budget' }}</label>
+              <p>{{ n.messaggio || 'Il limite impostato per il wallet condiviso è stato superato.' }}</p>
+              <span class="notif-time">{{ (n.data | date:'shortTime') || 'Ora' }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</div>
