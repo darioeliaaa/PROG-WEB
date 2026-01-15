@@ -42,7 +42,6 @@
   </div>
 
   <div class="grid-row-2">
-
     <div class="form-group">
       <label>Categoria</label>
       <select [(ngModel)]="nuovoMovimento.categoria" name="categoria" class="glass-input" required>
@@ -53,6 +52,7 @@
         <option value="salute">❤️ Salute</option>
         <option value="stipendio">💼 Stipendio</option>
         <option value="investimenti">📈 Investimenti</option>
+        <option value="altro">📄 Altro</option>
       </select>
     </div>
 
@@ -60,7 +60,6 @@
       <label>Data</label>
       <input type="date" [(ngModel)]="nuovoMovimento.data" name="data" class="glass-input">
     </div>
-
   </div>
 
   <div class="form-actions">
