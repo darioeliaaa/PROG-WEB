@@ -21,7 +21,7 @@ export class Movimenti implements OnInit {
   @Output() saved = new EventEmitter<void>();
 
   nuovoMovimento = {
-    tipo: 'uscita',
+    tipo: 'entrata',
     importo: null,
     descrizione: '',
     categoria: '',
