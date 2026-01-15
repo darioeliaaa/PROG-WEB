@@ -10,6 +10,7 @@ import { MyPortfolioComponent } from './features/portfolio/my-portfolio/my-portf
 import { StockChart } from './features/market/stock-chart/stock-chart';
 import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
+import { DashboardWallet} from './features/DashboardWallet/dashboard-wallet';
 
 export const routes: Routes = [
 
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'market', pathMatch: 'full' },
 
   { path: 'dashboard', component: Dashboard },
+  { path: 'dashboardWallet/:id', component: DashboardWallet },
 
   {
     path: 'market',
