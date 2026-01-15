@@ -1,0 +1,128 @@
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <div class="header-text">
+      <button class="btn-text-link" (click)="goBack()" style="margin-bottom: 5px; font-size: 0.9rem;">
+        ← Torna ai Wallet
+      </button>
+      <h1>{{ walletName }}</h1>
+      <p class="subtitle" *ngIf="inviteCode">
+        Codice Invito: <strong style="color: #4f46e5;">{{ inviteCode }}</strong>
+      </p>
+    </div>
+
+    <div class="header-controls">
+      <button class="btn-add-funds" (click)="openModal()">
+        <div class="icon-circle">+</div>
+        <span>Nuova Spesa</span>
+      </button>
+
+      <div class="month-selector">
+        <button class="nav-arrow" (click)="cambiaMese(-1)">❮</button>
+        <span class="date-badge">{{ titoloMese | titlecase }}</span>
+        <button class="nav-arrow" (click)="cambiaMese(1)">❯</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="chart-section fade-in">
+    <app-investment-summary-wallet
+      [currentDate]="currentDate"
+      [tutteLeTransazioni]="transazioniTotali"
+      [saldoReale]="saldoTotaleReale">
+    </app-investment-summary-wallet>
+  </section>
+
+  <section class="transactions-container fade-in">
+    <div class="transactions-unified-card">
+      <div class="card-header-row">
+        <div class="title-group">
+          <h2>Ultimi Movimenti</h2>
+          <span class="subtitle-badge">Questo Wallet</span>
+        </div>
+        <button class="btn-text-link" (click)="openHistory()">Vedi tutto</button>
+      </div>
+
+      <div class="unified-list">
+        <div *ngIf="recentTransactions.length === 0" class="empty-state-elegant">
+          <div class="empty-icon-box">📂</div>
+          <p>Nessun movimento ancora</p>
+        </div>
+
+        <div *ngFor="let t of recentTransactions" class="unified-row" [class.is-positive]="t.type === 'ENTRATA'">
+          <div class="row-left">
+            <div class="icon-glow-box">{{ getCategoryIcon(t.category) }}</div>
+            <div class="text-group">
+              <span class="row-desc">{{ t.description }}</span>
+              <div class="row-sub">
+                <span class="row-cat">{{ t.category | titlecase }}</span>
+                <span class="separator">•</span>
+                <span class="row-date">{{ t.date | date:'d MMM' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row-right">
+            <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
+              {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.2-2' }} €
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chart-section fade-in">
+    <app-budget-overview-wallet
+      [currentDate]="currentDate"
+      [datiReali]="datiMensili">
+    </app-budget-overview-wallet>
+  </section>
+
+  <section class="chart-section fade-in">
+    <app-yearly-history-wallet
+      [currentDate]="currentDate"
+      [allTransactions]="transazioniTotali">
+    </app-yearly-history-wallet>
+  </section>
+
+  <div class="modal-overlay fade-in" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Nuova Transazione</h3>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+      <app-movimenti
+        [walletId]="walletId"
+        (saved)="handleTransactionSaved()">
+      </app-movimenti>
+    </div>
+  </div>
+
+  <div class="history-overlay fade-in" *ngIf="isHistoryOpen" (click)="closeHistory()">
+    <div class="history-card" (click)="$event.stopPropagation()">
+      <div class="history-header">
+        <div class="h-titles">
+          <h2>Storico {{ walletName }}</h2>
+        </div>
+        <button class="close-history-btn" (click)="closeHistory()">✕</button>
+      </div>
+      <div class="history-list-scroll">
+        <div *ngFor="let t of transazioniTotali" class="unified-row" [class.is-positive]="t.type === 'ENTRATA'">
+          <div class="row-left">
+            <div class="icon-glow-box">{{ getCategoryIcon(t.category) }}</div>
+            <div class="text-group">
+              <span class="row-desc">{{ t.description }}</span>
+              <div class="row-sub">{{ t.date | date:'d MMM yyyy' }}</div>
+            </div>
+          </div>
+          <div class="row-right">
+            <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
+              {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.2-2' }} €
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
