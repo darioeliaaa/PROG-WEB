@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
+
 
 @Component({
   selector: 'app-budget-overview',
@@ -15,6 +16,7 @@ export class BudgetOverview implements OnChanges {
   @Input() currentDate!: Date;
   @Input() datiReali: any;
 
+  @Input() userSettings: any = { currency: 'EUR', privacyMode: false };
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   public totaleEntrate: number = 0;
@@ -53,7 +55,7 @@ export class BudgetOverview implements OnChanges {
     'default': '#bdc3c7'
   };
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
     // 🔴 RISOLVE L'ERRORE "doughnut is not registered"
     Chart.register(...registerables);
   }
@@ -66,6 +68,7 @@ export class BudgetOverview implements OnChanges {
 
       // Passa le transazioni al metodo di elaborazione
       this.elaboraDati(this.datiReali.transactions);
+      this.cd.detectChanges();
     }
   }
 

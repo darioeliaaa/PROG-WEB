@@ -68,7 +68,8 @@
         <app-investment-summary
           [currentDate]="currentDate"
           [tutteLeTransazioni]="transazioniTotali"
-          [saldoReale]="saldoTotaleReale">
+          [saldoReale]="converti(saldoTotaleReale)"
+          [userSettings]="userSettings">
         </app-investment-summary>
       </section>
 
@@ -111,7 +112,16 @@
       </section>
 
       <section class="chart-section fade-in" style="animation-delay: 0.2s;">
-        <app-budget-overview [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview>
+        <app-budget-overview
+          [currentDate]="currentDate"
+          [datiReali]="{
+            transactions: datiMensili?.transactions || [],
+            totaleEntrate: converti(datiMensili?.totaleEntrate || 0),
+            totaleUscite: converti(datiMensili?.totaleUscite || 0),
+            saldo: converti(datiMensili?.saldo || 0)
+          }"
+          [userSettings]="userSettings">
+        </app-budget-overview>
       </section>
 
       <section class="chart-section fade-in" style="animation-delay: 0.3s;">

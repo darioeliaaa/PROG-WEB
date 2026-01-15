@@ -28,6 +28,7 @@ export class Dashboard implements OnInit {
   currentDate: Date = new Date();
   profilePercentage: number = 0;
   userSettings: any = { currency: 'EUR', privacyMode: false };
+  tassoCambio: number = 1.09; // 1 EUR = 1.09 USD (Valore attuale)
 
   // Modali
   isModalOpen: boolean = false;
@@ -63,6 +64,8 @@ export class Dashboard implements OnInit {
         next: (settings) => {
           if (settings) {
             this.userSettings = settings;
+            this.filtraDatiLocali();
+            this.calcolaSaldoTotaleAssoluto();
             this.cd.detectChanges();
           }
         }
@@ -75,6 +78,13 @@ export class Dashboard implements OnInit {
   // ✅ NUOVO: Metodo per il bottone "Accedi" dell'overlay
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+  // Metodo per convertire i valori al volo
+  converti(valore: number): number {
+    if (this.userSettings?.currency === 'USD') {
+      return Math.trunc(valore * this.tassoCambio);
+    }
+    return valore;
   }
 
   caricaImpostazioniUtente() {
