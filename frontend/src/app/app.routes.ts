@@ -12,13 +12,21 @@ import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
 import {NotifichePage} from './shared/notifiche/notifiche';
 
+import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
+import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
+
 export const routes: Routes = [
 
-  // ✅ MODIFICA QUI: Redirect a 'market' invece che 'dashboard'
+  // Redirect iniziale
   { path: '', redirectTo: 'market', pathMatch: 'full' },
 
+  // Dashboard Generale
   { path: 'dashboard', component: Dashboard },
 
+  // Dashboard specifica del Wallet (quella su cui stiamo lavorando)
+  { path: 'dashboardWallet/:id', component: DashboardWallet },
+
+  // Market Routes
   {
     path: 'market',
     component: MarketHomeComponent
@@ -39,16 +47,18 @@ export const routes: Routes = [
     component: AssetListComponent,
     data: { type: 'CRYPTO' }
   },
-
   { path: 'market/chart/:symbol', component: StockChart },
 
+  // Altre feature
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
   { path: 'settings', component: SettingsComponent },
   { path: 'wallet', component: WalletComponent },
   { path: 'gestioneWallet', component: GestioneWallet },
-
   { path: 'portfolio', component: MyPortfolioComponent },
+
+  // Chi siamo
+  { path: 'chi-siamo', component: ChiSiamoComponent },
 
 ];

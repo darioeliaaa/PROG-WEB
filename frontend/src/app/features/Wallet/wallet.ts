@@ -148,4 +148,8 @@ export class WalletComponent implements OnInit {
       });
     }
   }
+
+  openWallet(walletId: number): void {
+    this.router.navigate([`/dashboardWallet`, walletId]);
+  }
 }

@@ -1,0 +1,94 @@
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  /* --- FIX RIDIMENSIONAMENTO --- */
+  min-width: 0; /* Permette alla card di restringersi */
+  box-sizing: border-box;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h3 { margin: 0; color: #333; }
+.subtitle { margin: 5px 0 0; color: #777; font-size: 0.9rem; }
+
+/* Contenitore flessibile per i due grafici */
+.charts-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px; /* Ridotto leggermente per sicurezza */
+  padding: 0 10px; /* Ridotto il padding laterale per dare più spazio ai grafici */
+  width: 100%; /* Occupa tutto lo spazio */
+
+  /* --- FIX RIDIMENSIONAMENTO --- */
+  min-width: 0;
+  flex: 1; /* Si adatta all'altezza */
+}
+
+.chart-wrapper {
+  flex: 1;
+  /* CAMBIAMENTO IMPORTANTE: */
+  /* min-width: 250px; <--- QUESTO BLOCCAVA IL RIDIMENSIONAMENTO */
+  min-width: 0; /* Ora può diventare piccolo quanto serve */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden; /* Taglia se necessario */
+}
+
+/* Titoli specifici */
+.income-title { color: #27ae60; margin-bottom: 10px; white-space: nowrap; }
+.expense-title { color: #c0392b; margin-bottom: 10px; white-space: nowrap; }
+
+/* Il contenitore del canvas */
+.canvas-container {
+  position: relative;
+  /* Altezza fissa va bene, ma diamogli flessibilità */
+  height: 250px;
+  width: 100%;
+  max-width: 300px; /* Non diventano giganti */
+
+  /* Centratura canvas */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.total {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #555;
+  text-align: center;
+}
+
+/* Linea divisoria verticale */
+.divider {
+  width: 1px;
+  background-color: #eee;
+  align-self: stretch; /* Si allunga per tutta l'altezza */
+  margin: 0 10px;
+  flex-shrink: 0; /* Non si schiaccia mai */
+}
+
+/* Mobile: nascondi la linea e impila tutto */
+@media (max-width: 768px) {
+  .charts-row {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .divider { display: none; }
+  .canvas-container { height: 220px; }
+
+  /* Su mobile ripristiniamo una larghezza minima sensata */
+  .chart-wrapper { min-width: auto; width: 100%; }
+}

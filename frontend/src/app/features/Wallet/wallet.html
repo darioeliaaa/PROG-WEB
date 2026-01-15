@@ -1,7 +1,6 @@
 <div class="locked-view-container">
 
   <div class="auth-overlay" *ngIf="!isLoggedIn">
-
     <div class="lock-icon-circle">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -10,30 +9,24 @@
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
     </div>
-
     <h3>Wallet Condivisi</h3>
-    <p>Autenticati per creare gruppi di spesa con amici o familiari e gestire budget comuni.</p>
-
-    <button class="btn-auth-lock" (click)="goToLogin()">
-      Accedi ora
-    </button>
+    <p>Autenticati per gestire i tuoi gruppi di spesa.</p>
+    <button class="btn-auth-lock" (click)="goToLogin()">Accedi ora</button>
   </div>
 
   <div [class.blurred-content]="!isLoggedIn">
-
     <div class="dashboard-container">
+
       <header class="dashboard-header">
         <h1>Gestisci i Wallet</h1>
       </header>
 
       <div class="wallet-header">
-        <h2>Wallet Condivisi</h2>
-
+        <h2>I tuoi Gruppi</h2>
         <div class="header-actions">
           <button class="btn-primary" (click)="showCreate = !showCreate; showJoin = false">
             {{ showCreate ? 'Chiudi' : '+ Crea nuovo' }}
           </button>
-
           <button class="btn-secondary" (click)="showJoin = !showJoin; showCreate = false">
             {{ showJoin ? 'Chiudi' : '🔗 Unisciti' }}
           </button>
@@ -43,31 +36,23 @@
       <div *ngIf="showCreate" class="action-box slide-in">
         <h3>Crea un nuovo gruppo</h3>
         <div class="input-group">
-          <input type="text" placeholder="Nome del wallet (es. Viaggio Estivo)" #walletNameInput>
+          <input type="text" placeholder="Nome (es. Viaggio)" #walletNameInput>
           <button class="btn-primary" (click)="handleCreateWallet(walletNameInput)">Crea</button>
         </div>
       </div>
 
       <div *ngIf="showJoin" class="action-box slide-in">
-        <h3>Unisciti a un gruppo esistente</h3>
-        <p class="hint">Inserisci il codice di 6 caratteri fornito dall'amministratore.</p>
+        <h3>Unisciti con codice</h3>
         <div class="input-group">
-          <input
-            type="text"
-            placeholder="Codice Invito (es. A1B2C3)"
-            [(ngModel)]="inviteCodeInput"
-            maxlength="6"
-            style="text-transform: uppercase; letter-spacing: 2px; font-weight: bold;"
-          >
+          <input type="text" placeholder="Codice (es. A1B2C3)" [(ngModel)]="inviteCodeInput" maxlength="6" style="text-transform: uppercase;">
           <button class="btn-primary" (click)="handleJoinWallet()">Entra</button>
         </div>
       </div>
 
-      <p *ngIf="loading && isLoggedIn" class="loading">Caricamento wallet...</p>
+      <p *ngIf="loading && isLoggedIn" class="loading">Caricamento...</p>
 
       <div *ngIf="!loading && wallets.length === 0" class="empty">
-        <p>Non fai parte di nessun wallet condiviso.</p>
-        <p>Creane uno nuovo o fatti dare un codice invito!</p>
+        <p>Non hai ancora nessun wallet.</p>
       </div>
 
       <div *ngIf="wallets.length > 0" class="wallet-list">
@@ -81,27 +66,28 @@
           </div>
 
           <div class="invite-code-box">
-            <span class="label">CODICE INVITO:</span>
-            <span class="code">{{ wallet.inviteCode || 'N/A' }}</span>
+            <span class="label">CODICE:</span>
+            <span class="code">{{ wallet.inviteCode || '---' }}</span>
           </div>
 
           <div class="info-row">
-            <div class="members">
-              <span class="member-count">👥 {{ wallet.members.length }} Membri</span>
-            </div>
-
-            <p *ngIf="wallet.monthlyBudget" class="budget">
-              💰 Budget: {{ wallet.monthlyBudget }} €
-            </p>
+            <span>👥 {{ wallet.members.length }} Membri</span>
+            <span *ngIf="wallet.monthlyBudget">💰 {{ wallet.monthlyBudget }}€</span>
           </div>
 
           <div class="card-footer">
-            <button class="btn-link">Apri dettagli →</button>
-            <button class="btn-danger-link" (click)="leaveWallet(wallet.id)">Esci</button>
+            <button class="btn-link" (click)="openWallet(wallet.id)">
+              Apri dettagli →
+            </button>
+
+            <button class="btn-danger-link" (click)="leaveWallet(wallet.id)">
+              Esci
+            </button>
           </div>
 
         </div>
       </div>
+
     </div>
   </div>
 </div>

@@ -57,4 +57,15 @@ export class WalletService {
     );
   }
 
+  openWallet(walletId: number, userId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${walletId}/open?userId=${userId}`, {});
+  }
+
+  transferMoney(userId: number, fromId: number, toId: number, amount: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/transfer?userId=${userId}&fromId=${fromId}&toId=${toId}&amount=${amount}`,
+      {}
+    );
+  }
+
 }

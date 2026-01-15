@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.entity.User;
 import com.example.backend.entity.Wallet;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.repository.WalletRepository;
 import com.example.backend.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class WalletController {
   @Autowired
   private UserRepository userRepository;
 
+  @Autowired
+  private WalletRepository walletRepository;
+
   public WalletController(WalletService walletService) {
     this.walletService = walletService;
   }
@@ -35,6 +39,14 @@ public class WalletController {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(user.getWallets());
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getWalletById(@PathVariable Long id) {
+    // Verifica se il wallet esiste nel repository
+    return walletRepository.findById(id)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity.notFound().build());
   }
 
   // --- CREA WALLET ---
