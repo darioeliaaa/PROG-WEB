@@ -18,7 +18,12 @@ export class UserService {
   private userSettings = new BehaviorSubject<any>(null);
   userSettings$ = this.userSettings.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const savedSettings = localStorage.getItem('userSettings');
+    if (savedSettings) {
+      this.userSettings.next(JSON.parse(savedSettings));
+    }
+  }
 
   // --- GESTIONE LOGIN/LOGOUT ---
   login(id: number, email: string) {
@@ -27,6 +32,7 @@ export class UserService {
     this.currentUserEmail = email;
     this.currentUserId = id;
     this.loggedIn.next(true);
+    this.loadUserSettings(id);
   }
 
   logout() {
@@ -53,6 +59,13 @@ export class UserService {
 
   isLoggedIn(): boolean {
     return this.loggedIn.value;
+  }
+  updateLocalSettings(newSettings: any) {
+    // 1. Notifica l'Observable (fa apparire/scomparire la campana subito)
+    this.userSettings.next(newSettings);
+
+    // 2. Aggiorna il localStorage (così al refresh i dati rimangono)
+    localStorage.setItem('userSettings', JSON.stringify(newSettings));
   }
 
   getCurrentUserEmail(): string | null {

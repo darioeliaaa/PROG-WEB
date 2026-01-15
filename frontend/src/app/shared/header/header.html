@@ -10,7 +10,8 @@
                      || router.url.includes('/wallet')
                      || router.url.includes('/settings')
                      || router.url.includes('/profilo')
-                     || router.url.includes('/gestioneWallet')"
+                     || router.url.includes('/gestioneWallet')
+                     || router.url.includes('/notifiche')"
        class="toggle-btn">
       Gestione Finanze
     </a>
@@ -28,6 +29,13 @@
     </ng-container>
 
     <div class="logged-user-container" *ngIf="isLoggedIn">
+      <button class="notification-btn-side"
+              *ngIf="userSettings?.budgetAlerts"
+              routerLink="/notifiche"
+              routerLinkActive="active-notif">
+        <i class="fa fa-bell"></i>
+        <span class="notification-dot" *ngIf="haNotificheNonLette"></span>
+      </button>
       <div class="avatar-circle-btn" (click)="toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

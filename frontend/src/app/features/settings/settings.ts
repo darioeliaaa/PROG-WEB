@@ -75,6 +75,7 @@ export class SettingsComponent implements OnInit {
       next: (res) => {
         // ✅ 2. Spegniamo lo spinner (Successo)
         this.isSaving = false;
+        this.userService.updateLocalSettings(this.systemSettings);
         alert("Impostazioni salvate con successo!");
       },
       error: (err) => {

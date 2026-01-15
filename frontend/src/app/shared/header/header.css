@@ -159,3 +159,106 @@
 .menu-divider { height: 1px; background-color: #f1f5f9; margin: 6px 0; }
 .logout-text { color: #ef4444 !important; }
 .logout-text:hover { background-color: #fef2f2 !important; }
+/* Assicurati che il contenitore sia relativo */
+.logged-user-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ✅ Badge Notifica in alto a sinistra dell'avatar */
+.notification-badge-top {
+  position: absolute;
+  top: -2px;    /* Leggermente sopra il bordo dell'avatar */
+  left: -2px;   /* Leggermente a sinistra del bordo dell'avatar */
+  width: 20px;
+  height: 20px;
+  background-color: #7D7DFA; /* Colore tema lilla */
+  border: 2px solid white;   /* Crea distacco visivo */
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Anello pulsante per l'effetto attivo */
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #7D7DFA;
+  animation: pulse-ring-animation 2s infinite;
+}
+
+@keyframes pulse-ring-animation {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+/* =========================================
+   5. BOTTONE NOTIFICHE (Stile Silk/Ice)
+   ========================================= */
+
+.notification-btn-side {
+  /* Layout affiancato con distanziamento */
+  margin-right: 12px;
+  width: 40px;
+  height: 40px;
+
+  /* Stile Vetro Ghiaccio (come l'avatar) */
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%; /* Tondo per armonia con l'avatar */
+
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  outline: none;
+}
+
+.notification-btn-side i {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.notification-btn-side:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-btn-side:active {
+  transform: translateY(0);
+}
+
+/* Puntino Rosso Notifica Attiva */
+.notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444; /* Rosso vibrante */
+  border: 2px solid #8E8EFA;   /* Bordo del colore del gradiente per fusione */
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+/* Stile quando il bottone è "attivo" (se sei nella pagina notifiche) */
+.active-notif {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #7D7DFA !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
