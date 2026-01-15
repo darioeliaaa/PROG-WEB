@@ -48,9 +48,10 @@ public class UserController {
     }
   }
 
-  // --- API LOGIN ---
+  // --- API LOGIN (PERFETTA: Usa già il Service che restituisce il Proxy) ---
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest loginData) {
+    // Qui userService.loginUser restituisce new UserProxy(...)
     User user = userService.loginUser(loginData.email, loginData.password);
 
     if (user != null) {
@@ -60,7 +61,7 @@ public class UserController {
     }
   }
 
-  // --- API GAMIFICATION (Stato Profilo) ---
+  // --- API GAMIFICATION ---
   @GetMapping("/{id}/profile-status")
   public ResponseEntity<Map<String, Object>> getProfileStatus(@PathVariable Long id) {
     Optional<User> userOpt = userRepository.findById(id);
@@ -86,11 +87,10 @@ public class UserController {
     public String password;
   }
 
-  // --- UPDATE PROFILO (CORRETTO QUI!) ---
+  // --- UPDATE PROFILO ---
   @PutMapping("/{id}/update")
   public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody User userDetails) {
     return userRepository.findById(id).map(user -> {
-      // Aggiorniamo i campi
       if (userDetails.getNome() != null) user.setNome(userDetails.getNome());
       if (userDetails.getCognome() != null) user.setCognome(userDetails.getCognome());
       if (userDetails.getSesso() != null) user.setSesso(userDetails.getSesso());
@@ -98,24 +98,33 @@ public class UserController {
       if (userDetails.getTelefono() != null) user.setTelefono(userDetails.getTelefono());
       if (userDetails.getIndirizzo() != null) user.setIndirizzo(userDetails.getIndirizzo());
 
+      // Impostazioni (aggiunte per completezza)
+      user.setPrivacyMode(userDetails.isPrivacyMode());
+      user.setBudgetAlerts(userDetails.isBudgetAlerts());
+      if (userDetails.getLanguage() != null) user.setLanguage(userDetails.getLanguage());
+      if (userDetails.getCurrency() != null) user.setCurrency(userDetails.getCurrency());
+
       userRepository.save(user);
 
-      // --- MODIFICA FONDAMENTALE ---
-      // Invece di tornare una stringa semplice, torniamo un JSON!
       Map<String, String> response = new HashMap<>();
       response.put("message", "Profilo aggiornato con successo!");
-
       return ResponseEntity.ok(response);
-      // -----------------------------
 
     }).orElse(ResponseEntity.notFound().build());
   }
 
-  // Get User Details
+  // --- GET USER DETAILS (MODIFICATO!) ---
   @GetMapping("/{id}")
   public ResponseEntity<User> getUserDetails(@PathVariable Long id) {
-    return userRepository.findById(id)
-      .map(user -> ResponseEntity.ok(user))
-      .orElse(ResponseEntity.notFound().build());
+    try {
+      // ✅ USARE IL SERVICE INVECE DEL REPOSITORY!
+      // Usiamo il metodo che abbiamo creato apposta per restituire il Proxy.
+      // Se usassi userRepository.findById(id), scavalcheresti il Proxy manuale.
+      User userProxy = userService.getUserByIdWithProxy(id);
+
+      return ResponseEntity.ok(userProxy);
+    } catch (RuntimeException e) {
+      return ResponseEntity.notFound().build();
+    }
   }
 }
