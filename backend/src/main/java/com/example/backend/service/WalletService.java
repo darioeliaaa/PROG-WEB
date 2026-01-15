@@ -188,34 +188,52 @@ public class WalletService {
 
   @Transactional
   public void transferMoney(Long userId, Long fromWalletId, Long toWalletId, BigDecimal amount) {
-    User user = userRepository.findById(userId).orElseThrow();
-    Wallet fromWallet = walletRepository.findById(fromWalletId).orElseThrow();
-    Wallet toWallet = walletRepository.findById(toWalletId).orElseThrow();
-
-    // ✅ CONTROLLO NUOVO: Verifica il limite (se impostato)
-    if (fromWallet.getMaxTransferLimit() != null && fromWallet.getMaxTransferLimit().compareTo(BigDecimal.ZERO) > 0) {
-      // Se l'importo da trasferire è maggiore del limite
-      if (amount.compareTo(fromWallet.getMaxTransferLimit()) > 0) {
-        throw new RuntimeException("Errore: L'importo supera il limite massimo di prelievo impostato dall'Admin (" + fromWallet.getMaxTransferLimit() + " €)");
-      }
+    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+      throw new RuntimeException("L'importo deve essere positivo");
     }
 
+    Wallet fromWallet = walletRepository.findById(fromWalletId)
+      .orElseThrow(() -> new RuntimeException("Wallet di origine non trovato"));
+
+    Wallet toWallet = walletRepository.findById(toWalletId)
+      .orElseThrow(() -> new RuntimeException("Wallet di destinazione non trovato"));
+
+    // 1. CALCOLO SALDO DEL MITTENTE
+    // Sommiamo tutte le entrate e sottraiamo le uscite per vedere quanto ha davvero
+    BigDecimal currentBalance = transactionRepository.findByWallet(fromWallet).stream()
+      .map(t -> t.getType() == TransactionType.ENTRATA ? t.getAmount() : t.getAmount().negate())
+      .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    // 2. CONTROLLO FONDI
+    // Se il saldo è minore dell'importo che vuoi trasferire -> BLOCCA TUTTO
+    if (currentBalance.compareTo(amount) < 0) {
+      throw new RuntimeException("Fondi insufficienti nel wallet di origine! Saldo attuale: " + currentBalance + " €");
+    }
+
+    // 3. ESECUZIONE TRASFERIMENTO
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+    // Uscita dal mittente
     Transaction out = new Transaction();
-    out.setDescription("Spostamento verso " + toWallet.getName());
+    out.setDescription("Trasferimento a " + toWallet.getName());
     out.setAmount(amount);
     out.setType(TransactionType.USCITA);
     out.setDate(LocalDate.now());
     out.setUser(user);
     out.setWallet(fromWallet);
+    out.setCategory("trasferimento"); // Categoria tecnica
     transactionRepository.save(out);
 
+    // Entrata nel destinatario
     Transaction in = new Transaction();
-    in.setDescription("Ricevuto da " + fromWallet.getName());
+    in.setDescription("Ricevuto da " + fromWallet.getName()); // O "da Mio Portafoglio"
     in.setAmount(amount);
     in.setType(TransactionType.ENTRATA);
     in.setDate(LocalDate.now());
     in.setUser(user);
     in.setWallet(toWallet);
+    in.setCategory("trasferimento");
     transactionRepository.save(in);
   }
 
@@ -244,6 +262,12 @@ public class WalletService {
     wallet.setMonthlyBudget(budget);
     wallet.setMaxTransferLimit(maxTransfer); // ✅ Salviamo il nuovo limite
     walletRepository.save(wallet);
+  }
+
+  @Transactional
+  public void openWallet(Long walletId, String newName) {
+    Wallet wallet = walletRepository.findById(walletId)
+      .orElseThrow(() -> new RuntimeException("Wallet non trovato"));
   }
 
   public List<Wallet> findWalletsByUserId(Long userId) {
