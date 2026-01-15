@@ -1,9 +1,7 @@
 <div class="glass-card summary-card">
-
   <div class="info-group">
     <div style="display: flex; align-items: center; gap: 10px;">
       <h3>Saldo Totale</h3>
-
       <button *ngIf="userSettings?.privacyMode"
               (click)="togglePeek()"
               class="peek-toggle-btn"
@@ -14,8 +12,7 @@
 
     <div class="balance-amount" [class.negative-balance]="saldoAttuale < 0">
       <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-        {{ saldoAttuale | currency: userSettings?.currency : 'symbol' : '1.2-2' }}
-      </ng-container>
+        {{ saldoAttuale | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}      </ng-container>
 
       <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">
         ••••••
@@ -25,13 +22,19 @@
     <div class="stats-row" style="margin-top: 15px; display: flex; gap: 15px;">
       <span class="performance-badge positive">
         <i class="fa fa-arrow-up"></i>
-        {{ userSettings?.privacyMode ? '•••' : (totaleEntrate | currency: userSettings?.currency :'symbol':'1.0-0') }}
+        <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
+          {{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
+        </ng-container>
+        <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
         <small> Tot. Entrate</small>
       </span>
 
       <span class="performance-badge negative">
         <i class="fa fa-arrow-down"></i>
-        {{ userSettings?.privacyMode ? '•••' : (totaleUscite | currency: userSettings?.currency :'symbol':'1.0-0') }}
+        <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
+          {{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
+        </ng-container>
+        <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
         <small> Tot. Uscite</small>
       </span>
     </div>
@@ -40,18 +43,12 @@
   <div class="mini-chart">
     <div *ngFor="let item of trendData"
          class="bar-wrapper"
-         [title]="userSettings?.privacyMode ? 'Dato Protetto' : (item.label + ': ' + (item.value | currency: userSettings?.currency))">
-
+         [title]="(userSettings?.privacyMode && !peekBalance) ? 'Dato Protetto' : (item.label + ': ' + (item.value | currency: (userSettings?.currency || 'EUR')))">
       <div class="bar"
            [style.background-color]="item.value >= 0 ? '#6366f1' : '#ef4444'"
            [class.active]="item.isCurrent"
            [style.height.%]="item.heightPercent">
       </div>
-
-      <div class="bar-label" style="font-size: 0.6rem; color: #94a3b8; margin-top: 4px; text-align: center;">
-        {{ item.label }}
-      </div>
     </div>
   </div>
-
 </div>

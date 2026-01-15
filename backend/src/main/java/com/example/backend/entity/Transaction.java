@@ -1,10 +1,10 @@
 package com.example.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 import java.math.BigDecimal;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Data
@@ -26,13 +26,15 @@ public class Transaction {
   @Enumerated(EnumType.STRING)
   private TransactionType type;
 
+  // --- RELAZIONI (FIX LOOP INFINITO) ---
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  @JsonIgnoreProperties({"password", "email", "hibernateLazyInitializer", "handler", "wallets"})
+  @JsonIgnore // <--- FONDAMENTALE: Spezza il ciclo User -> Transactions -> User
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "wallet_id", nullable = false)
-  @JsonIgnoreProperties({"members", "transactions", "admin", "hibernateLazyInitializer", "handler"})
+  @JsonIgnore // <--- FONDAMENTALE: Spezza il ciclo Wallet -> Transactions -> Wallet
   private Wallet wallet;
 }

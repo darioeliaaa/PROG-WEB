@@ -17,10 +17,10 @@ export class InvestmentSummary implements OnInit, OnChanges {
   // ✅ Riceve il saldo reale (assoluto) dalla Dashboard
   @Input() saldoReale: number = 0;
 
-  totaleEntrate: number = 0;
-  totaleUscite: number = 0;
-  saldoAttuale: number = 0;
-  userSettings: any;
+  @Input() totaleEntrate: number = 0;
+  @Input() totaleUscite: number = 0;
+  @Input() saldoAttuale: number = 0;
+  @Input() userSettings: any;
   peekBalance: boolean = false;
 
   constructor(private userService: UserService, private cd: ChangeDetectorRef) {
@@ -70,12 +70,13 @@ export class InvestmentSummary implements OnInit, OnChanges {
     this.totaleUscite = 0;
 
     if (!this.tutteLeTransazioni) return;
+    const multiplier = this.userSettings?.currency === 'USD' ? 1.09 : 1;
 
     // Somma su TUTTO lo storico
     this.tutteLeTransazioni.forEach(t => {
-      const importo = Number(t.amount);
-      if (t.type === 'ENTRATA') this.totaleEntrate += importo;
-      else if (t.type === 'USCITA') this.totaleUscite += importo;
+      const importoConvertito = Number(t.amount) * multiplier;
+      if (t.type === 'ENTRATA') this.totaleEntrate += importoConvertito;
+      else if (t.type === 'USCITA') this.totaleUscite += importoConvertito;
     });
   }
 
@@ -86,6 +87,7 @@ export class InvestmentSummary implements OnInit, OnChanges {
     let maxValoreAssoluto = 0;
 
     const oggi = new Date();
+    const multiplier = this.userSettings?.currency === 'USD' ? 1.09 : 1;
 
     for (let i = mesi - 1; i >= 0; i--) {
       const dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - i, 1);
@@ -99,8 +101,9 @@ export class InvestmentSummary implements OnInit, OnChanges {
 
       let saldoMese = 0;
       transazioniMese.forEach(t => {
-        if(t.type === 'ENTRATA') saldoMese += Number(t.amount);
-        if(t.type === 'USCITA') saldoMese -= Number(t.amount);
+        const valoreConvertito = Number(t.amount) * multiplier;
+        if(t.type === 'ENTRATA') saldoMese += valoreConvertito;
+        if(t.type === 'USCITA') saldoMese -= valoreConvertito;
       });
 
       if (Math.abs(saldoMese) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoMese);

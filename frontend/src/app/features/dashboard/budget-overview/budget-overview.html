@@ -1,3 +1,4 @@
+
 <div class="budget-card glass-panel">
   <div class="card-header">
     <div class="glass-card">
@@ -11,13 +12,18 @@
         <div class="chart-wrapper">
           <h4 class="income-title">Entrate</h4>
           <div class="canvas-container">
-            <canvas baseChart
-                    [data]="incomeData"
-                    [options]="chartOptions"
-                    [type]="chartType">
-            </canvas>
+            <canvas baseChart [data]="incomeData" [options]="chartOptions" [type]="chartType"></canvas>
           </div>
-          <p class="total">Totale: <strong>+{{ totaleEntrate | currency:'EUR':'symbol':'1.0-0' }}</strong></p>
+
+          <div class="chart-wrapper">
+            <p class="total">
+              Totale:
+              <strong *ngIf="!userSettings?.privacyMode">
+                +{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
+              </strong>
+              <strong *ngIf="userSettings?.privacyMode">***</strong>
+            </p>
+          </div>
         </div>
 
         <div class="divider"></div>
@@ -25,13 +31,18 @@
         <div class="chart-wrapper">
           <h4 class="expense-title">Uscite</h4>
           <div class="canvas-container">
-            <canvas baseChart
-                    [data]="expenseData"
-                    [options]="chartOptions"
-                    [type]="chartType">
-            </canvas>
+            <canvas baseChart [data]="expenseData" [options]="chartOptions" [type]="chartType"></canvas>
           </div>
-          <p class="total">Totale: <strong>-{{ totaleUscite | currency:'EUR':'symbol':'1.0-0' }}</strong></p>
+
+          <div class="chart-wrapper">
+            <p class="total">
+              Totale:
+              <strong *ngIf="!userSettings?.privacyMode">
+                -{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
+              </strong>
+              <strong *ngIf="userSettings?.privacyMode">***</strong>
+            </p>
+          </div>
         </div>
 
       </div>

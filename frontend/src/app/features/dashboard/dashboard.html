@@ -30,7 +30,7 @@
         <div class="header-controls">
           <button class="btn-add-funds" (click)="openModal()">
             <div class="icon-circle">+</div>
-            <span>Aggiungi Fondi</span>
+            <span>Movimenti</span>
           </button>
 
           <div class="month-selector">
@@ -68,7 +68,8 @@
         <app-investment-summary
           [currentDate]="currentDate"
           [tutteLeTransazioni]="transazioniTotali"
-          [saldoReale]="saldoTotaleReale">
+          [saldoReale]="converti(saldoTotaleReale)"
+          [userSettings]="userSettings">
         </app-investment-summary>
       </section>
 
@@ -102,7 +103,12 @@
               </div>
               <div class="row-right">
                 <span class="row-amount" [class.income]="t.type === 'ENTRATA'" [class.expense]="t.type === 'USCITA'">
-                  {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.0-0' }}<small>,{{ (t.amount % 1).toFixed(2).substring(2) }}</small> €
+                  <ng-container *ngIf="!userSettings?.privacyMode">
+                    {{ t.type === 'ENTRATA' ? '+' : '-' }}
+                    {{ converti(t.amount) | number:'1.2-2' }}
+                    {{ userSettings?.currency === 'USD' ? '$' : '€' }}
+                  </ng-container>
+                  <ng-container *ngIf="userSettings?.privacyMode">***</ng-container>
                 </span>
               </div>
             </div>
@@ -111,7 +117,16 @@
       </section>
 
       <section class="chart-section fade-in" style="animation-delay: 0.2s;">
-        <app-budget-overview [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview>
+        <app-budget-overview
+          [currentDate]="currentDate"
+          [datiReali]="{
+            transactions: datiMensili?.transactions || [],
+            totaleEntrate: converti(datiMensili?.totaleEntrate || 0),
+            totaleUscite: converti(datiMensili?.totaleUscite || 0),
+            saldo: converti(datiMensili?.saldo || 0)
+          }"
+          [userSettings]="userSettings">
+        </app-budget-overview>
       </section>
 
       <section class="chart-section fade-in" style="animation-delay: 0.3s;">

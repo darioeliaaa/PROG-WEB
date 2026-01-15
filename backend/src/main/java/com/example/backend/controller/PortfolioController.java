@@ -2,6 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.PortfolioOverviewDTO;
 import com.example.backend.entity.*;
+// IMPORTA IL TUO PROXY (Assicurati che il package sia giusto)
+import com.example.backend.proxy.PortfolioProxy;
 import com.example.backend.repository.*;
 import com.example.backend.service.InvestmentService;
 import com.example.backend.service.MarketService;
@@ -24,38 +26,51 @@ public class PortfolioController {
   @Autowired private InvestmentService investmentService;
   @Autowired private WalletRepository walletRepository;
 
+  // ✅ 1. AGGIUNTA: Serve al Proxy per poter caricare i dati "Lazy"
+  @Autowired private InvestmentRepository investmentRepository;
+
 
   @GetMapping("/{userId}")
   public ResponseEntity<?> getPortfolioOverview(@PathVariable Long userId) {
     User user = userRepository.findById(userId).orElse(null);
     if (user == null) return ResponseEntity.notFound().build();
 
-    // Se l'utente non ha ancora un portafoglio, ne creiamo uno vuoto in memoria per non dare errore
-    Portfolio portfolio = portfolioRepository.findByUser(user).orElse(new Portfolio());
+    // Recuperiamo il portafoglio "grezzo" dal DB
+    Portfolio rawPortfolio = portfolioRepository.findByUser(user).orElse(new Portfolio());
+
+    // ✅ 2. MODIFICA FONDAMENTALE PER L'ESAME: CREIAMO IL PROXY
+    // Invece di usare rawPortfolio direttamente, lo "impacchettiamo" nel Proxy.
+    // In questo momento la lista degli investimenti è ancora VUOTA (Lazy).
+    PortfolioProxy portfolioProxy = new PortfolioProxy(
+      rawPortfolio.getId(),
+      rawPortfolio.getName(),
+      investmentRepository
+    );
 
     PortfolioOverviewDTO response = new PortfolioOverviewDTO();
     List<PortfolioOverviewDTO.AssetPerformanceDTO> assetList = new ArrayList<>();
 
     double grandTotalValue = 0.0;
-    double grandTotalInvested = portfolio.getTotalInvested();
+    double grandTotalInvested = rawPortfolio.getTotalInvested(); // Questo dato ce l'abbiamo subito
 
-    // Se ci sono investimenti, calcoliamo il valore attuale
-    if (portfolio.getInvestments() != null) {
-      for (Investment inv : portfolio.getInvestments()) {
-        if (inv.getQuantity() <= 0.0001) continue; // Saltiamo quelli venduti
+    // ✅ 3. USIAMO IL PROXY
+    // Appena il codice tocca .getInvestments(), il Proxy si "sveglia",
+    // stampa il messaggio in console (quello che vuole il prof) e scarica i dati.
+    if (portfolioProxy.getInvestments() != null) {
+      for (Investment inv : portfolioProxy.getInvestments()) {
 
-        // 1. Chiediamo al MarketService il prezzo ATTUALE
+        if (inv.getQuantity() <= 0.0001) continue;
+
+        // --- Logica Calcoli (Invariata) ---
         double livePrice = marketService.getCurrentPrice(inv.getSymbol());
-        // Fallback: se l'API fallisce e torna 0, usiamo il prezzo medio di acquisto per non rompere i calcoli
         if (livePrice == 0) livePrice = inv.getAverageBuyPrice();
 
-        // 2. Facciamo i calcoli
         double currentValue = inv.getQuantity() * livePrice;
         double costBasis = inv.getQuantity() * inv.getAverageBuyPrice();
 
         PortfolioOverviewDTO.AssetPerformanceDTO dto = new PortfolioOverviewDTO.AssetPerformanceDTO();
         dto.setSymbol(inv.getSymbol());
-        dto.setName(inv.getName());
+        dto.setName(inv.getName()); // Se non hai il campo name in Investment, togli questa riga o aggiungilo all'Entity
         dto.setQuantity(inv.getQuantity());
         dto.setAvgBuyPrice(inv.getAverageBuyPrice());
         dto.setCurrentPrice(livePrice);
@@ -76,7 +91,6 @@ public class PortfolioController {
 
     Wallet wallet = walletRepository.findByAdminAndPersonalTrue(user).orElse(null);
     if (wallet != null) {
-      // Usa il nuovo metodo getRealBalance che abbiamo appena creato
       BigDecimal realBalance = investmentService.getRealBalance(wallet.getId());
       response.setAvailableCash(realBalance.doubleValue());
     }

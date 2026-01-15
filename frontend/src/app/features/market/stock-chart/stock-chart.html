@@ -2,9 +2,13 @@
 
   <div class="header-actions">
     <div class="title-group">
-      <h2>{{ symbol }}</h2>
+      <h2>{{ pulisciSimbolo(symbol) }}</h2>
       <span class="asset-subtitle">Analisi Tecnica</span>
     </div>
+
+    <button class="btn-trade-action" (click)="openTradePanel()">
+      Trade
+    </button>
 
     <button class="back-btn" (click)="goBack()">
       <i class="back-arrow"></i> Torna al Market
@@ -15,4 +19,72 @@
     <div id="tradingview_chart" #containerDiv class="tradingview_widget"></div>
   </div>
 
+</div>
+
+<div class="trade-modal-backdrop" *ngIf="isTradeModalOpen">
+  <div class="trade-modal">
+
+    <div class="stylish-header">
+      <div class="header-left">
+        <h2>{{ pulisciSimbolo(symbol) }}</h2>
+        <span class="asset-name-small">{{ selectedAsset?.name || 'Asset Name' }}</span>
+      </div>
+      <div class="holding-badge">
+        Possedute: {{ getMyQuantity(symbol) | number:'1.0-4' }}
+      </div>
+    </div>
+
+    <div class="toggle-buttons">
+      <button type="button" class="btn-toggle income"
+              [class.active]="tradeAction === 'BUY'"
+              (click)="setAction('BUY')">
+        <span>▲</span> Acquista
+      </button>
+      <button type="button" class="btn-toggle expense"
+              [class.active]="tradeAction === 'SELL'"
+              (click)="setAction('SELL')">
+        <span>▼</span> Vendi
+      </button>
+    </div>
+
+    <div class="center-input-section">
+      <label>Quantità da {{ tradeAction === 'BUY' ? 'Acquistare' : 'Vendere' }}</label>
+      <div class="amount-wrapper">
+        <input type="number"
+               class="big-input"
+               [ngClass]="{'text-green': tradeAction === 'BUY', 'text-red': tradeAction === 'SELL'}"
+               [(ngModel)]="tradeQuantity"
+               (input)="onQuantityChange()"
+               placeholder="0" min="0">
+      </div>
+    </div>
+
+    <div class="info-row">
+      <span>Prezzo di Mercato</span>
+      <span class="bold-text">{{ selectedAsset?.currentPrice | currency:'USD' }}</span>
+    </div>
+
+    <div class="form-group">
+      <label>Controvalore Stimato (€)</label>
+      <div class="amount-wrapper small-wrapper">
+        <input type="number"
+               class="big-input small-input"
+               [(ngModel)]="tradeAmount"
+               (input)="onAmountChange()"
+               placeholder="0.00">
+        <span class="currency-suffix">€</span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="closeTradePanel()" class="btn-secondary">Annulla</button>
+      <button type="button" class="btn-primary"
+              (click)="confirmTrade()"
+              [disabled]="isProcessing || !tradeQuantity || tradeQuantity <= 0">
+        <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'Acquisto' : 'Vendita' }}</span>
+        <span *ngIf="isProcessing">Esecuzione...</span>
+      </button>
+    </div>
+
+  </div>
 </div>

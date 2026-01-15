@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from './settings.service';
 import { ChangeDetectorRef } from '@angular/core';
-import {UserService} from '../../services/user.service';
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-settings',
@@ -16,7 +15,10 @@ import { Router } from '@angular/router';
 })
 export class SettingsComponent implements OnInit {
 
-  userId: number = 6; // Usiamo l'ID 6 che abbiamo verificato funzionare
+  userId: number = 6;
+
+  // ✅ AGGIUNTO: Questa variabile serve per gestire lo spinner nel pulsante
+  isSaving: boolean = false;
 
   // Struttura dati pulita (senza darkmode)
   systemSettings = {
@@ -30,7 +32,8 @@ export class SettingsComponent implements OnInit {
     private settingsService: SettingsService,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private router: Router) {}
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const idLoggato = this.userService.getCurrentUserId();
@@ -39,22 +42,23 @@ export class SettingsComponent implements OnInit {
       this.userId = idLoggato;
       this.loadRemoteSettings();
     } else {
-      // Se non c'è l'ID, lo rimandiamo al login
       alert("Sessione scaduta o utente non trovato. Torna al login.");
       this.router.navigate(['/login']);
     }
   }
 
+  backToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
   loadRemoteSettings(): void {
     this.settingsService.getSettings(this.userId).subscribe({
       next: (data) => {
-        // Assegnazione pulita
         this.systemSettings.language = data.language;
         this.systemSettings.currency = data.currency;
         this.systemSettings.privacyMode = data.privacyMode;
         this.systemSettings.budgetAlerts = data.budgetAlerts;
 
-        // Forza il refresh della grafica
         this.cdr.detectChanges();
       },
       error: (err) => console.error("Errore nel recupero impostazioni:", err)
@@ -62,12 +66,20 @@ export class SettingsComponent implements OnInit {
   }
 
   saveSettings(): void {
+    // ✅ 1. Attiviamo lo spinner
+    this.isSaving = true;
+
     console.log("Invio questi dati al server:", this.systemSettings);
+
     this.settingsService.updateSettings(this.userId, this.systemSettings).subscribe({
       next: (res) => {
+        // ✅ 2. Spegniamo lo spinner (Successo)
+        this.isSaving = false;
         alert("Impostazioni salvate con successo!");
       },
       error: (err) => {
+        // ✅ 3. Spegniamo lo spinner (Errore)
+        this.isSaving = false;
         console.error("Errore nel salvataggio:", err);
         alert("Errore durante il salvataggio.");
       }

@@ -1,64 +1,98 @@
-<div class="settings-container">
-  <div class="settings-card">
-    <header class="settings-header">
-      <h1>Impostazioni di Sistema</h1>
-      <p>Gestisci le preferenze del tuo account</p>
-    </header>
+<div class="light-container">
 
-    <div class="settings-content">
-      <section class="settings-group">
-        <h3>Preferenze Generali</h3>
-        <div class="setting-row">
-          <div class="info">
-            <label>Lingua</label>
-            <span>Scegli la lingua dell'interfaccia</span>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="layout-grid">
+
+    <aside class="hero-side">
+      <button class="back-link" (click)="backToDashboard()">
+        <span class="icon">←</span> Torna alla Dashboard
+      </button>
+
+      <div class="hero-content">
+        <div class="icon-container">
+          <span class="gear-icon">⚙️</span>
+        </div>
+        <h1>Impostazioni <span class="gradient-text">Sistema</span>.</h1>
+        <p class="subtitle">Personalizza l'esperienza MoneyMind.<br>Sicurezza e preferenze in un click.</p>
+      </div>
+    </aside>
+
+    <main class="content-side">
+      <div class="settings-wrapper">
+
+        <section class="settings-group">
+          <h3 class="group-title">Generale</h3>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Valuta Principale</label>
+              <p>La moneta utilizzata per i calcoli globali</p>
+            </div>
+            <div class="control-wrapper">
+              <select [(ngModel)]="systemSettings.currency">
+                <option value="EUR">Euro (€)</option>
+                <option value="USD">Dollar ($)</option>
+                <option value="GBP">Pound (£)</option>
+              </select>
+            </div>
           </div>
-          <select [(ngModel)]="systemSettings.language">
-            <option value="it">Italiano</option>
-            <option value="en">English</option>
-          </select>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Lingua</label>
+              <p>Lingua dell'interfaccia utente</p>
+            </div>
+            <div class="control-wrapper">
+              <select [(ngModel)]="systemSettings.language">
+                <option value="it">Italiano</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-group">
+          <h3 class="group-title">Esperienza & Sicurezza</h3>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Modalità Privacy</label>
+              <p>Nasconde i saldi totali nella dashboard</p>
+            </div>
+            <div class="control-wrapper">
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="systemSettings.privacyMode">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Avvisi Budget</label>
+              <p>Notificami quando supero le soglie</p>
+            </div>
+            <div class="control-wrapper">
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="systemSettings.budgetAlerts">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer-actions">
+          <button class="btn-cancel" (click)="backToDashboard()">Annulla</button>
+          <button class="btn-primary" (click)="saveSettings()" [disabled]="isSaving">
+            <span *ngIf="!isSaving">Salva Impostazioni</span>
+            <span *ngIf="isSaving" class="loader"></span>
+          </button>
         </div>
 
-        <div class="setting-row">
-          <div class="info">
-            <label>Valuta</label>
-            <span>Valuta principale per i conteggi</span>
-          </div>
-          <select [(ngModel)]="systemSettings.currency">
-            <option value="EUR">Euro (€)</option>
-            <option value="USD">Dollar ($)</option>
-          </select>
-        </div>
-      </section>
+      </div>
+    </main>
 
-      <section class="settings-group">
-        <h3>Sicurezza & Avvisi</h3>
-        <div class="setting-row">
-          <div class="info">
-            <label>Modalità Privacy</label>
-            <span>Nascondi i saldi nella dashboard</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="systemSettings.privacyMode">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <div class="setting-row">
-          <div class="info">
-            <label>Avvisi Budget</label>
-            <span>Notifica al superamento del limite</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="systemSettings.budgetAlerts">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </section>
-    </div>
-
-    <footer class="settings-footer">
-      <button class="btn-save" (click)="saveSettings()">Salva Impostazioni</button>
-    </footer>
   </div>
 </div>

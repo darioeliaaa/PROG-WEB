@@ -1,0 +1,89 @@
+<div class="about-page">
+
+  <section class="hero-section">
+    <div class="container hero-grid">
+
+      <div class="text-column">
+        <div class="pill-badge">MONEYMIND VISION</div>
+
+        <h1>La chiarezza genera <span class="highlight-text">Potere.</span></h1>
+
+        <p class="lead">
+          MoneyMind semplifica la gestione del tuo patrimonio.
+          Un ecosistema avanzato che filtra il rumore dei mercati per offrirti solo ciò che conta.
+          Riprendi il controllo delle tue finanze con strumenti professionali, ma semplici da usare.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-item"><strong>5k+</strong><span>Utenti</span></div>
+          <div class="divider"></div>
+          <div class="stat-item"><strong>€15M</strong><span>Gestiti</span></div>
+          <div class="divider"></div>
+          <div class="stat-item"><strong>24/7</strong><span>Monitoraggio</span></div>
+        </div>
+      </div>
+
+      <div class="visual-column">
+        <div class="glow-bg"></div>
+        <div class="cards-stack">
+          <div class="widget-card glass-effect" *ngFor="let item of heroWidgets; let i = index" [style.animation-delay]="i * 0.2 + 's'">
+            <div class="icon-box">{{ item.icon }}</div>
+            <div class="widget-content">
+              <span class="widget-label">{{ item.label }}</span>
+              <div class="widget-value" [ngClass]="item.colorClass">{{ item.value }}</div>
+              <span class="widget-desc">{{ item.desc }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="bento-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Perché MoneyMind?</h2>
+        <p>Tecnologia avanzata al servizio della tua tranquillità.</p>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-card" *ngFor="let feat of features" [ngClass]="feat.class">
+          <div class="bento-icon">{{ feat.icon }}</div>
+          <div class="bento-text">
+            <h3>{{ feat.title }}</h3>
+            <p>{{ feat.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="team-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Il Team</h2>
+        <p>Sviluppatori e analisti uniti da un unico obiettivo: la tua libertà finanziaria.</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card" *ngFor="let member of team">
+          <div class="avatar-circle">
+            <img [src]="member.img" [alt]="member.name">
+          </div>
+          <h4>{{ member.name }}</h4>
+          <span class="role-badge">{{ member.role }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-card">
+      <h2>Unisciti al viaggio.</h2>
+      <p>Unisci oggi stesso tecnologia e semplicità per far crescere il tuo patrimonio.</p>
+      <button routerLink="/dashboard" routerLinkActive="active" class="btn-glow">Accedi alla Dashboard</button>
+    </div>
+  </section>
+
+</div>

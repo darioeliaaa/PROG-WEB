@@ -119,13 +119,26 @@
 .stat-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 6px; color: #94a3b8; padding-right: 25px; }
 .stat-row strong { color: #475569; font-weight: 600; }
 
+/* Modifica questo blocco nella sezione 3. TABELLA ASSET */
 .btn-trade {
-  background-color: #4f46e5; color: white; border: none; padding: 10px 0; width: 100%;
-  border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
-  transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+  background-color: #7D7DFA; /* Era #4f46e5 - Ora è il Viola Portfolio */
+  color: white;
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(125, 125, 250, 0.3); /* Ombra viola */
 }
-.btn-trade:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
 
+.btn-trade:hover {
+  background-color: #6f6ffa;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(125, 125, 250, 0.4);
+}
 /* Loading & Empty */
 .loading-state, .empty-state { text-align: center; padding: 100px 20px; color: #94a3b8; font-weight: 500; background: white; border-radius: 20px; margin-top: 20px; }
 .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 10px; }
@@ -135,88 +148,125 @@
    4. MODALE OVERLAY (Limitata al Componente)
    ========================================= */
 /* =========================================
-   4. MODALE OVERLAY (Fissa e Centrata)
+   STILE UNIFICATO TRADE MODAL (stile Portfolio)
    ========================================= */
-.modal-overlay {
-  /* FISSA RISPETTO ALLO SCHERMO (VIEWPORT) */
+
+/* 1. SFONDO OVERLAY (Scuro e Sfuocato) */
+.trade-modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-
-  /* Occupa tutto lo spazio visibile */
-  width: 100vw;
-  height: 100vh;
-
-  /* TRUCCO Z-INDEX:
-     50 è maggiore del contenuto della tabella (1),
-     ma minore dell'Header (100) e della Sidebar (1000).
-     Risultato: Copre i dati, ma Header e Sidebar restano cliccabili sopra.
-  */
-  z-index: 50;
-
-  /* Sfondo e Sfocatura */
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-
-  /* Centratura perfetta */
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Scuro come nel portfolio */
+  backdrop-filter: blur(5px);
+  z-index: 1000;
   display: flex;
-  align-items: center;
   justify-content: center;
-
+  align-items: center;
   animation: fadeIn 0.3s ease-out;
-
-  /* Impedisce che lo scroll del mouse si propaghi troppo facilmente (opzionale) */
-  overscroll-behavior: contain;
 }
 
-/* =========================================
-   5. TRADE CARD (Compravendita)
-   ========================================= */
-.trade-card-stylish {
-  background: #ffffff;
-  width: 90%; max-width: 600px;
-  border-radius: 24px; padding: 30px;
+/* 2. CARD BIANCA CENTRALE */
+.trade-modal {
+  width: 90%;
+  max-width: 550px; /* Larghezza controllata */
+  background: white;
+  padding: 30px;
+  border-radius: 24px; /* Curve morbide */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  display: flex; flex-direction: column; gap: 20px;
-  position: relative; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.stylish-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.stylish-header h3 { margin: 0; font-size: 1.1rem; font-weight: 800; color: #1e293b; }
-.asset-pill { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: #475569; }
-.mini-logo { width: 20px; height: 20px; border-radius: 50%; }
-.holding-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #64748b; border: 1px solid #e2e8f0; }
+/* 3. HEADER INTERNO */
+.stylish-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header-left h2 { margin: 0; font-size: 1.5rem; color: #1e293b; font-weight: 800; }
+.header-left .asset-name-small { font-size: 0.85rem; color: #94a3b8; font-weight: 500; display: block; margin-top: 2px;}
 
-/* Toggles & Inputs */
-.toggle-buttons { display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; }
-.btn-toggle { flex: 1; border: none; background: transparent; padding: 10px; border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+.holding-badge {
+  background: #f1f5f9; padding: 6px 12px; border-radius: 20px;
+  font-size: 0.75rem; color: #64748b; border: 1px solid #e2e8f0; font-weight: 600;
+}
+
+/* 4. TOGGLE BUTTONS (Acquista/Vendi) */
+.toggle-buttons {
+  display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px;
+}
+.btn-toggle {
+  flex: 1; border: none; background: transparent; padding: 12px;
+  border-radius: 12px; font-weight: 600; color: #64748b; cursor: pointer;
+  transition: 0.2s; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+/* Stati Attivi */
 .btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-.center-input-section { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.center-input-section label { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700; }
+/* 5. INPUT QUANTITÀ GIGANTE */
+.center-input-section {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px 0;
+}
+.center-input-section label {
+  font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px; font-weight: 700;
+}
 .amount-wrapper { position: relative; width: 100%; text-align: center; }
 
 .big-input {
   font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
   border: none; background: transparent; text-align: center; width: 100%;
-  outline: none; padding: 0 0 5px 0; margin: 0; border-bottom: 2px solid #e2e8f0;
-  color: #1e293b; border-radius: 0;
+  outline: none; padding: 0 0 5px 0; margin: 0;
+  border-bottom: 2px solid #e2e8f0;
+  color: #1e293b; transition: border-color 0.3s;
+  border-radius: 0; /* Importante per rimuovere curve default su iOS */
 }
+/* Colori Input Dinamici */
 .big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
 .big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
-.big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.big-input::placeholder { color: #cbd5e1; opacity: 0.5; }
 
-.small-input { font-size: 1.6rem !important; color: #334155 !important; }
-.currency-suffix { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: #94a3b8; font-weight: bold; }
-.info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px dashed #e2e8f0; margin-bottom: 20px; color: #64748b; font-size: 0.95rem; }
+/* 6. INPUT VALUTA (PICCOLO) E INFO */
+.form-group label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; }
+.small-wrapper { border-bottom: 1px solid #e2e8f0; position: relative; display: flex; align-items: center; }
+.small-input {
+  font-size: 1.5rem !important; color: #334155 !important;
+  border: none !important; text-align: left; padding: 5px 0; width: 100%; outline: none; font-weight: 600;
+}
+.currency-suffix { font-size: 1.5rem; color: #94a3b8; font-weight: 600; padding-right: 5px; }
 
+.info-row {
+  display: flex; justify-content: space-between; padding: 15px 0;
+  border-bottom: 1px dashed #e2e8f0; color: #64748b; font-size: 0.95rem;
+}
+.bold-text { font-weight: 700; color: #1e293b; }
+
+/* 7. BOTTONI AZIONE (Il Viola Portfolio) */
 .form-actions { display: flex; gap: 15px; margin-top: 10px; }
-.btn-primary, .btn-secondary { flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s; }
-.btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3); }
-.btn-primary:hover { background: #6464fa; transform: translateY(-1px); }
-.btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
+
+.btn-primary {
+  flex: 1; height: 50px; border-radius: 12px;
+  background: #7D7DFA; /* IL VIOLA ESATTO DEL PORTFOLIO */
+  color: white; border: none; font-weight: 600; font-size: 1rem;
+  cursor: pointer; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3);
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: #6f6ffa; transform: translateY(-2px); }
+.btn-primary:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  flex: 1; height: 50px; border-radius: 12px;
+  background: white; border: 1px solid #e2e8f0; color: #64748b;
+  font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { background: #f8fafc; color: #334155; }
+
+/* Rimuovi frecce input number */
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* Animazioni */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
 /* =========================================
    6. LOGIN CARD (REPLICA IMMAGINE)
