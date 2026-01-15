@@ -44,6 +44,9 @@ export class SettingsComponent implements OnInit {
       this.router.navigate(['/login']);
     }
   }
+  backToDashboard() {
+    this.router.navigate(['/dashboard']); // Controlla che il path sia corretto
+  }
 
   loadRemoteSettings(): void {
     this.settingsService.getSettings(this.userId).subscribe({
