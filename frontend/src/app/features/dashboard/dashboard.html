@@ -139,7 +139,7 @@
             <h3>Nuovo Movimento</h3>
             <button class="close-btn" (click)="closeModal()">✕</button>
           </div>
-          <app-movimenti (saved)="handleTransactionSaved()"></app-movimenti>
+          <app-movimenti (saved)="handleTransactionSaved()" (close)="closeModal()"></app-movimenti>
         </div>
       </div>
 
