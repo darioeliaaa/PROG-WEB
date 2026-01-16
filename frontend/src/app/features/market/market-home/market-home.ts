@@ -13,51 +13,42 @@ import { finalize } from 'rxjs/operators';
 })
 export class MarketHomeComponent implements OnInit {
 
-  // Liste per memorizzare gli asset finanziari divisi per categoria
   topStocks: MarketAsset[] = [];
   topCrypto: MarketAsset[] = [];
   topEtf: MarketAsset[] = [];
   newsList: any[] = [];
 
-  // Variabili di stato per gestire la visualizzazione di loader o errori nel template
+  // Variabili di stato
   loading = true;
-  hasError = false;
+  hasError = false; // <--- ECCO LA VARIABILE CHE MANCAVA
 
   constructor(
     private marketService: MarketService,
-    private cd: ChangeDetectorRef // Utilizzato per notificare Angular di aggiornare la UI dopo chiamate asincrone
+    private cd: ChangeDetectorRef
   ) {}
 
-  /**
-   * Ciclo di vita: All'inizializzazione del componente avvia il caricamento dei dati.
-   */
   ngOnInit() {
     this.caricaDatiParalleli();
   }
 
-  /**
-   * Metodo principale per popolare la home del market.
-   * Effettua chiamate parallele (non bloccanti tra loro) per Stocks, Crypto, ETF e News.
-   */
   caricaDatiParalleli() {
-    this.loading = false; // Lo stato di loading viene gestito individualmente o inizialmente settato a false
+    this.loading = false;
     this.hasError = false;
 
-    // 1. CARICAMENTO AZIONI (STOCKS)
+    // 1. CARICA STOCKS
     this.marketService.getAssetsByType('STOCK').subscribe({
       next: (res) => {
-        // Unisce i dati reali del server con i dati di fallback e prende i primi 8
         this.topStocks = this.mergeDati(res, this.getFallbackStocks()).slice(0, 8);
-        this.cd.detectChanges(); // Forza il refresh della UI
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.warn('Errore Stocks:', err);
-        this.topStocks = this.getFallbackStocks(); // In caso di errore API, usa dati statici
+        this.topStocks = this.getFallbackStocks(); // Fallback
         this.cd.detectChanges();
       }
     });
 
-    // 2. CARICAMENTO CRIPTOVALUTE
+    // 2. CARICA CRYPTO
     this.marketService.getAssetsByType('CRYPTO').subscribe({
       next: (res) => {
         this.topCrypto = this.mergeDati(res, this.getFallbackCrypto()).slice(0, 8);
@@ -65,12 +56,12 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore Crypto:', err);
-        this.topCrypto = this.getFallbackCrypto();
+        this.topCrypto = this.getFallbackCrypto(); // Fallback
         this.cd.detectChanges();
       }
     });
 
-    // 3. CARICAMENTO ETF
+    // 3. CARICA ETF
     this.marketService.getAssetsByType('ETF').subscribe({
       next: (res) => {
         this.topEtf = this.mergeDati(res, this.getFallbackEtf()).slice(0, 8);
@@ -78,31 +69,27 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore ETF:', err);
-        this.topEtf = this.getFallbackEtf();
+        this.topEtf = this.getFallbackEtf(); // Fallback
         this.cd.detectChanges();
       }
     });
 
-    // 4. CARICAMENTO NOTIZIE FINANZIARIE
+    // 4. CARICA NEWS
     this.marketService.getNews().subscribe({
       next: (res) => {
-        // Se l'API restituisce dati validi li usa, altrimenti carica news dimostrative
         if (res && res.length > 0) this.newsList = res;
         else this.usaNewsFinte();
         this.cd.detectChanges();
       },
       error: (err) => {
         console.warn('Errore News:', err);
-        this.usaNewsFinte();
+        this.usaNewsFinte(); // Fallback
         this.cd.detectChanges();
       }
     });
   }
 
-  /**
-   * Helper per unire i dati reali del backend con quelli di fallback.
-   * Filtra i duplicati basandosi sul simbolo dell'asset per evitare ripetizioni nella UI.
-   */
+  // === HELPER PER UNIRE I DATI ===
   mergeDati(real: any[], fake: any[]): any[] {
     const safeReal = real || [];
     const combined = [...safeReal, ...fake];
@@ -111,20 +98,12 @@ export class MarketHomeComponent implements OnInit {
     );
   }
 
-  /**
-   * Rimuove prefissi o suffissi valutari dai simboli (es. "NASDAQ:AAPL" -> "AAPL").
-   * Utile per uniformare i dati provenienti da fonti diverse.
-   */
   pulisciSimbolo(simbolo: string): string {
     if (!simbolo) return '';
     let nomePulito = simbolo.includes(':') ? simbolo.split(':')[1] : simbolo;
     return nomePulito.replace('USDT', '').replace('USD', '').replace('EUR', '');
   }
 
-  /**
-   * Gestisce l'errore di caricamento delle immagini dei loghi.
-   * Se l'URL dell'immagine non è valido, assegna un'icona generica in base al tipo di asset.
-   */
   handleImgError(event: any, symbol: string) {
     const cleanSymbol = this.pulisciSimbolo(symbol).toLowerCase();
     const fallbackUrl = symbol.includes('BINANCE') || symbol.includes('CRYPTO')
@@ -136,10 +115,7 @@ export class MarketHomeComponent implements OnInit {
     }
   }
 
-  // === METODI DI FALLBACK (DATI STATICI) ===
-  // Questi metodi restituiscono dati "hardcoded" per garantire che l'app
-  // mostri contenuti anche se il server backend è offline.
-
+  // === FALLBACK DATA ===
   getFallbackStocks(): any[] {
     return [
       { symbol: 'AAPL', name: 'Apple', currentPrice: 185.92, changePercent: 1.25, logoUrl: 'https://logo.clearbit.com/apple.com' },
@@ -179,9 +155,6 @@ export class MarketHomeComponent implements OnInit {
     ] as any[];
   }
 
-  /**
-   * Popola la lista delle news con dati dimostrativi.
-   */
   usaNewsFinte() {
     this.newsList = [
       {
