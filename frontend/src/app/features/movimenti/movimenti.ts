@@ -186,7 +186,6 @@ export class Movimenti implements OnInit {
           });
       }
       else {
-        // Spesa semplice dal wallet condiviso
         this.salvaTransazioneDB('USCITA');
       }
     }

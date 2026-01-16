@@ -61,7 +61,6 @@ export class Profilo implements OnInit {
    * Scarica i dati del profilo dal backend.
    * Utilizza l'operatore 'finalize' per spegnere lo stato di caricamento indipendentemente dall'esito.
    */
-  // In profilo.ts
 
   loadUserData() {
     if (!this.userId) return;
@@ -73,7 +72,6 @@ export class Profilo implements OnInit {
       }))
       .subscribe({
         next: (data) => {
-          // Ora i dati arriveranno popolati correttamente dal Proxy!
           this.userData = data;
 
           // Mantieni solo il fix per la data
