@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../services/transaction.service';
@@ -48,7 +48,8 @@ export class Movimenti implements OnInit {
   constructor(
     private transactionService: TransactionService,
     private userService: UserService,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   /**
@@ -180,6 +181,7 @@ export class Movimenti implements OnInit {
             error: () => {
               this.isLoading = false;
               this.errorMessage = "Non hai abbastanza soldi nel tuo Wallet Personale!";
+              this.cdr.detectChanges();
             }
           });
       }
