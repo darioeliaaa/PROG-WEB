@@ -181,11 +181,12 @@ export class Login {
 
   // --- RESET PASSWORD ---
   onResetPassword() {
-    // 1. Controllo validità nuova password
+    // 1. Controllo Password Sicura
     if (!this.checkPasswordStrength(this.forgotObj.newPassword)) {
       return;
     }
 
+    // 2. Controllo Campi Vuoti
     if (!this.forgotObj.email || !this.forgotObj.code) {
       alert("Compila tutti i campi.");
       return;
@@ -199,12 +200,24 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
       next: (res: any) => {
-        this.currentView = 'forgot-success';
-        this.loginObj.email = this.forgotObj.email;
-        this.loginObj.password = '';
+
+        // ✅ FIX: Usiamo NgZone per aggiornare subito la schermata
+        this.zone.run(() => {
+          this.currentView = 'forgot-success';
+
+          // Pre-compiliamo la mail per il login
+          this.loginObj.email = this.forgotObj.email;
+          this.loginObj.password = '';
+
+          this.cdr.detectChanges(); // Sicurezza extra
+        });
+
       },
       error: (err) => {
-        alert(err.error?.message || "Codice errato o email non valida.");
+        // Anche l'alert o i messaggi di errore meglio gestirli nella zone
+        this.zone.run(() => {
+          alert(err.error?.message || "Codice errato o email non valida.");
+        });
       }
     });
   }
