@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-// Componenti Figli
 import { InvestmentSummaryWallet } from './investment-summary-wallet/investment-summary-wallet';
 import { BudgetOverviewWallet } from './budget-overview-wallet/budget-overview-wallet';
 import { YearlyHistoryWallet } from './yearly-history-wallet/yearly-history-wallet';
 import { Movimenti} from '../movimenti/movimenti';
 
-// Services e Modelli
 import { TransactionService } from '../../services/transaction.service';
 import { WalletService } from '../../services/wallet.service';
 import { UserService } from '../../services/user.service';
@@ -31,13 +29,11 @@ export class DashboardWallet implements OnInit {
   currentUserId: number | null = null;
   isAdmin: boolean = false;
 
-  // Dati Grafici
   datiMensili: any = { transactions: [], totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
   transazioniTotali: Transaction[] = [];
   recentTransactions: Transaction[] = [];
   saldoTotaleReale: number = 0;
 
-  // Stati Modali
   isModalOpen: boolean = false;
   isHistoryOpen: boolean = false;
   isSettingsOpen: boolean = false;
@@ -52,6 +48,7 @@ export class DashboardWallet implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  // Inizializza l'utente e resta in ascolto dell'ID wallet dai parametri della URL
   ngOnInit() {
     const uId = this.userService.getCurrentUserId();
     this.currentUserId = uId ? uId : Number(localStorage.getItem('userId'));
@@ -65,6 +62,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
+  // Recupera i dettagli del wallet e tutte le transazioni associate per popolare la dashboard
   caricaDatiWallet() {
     this.walletService.getWalletById(this.walletId).subscribe({
       next: (w) => {
@@ -86,6 +84,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
+  // Confronta l'ID dell'utente corrente con l'admin del wallet per sbloccare i permessi di gestione
   checkAdminStatus() {
     if (this.wallet && this.currentUserId) {
       const adminId = this.wallet.admin?.id || (this.wallet as any).adminId;
@@ -94,16 +93,19 @@ export class DashboardWallet implements OnInit {
     }
   }
 
-  // --- LOGICA GESTIONE WALLET (ADMIN) ---
-
+  // Apre il pannello delle impostazioni (solo per admin)
   openSettings() { this.isSettingsOpen = true; this.successMessage = null; }
+
+  // Chiude il pannello delle impostazioni e resetta i messaggi
   closeSettings() { this.isSettingsOpen = false; this.successMessage = null; }
 
+  // Gestisce la visualizzazione temporanea dei feedback positivi a schermo
   showSuccess(msg: string) {
     this.successMessage = msg;
     this.cd.detectChanges();
   }
 
+  // Salva le modifiche al budget mensile e ai limiti di trasferimento del wallet
   saveSettings() {
     if (!this.isAdmin || !this.currentUserId || !this.wallet) return;
 
@@ -124,6 +126,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
+  // Trasferisce la proprietà del wallet a un altro membro, perdendo i diritti di admin
   promoteMember(memberId: number, memberName: string) {
     if (!confirm(`Sei sicuro di voler nominare ${memberName} come Amministratore?\n\nATTENZIONE: Perderai i privilegi di admin su questo wallet.`)) return;
 
@@ -144,6 +147,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
+  // Rimuove un partecipante dal wallet condiviso
   removeMember(memberId: number) {
     if (!confirm("Vuoi davvero rimuovere questo utente dal wallet?")) return;
     if (!this.currentUserId) return;
@@ -159,6 +163,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
+  // Elimina definitivamente il wallet e reindirizza alla lista generale
   deleteWallet() {
     if (!confirm("ATTENZIONE: Eliminazione irreversibile. Continuare?") || !this.currentUserId) return;
 
@@ -170,7 +175,7 @@ export class DashboardWallet implements OnInit {
     });
   }
 
-  // --- CALCOLI E HELPERS ---
+  // Esegue la somma algebrica di tutte le entrate e uscite per ottenere il saldo reale complessivo
   calcolaSaldoTotaleAssoluto() {
     let tot = 0;
     this.transazioniTotali.forEach((t: any) => {
@@ -181,6 +186,7 @@ export class DashboardWallet implements OnInit {
     this.saldoTotaleReale = tot;
   }
 
+  // Filtra l'elenco delle transazioni per isolare quelle del mese visualizzato e calcola i parziali
   filtraDatiLocali() {
     if (!this.transazioniTotali) return;
     const mese = this.currentDate.getMonth();
@@ -198,6 +204,7 @@ export class DashboardWallet implements OnInit {
     this.datiMensili = { transactions: filtered, totaleEntrate: entrate, totaleUscite: uscite, saldo: entrate - uscite };
   }
 
+  // Gestisce la navigazione temporale tra i mesi nel selettore della dashboard
   cambiaMese(delta: number) {
     const nextDate = new Date(this.currentDate);
     const oggi = new Date();
@@ -207,14 +214,17 @@ export class DashboardWallet implements OnInit {
     this.filtraDatiLocali();
   }
 
+  // Mette in ordine cronologico le transazioni caricate
   ordinaTransazioni(lista: any[]) {
     return lista.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
+  // Restituisce la stringa del mese e anno corrente formattata per l'intestazione
   get titoloMese(): string {
     return this.currentDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
   }
 
+  // Associa un'icona specifica in base alla categoria testuale della transazione
   getCategoryIcon(c: string): string {
     const cat = (c || '').toLowerCase();
     if (cat.includes('spesa')) return '🛒';
@@ -224,10 +234,21 @@ export class DashboardWallet implements OnInit {
     return '📄';
   }
 
+  // Torna alla schermata principale dei wallet
   goBack() { this.router.navigate(['/wallet']); }
+
+  // Apre la modale per aggiungere una nuova transazione
   openModal() { this.isModalOpen = true; }
+
+  // Chiude la modale di inserimento
   closeModal() { this.isModalOpen = false; }
+
+  // Esegue il refresh dei dati dopo che una transazione è stata correttamente salvata
   handleTransactionSaved() { this.closeModal(); this.caricaDatiWallet(); }
+
+  // Apre la modale dello storico movimenti completo
   openHistory() { this.isHistoryOpen = true; }
+
+  // Chiude la modale dello storico
   closeHistory() { this.isHistoryOpen = false; }
 }

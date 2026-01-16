@@ -2,13 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
-// Componenti figli
 import { InvestmentSummary } from './investment-summary/investment-summary';
 import { BudgetOverview } from './budget-overview/budget-overview';
 import { YearlyHistory } from './yearly-history/yearly-history';
 import { Movimenti } from '../movimenti/movimenti';
 
-// Services
 import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { WalletService } from '../../services/wallet.service';
@@ -22,19 +20,15 @@ import { WalletService } from '../../services/wallet.service';
 })
 export class Dashboard implements OnInit {
 
-  // ✅ NUOVO: Variabile per gestire lo stato di login
   isLoggedIn: boolean = false;
-
   currentDate: Date = new Date();
   profilePercentage: number = 0;
   userSettings: any = { currency: 'EUR', privacyMode: false };
-  tassoCambio: number = 1.09; // 1 EUR = 1.09 USD (Valore attuale)
+  tassoCambio: number = 1.09;
 
-  // Modali
   isModalOpen: boolean = false;
   isHistoryOpen: boolean = false;
 
-  // Dati (Inizializzati vuoti per l'utente non loggato)
   datiMensili: any = { transactions: [], totaleEntrate: 0, totaleUscite: 0, saldo: 0 };
   transazioniTotali: any[] = [];
   recentTransactions: any[] = [];
@@ -48,18 +42,15 @@ export class Dashboard implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  // Verifica lo stato di autenticazione e avvia il caricamento dei dati se l'utente è loggato
   ngOnInit() {
-    // 1. CONTROLLO IMMEDIATO DELLO STATO DI LOGIN
     this.isLoggedIn = this.userService.isLoggedIn();
 
-    // 2. CARICA I DATI **SOLO** SE L'UTENTE È LOGGATO
     if (this.isLoggedIn) {
-
       this.caricaDati();
       this.checkProfileStatus();
       this.caricaImpostazioniUtente();
 
-      // Sottoscrizione per aggiornamenti live delle impostazioni
       this.userService.userSettings$.subscribe({
         next: (settings) => {
           if (settings) {
@@ -71,15 +62,14 @@ export class Dashboard implements OnInit {
         }
       });
     }
-    // SE NON È LOGGATO: Non facciamo nulla.
-    // Le variabili restano vuote/zero e non partono chiamate API che darebbero errore.
   }
 
-  // ✅ NUOVO: Metodo per il bottone "Accedi" dell'overlay
+  // Naviga l'utente verso la pagina di login
   goToLogin() {
     this.router.navigate(['/login']);
   }
-  // Metodo per convertire i valori al volo
+
+  // Applica il tasso di cambio se la valuta impostata è diversa dall'Euro
   converti(valore: number): number {
     if (this.userSettings?.currency === 'USD') {
       return valore * this.tassoCambio;
@@ -87,6 +77,7 @@ export class Dashboard implements OnInit {
     return valore;
   }
 
+  // Sincronizza le impostazioni dell'utente (valuta, privacy) dal servizio dedicato
   caricaImpostazioniUtente() {
     const userId = this.userService.getCurrentUserId();
     if (userId) {
@@ -95,31 +86,46 @@ export class Dashboard implements OnInit {
     }
   }
 
+  // Restituisce il nome del mese e l'anno correnti formattati per l'header
   get titoloMese(): string {
     return this.currentDate.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
   }
 
+  // Naviga l'utente verso la gestione del profilo
   goToProfile() {
     this.router.navigate(['/profilo']);
   }
 
-  // --- GESTIONE MODALI ---
+  // Apre la modale dello storico completo delle transazioni
   openHistory() {
     this.isHistoryOpen = true;
     if (this.transazioniTotali) {
       this.ordinaTransazioni(this.transazioniTotali);
     }
   }
-  closeHistory() { this.isHistoryOpen = false; }
 
-  openModal() { this.isModalOpen = true; }
-  closeModal() { this.isModalOpen = false; }
+  // Chiude la modale dello storico
+  closeHistory() {
+    this.isHistoryOpen = false;
+  }
+
+  // Apre la modale per l'inserimento di una nuova transazione
+  openModal() {
+    this.isModalOpen = true;
+  }
+
+  // Chiude la modale di inserimento transazione
+  closeModal() {
+    this.isModalOpen = false;
+  }
+
+  // Aggiorna la dashboard dopo il salvataggio di un nuovo movimento
   handleTransactionSaved() {
     this.isModalOpen = false;
     this.caricaDati();
   }
 
-  // --- LOGICA DATI ---
+  // Recupera dal server la percentuale di completamento del profilo utente
   checkProfileStatus() {
     const userId = this.userService.getCurrentUserId();
     if (userId) {
@@ -129,6 +135,7 @@ export class Dashboard implements OnInit {
     }
   }
 
+  // Sposta la visualizzazione della dashboard al mese precedente o successivo
   cambiaMese(delta: number) {
     const oggi = new Date();
     const testDate = new Date(this.currentDate);
@@ -144,11 +151,11 @@ export class Dashboard implements OnInit {
     this.filtraDatiLocali();
   }
 
+  // Identifica il wallet principale e ne scarica tutte le transazioni associate
   caricaDati() {
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
 
-    // Puliamo i dati vecchi per evitare che si vedano durante il caricamento
     this.transazioniTotali = [];
     this.recentTransactions = [];
 
@@ -156,11 +163,7 @@ export class Dashboard implements OnInit {
       next: (wallets) => {
         if (!wallets || wallets.length === 0) return;
 
-        // --- FIX CRUCIALE ---
-        // Cerchiamo il wallet che ha personal === true
         const personalWallet = wallets.find(w => w.personal === true);
-
-        // Se lo troviamo usiamo quello, altrimenti per sicurezza prendiamo il primo
         const mainWalletId = personalWallet ? personalWallet.id : wallets[0].id;
 
         this.transactionService.getTransactionsByWallet(mainWalletId).subscribe({
@@ -177,7 +180,7 @@ export class Dashboard implements OnInit {
     });
   }
 
-  // Helper per ordinare (Data + ID per spareggio)
+  // Ordina una lista di transazioni in ordine cronologico decrescente
   ordinaTransazioni(lista: any[]) {
     return lista.sort((a: any, b: any) => {
       const dataA = new Date(a.date).getTime();
@@ -187,6 +190,7 @@ export class Dashboard implements OnInit {
     });
   }
 
+  // Calcola il saldo netto complessivo sommando entrate e sottraendo uscite
   calcolaSaldoTotaleAssoluto() {
     let tot = 0;
     this.transazioniTotali.forEach((t: any) => {
@@ -196,6 +200,7 @@ export class Dashboard implements OnInit {
     this.saldoTotaleReale = tot;
   }
 
+  // Isola le transazioni appartenenti al mese e all'anno attualmente selezionati
   filtraDatiLocali() {
     if (!this.transazioniTotali) return;
     const meseTarget = this.currentDate.getMonth();
@@ -223,6 +228,7 @@ export class Dashboard implements OnInit {
     this.cd.detectChanges();
   }
 
+  // Associa un'icona emoji specifica ad ogni categoria di spesa o entrata
   getCategoryIcon(category: string): string {
     const cat = category ? category.toLowerCase() : '';
     if (cat.includes('casa')) return '🏠';
