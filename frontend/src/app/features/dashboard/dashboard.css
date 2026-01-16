@@ -1,4 +1,4 @@
-/* IMPORT FONT (Essenziale per il look moderno) */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =========================================
@@ -46,7 +46,6 @@
   font-weight: 500;
 }
 
-/* CONTENITORE CONTROLLI (Allinea Bottone e Data) */
 .header-controls {
   display: flex;
   align-items: center;
@@ -105,7 +104,7 @@
   transform: scale(1.1);
 }
 
-/* --- B. BOTTONE AGGIUNGI FONDI (Nuovo Stile) --- */
+/* --- B. BOTTONE AGGIUNGI FONDI  --- */
 .btn-add-funds {
   display: flex;
   align-items: center;
@@ -115,9 +114,9 @@
   background: white;
   color: #1e293b;
   border: none;
-  padding: 6px 16px 6px 6px; /* Padding asimmetrico per ospitare il cerchietto */
+  padding: 6px 16px 6px 6px;
   border-radius: 50px;
-  height: 44px; /* Stessa altezza della data */
+  height: 44px;
 
   font-weight: 600;
   font-size: 0.95rem;
@@ -128,18 +127,17 @@
   transition: all 0.2s ease;
 }
 
-/* Hover Effect */
+
 .btn-add-funds:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(125, 125, 250, 0.2); /* Ombra leggermente viola */
-  color: #7D7DFA; /* Testo diventa viola */
+  box-shadow: 0 6px 20px rgba(125, 125, 250, 0.2);
+  color: #7D7DFA;
 }
 
-/* Cerchietto con il "+" */
 .icon-circle {
   width: 32px;
   height: 32px;
-  background-color: #f1f5f9; /* Grigio chiaro default */
+  background-color: #f1f5f9;
   color: #1e293b;
   border-radius: 50%;
   display: flex;
@@ -150,7 +148,6 @@
   transition: background 0.2s, color 0.2s;
 }
 
-/* Quando passi sopra il bottone, il cerchietto si accende */
 .btn-add-funds:hover .icon-circle {
   background-color: #7D7DFA;
   color: white;

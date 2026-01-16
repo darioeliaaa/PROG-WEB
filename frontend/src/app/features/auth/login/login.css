@@ -62,7 +62,7 @@ h1 {
   font-size: 1.1rem; line-height: 1.6; opacity: 0.95; margin-bottom: 50px;
 }
 
-/* Glass card flottante per l'estetica tech */
+/* Glass card per l'estetica tech */
 .glass-card-decor {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);

@@ -51,7 +51,6 @@ export class BudgetOverview implements OnChanges {
     'default': '#bdc3c7'
   };
 
-  // Registra i moduli di Chart.js necessari per il corretto funzionamento dei grafici
   constructor(private cd: ChangeDetectorRef) {
     Chart.register(...registerables);
   }

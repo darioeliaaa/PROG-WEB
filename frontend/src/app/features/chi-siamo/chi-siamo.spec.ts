@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChiSiamoComponent } from './chi-siamo'; // Corretto il nome della classe
+import { ChiSiamoComponent } from './chi-siamo';
 
 describe('ChiSiamoComponent', () => {
   let component: ChiSiamoComponent;
@@ -7,7 +7,7 @@ describe('ChiSiamoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChiSiamoComponent] // Deve essere standalone o dichiarato qui
+      imports: [ChiSiamoComponent]
     })
       .compileComponents();
 

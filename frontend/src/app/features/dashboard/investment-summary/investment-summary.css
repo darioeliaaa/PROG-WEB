@@ -1,4 +1,4 @@
-/* Card principale: il gradiente sfuma verso il viola del brand per profondità */
+
 .summary-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.8), rgb(125, 125, 250));
   border-radius: 24px;
