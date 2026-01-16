@@ -96,7 +96,7 @@
         <h3>Nuova Transazione</h3>
         <button class="close-btn" (click)="closeModal()">✕</button>
       </div>
-      <app-movimenti [walletId]="walletId" (saved)="handleTransactionSaved()"></app-movimenti>
+      <app-movimenti [walletId]="walletId" (saved)="handleTransactionSaved()" (close)="closeModal()"></app-movimenti>
     </div>
   </div>
 
