@@ -1,7 +1,6 @@
 /* =========================================
    ===== 1. FONT & BASE =====
    ========================================= */
-/* IMPORT FONT: Plus Jakarta Sans per un'estetica moderna */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 .main-container {
@@ -163,7 +162,7 @@
 }
 
 /* =========================================
-   ===== 6. AREA RISERVATA (LOCK SCREEN - FIXED & CLEAN) =====
+   ===== 6. AREA RISERVATA (LOCK SCREEN) =====
    ========================================= */
 
 /* 1. Contenitore principale */
@@ -175,8 +174,8 @@
 
 /* 2. L'EFFETTO SFOCATURA (Solo sul contenuto sotto) */
 .blurred-content {
-  filter: blur(10px);    /* Sfocatura decisa */
-  opacity: 0.5;          /* Leggermente trasparente */
+  filter: blur(10px);
+  opacity: 0.5;
   pointer-events: none;  /* Impedisce i click sotto */
   user-select: none;     /* Impedisce selezione testo */
   transition: all 0.3s ease;
@@ -184,11 +183,11 @@
 
 /* 4. LA CARD (Il box bianco centrale) */
 .glass-box {
-  background: #ffffff;  /* QUI va il bianco */
+  background: #ffffff;
   width: 90%;
-  max-width: 440px;     /* Larghezza ottimale */
-  padding: 50px 40px;   /* Spaziatura interna abbondante */
-  border-radius: 32px;  /* Angoli molto rotondi come nella foto */
+  max-width: 440px;
+  padding: 50px 40px;
+  border-radius: 32px;
   text-align: center;
 
   /* Ombra morbida e diffusa (Soft Shadow) */
@@ -204,7 +203,6 @@
 .icon-circle-lock {
   width: 72px;
   height: 72px;
-  /* Gradiente Viola come nella tua foto */
   background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
   color: #ffffff;
   border-radius: 50%;
@@ -243,12 +241,12 @@
 
 /* 7. BOTTONE ACCEDI */
 .btn-auth {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); /* Viola Intenso */
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: white;
   border: none;
   padding: 14px 0;
   width: 100%;
-  border-radius: 12px; /* Arrotondato ma non a pillola estrema */
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;

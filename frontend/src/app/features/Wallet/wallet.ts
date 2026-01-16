@@ -228,10 +228,7 @@ export class WalletComponent implements OnInit {
       }
     });
   }
-
-  /**
-   * Naviga verso la dashboard specifica del wallet selezionato.
-   */
+  
   openWallet(walletId: number): void {
     this.router.navigate([`/dashboardWallet`, walletId]);
   }
