@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 
-// ✅ AGGIUNTO 'forgot-success'
 type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-success';
 
 @Component({
@@ -19,15 +18,10 @@ type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-
 export class Login {
 
   currentView: ViewState = 'login';
-
-  // Dati Form
   loginObj: any = { email: '', password: '' };
   registerObj: any = { username: '', email: '', password: '' };
   forgotObj: any = { email: '', code: '', newPassword: '' };
-
   generatedRecoveryCode: string = '';
-
-  // Gestione Errori
   fieldErrors: { username: boolean, email: boolean } = { username: false, email: false };
   registerMessage: string = '';
   suggestedUsernames: string[] = [];
@@ -39,30 +33,33 @@ export class Login {
     private cdr: ChangeDetectorRef
   ) {}
 
-  // --- NAVIGAZIONE ---
+  // Alterna la visualizzazione tra il form di login e quello di registrazione
   toggleMode() {
     this.currentView = this.currentView === 'login' ? 'register' : 'login';
     this.resetErrors();
   }
 
+  // Attiva la vista per il recupero della password dimenticata
   showForgotPassword() {
     this.currentView = 'forgot';
     this.forgotObj = { email: '', code: '', newPassword: '' };
     this.resetErrors();
   }
 
+  // Riporta l'utente alla schermata di login principale
   backToLogin() {
     this.currentView = 'login';
     this.resetErrors();
   }
 
+  // Pulisce tutti i messaggi di errore e i suggerimenti attivi nei form
   resetErrors() {
     this.registerMessage = '';
     this.fieldErrors = { username: false, email: false };
     this.suggestedUsernames = [];
   }
 
-  // --- LOGIN ---
+  // Gestisce la chiamata API per l'autenticazione dell'utente
   onLogin() {
     this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
       next: (res: any) => {
@@ -76,7 +73,7 @@ export class Login {
     });
   }
 
-  // --- REGISTRAZIONE ---
+  // Invia i dati di registrazione al server e gestisce la risposta o il token di reset
   onRegister() {
     this.resetErrors();
 
@@ -105,6 +102,7 @@ export class Login {
     });
   }
 
+  // Conclude la procedura di registrazione pulendo i dati temporanei e tornando al login
   finishRegistration() {
     this.generatedRecoveryCode = '';
     this.registerObj = { username: '', email: '', password: '' };
@@ -112,7 +110,7 @@ export class Login {
     this.currentView = 'login';
   }
 
-  // --- RESET PASSWORD (MODIFICATO) ---
+  // Invia la richiesta di reset password utilizzando il codice di recupero fornito
   onResetPassword() {
     if (!this.forgotObj.email || !this.forgotObj.code || !this.forgotObj.newPassword) {
       alert("Compila tutti i campi.");
@@ -127,21 +125,17 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
       next: (res: any) => {
-        // ✅ NESSUN ALERT: Cambiamo vista e mostriamo il messaggio bello
         this.currentView = 'forgot-success';
-
-        // Pre-compiliamo l'email nel login per comodità
         this.loginObj.email = this.forgotObj.email;
-        this.loginObj.password = ''; // Reset password field
+        this.loginObj.password = '';
       },
       error: (err) => {
-        // Qui lasciamo l'alert o un messaggio di errore rosso nel form (come preferisci)
         alert(err.error?.message || "Codice errato o email non valida.");
       }
     });
   }
 
-  // --- HELPERS ---
+  // Analizza l'errore di registrazione per evidenziare se il problema è lo username o l'email
   handleRegisterError(err: any) {
     let errorBody = '';
     if (err.error && typeof err.error === 'string') errorBody = err.error.toLowerCase();
@@ -157,17 +151,20 @@ export class Login {
     this.cdr.detectChanges();
   }
 
+  // Crea una lista di alternative disponibili se lo username scelto è già occupato
   generateUsernameSuggestions(base: string) {
     if(!base) base = "User";
     const random = Math.floor(Math.random() * 1000);
     this.suggestedUsernames = [`${base}_${random}`, `${base}.official`, `${base}${new Date().getFullYear()}`];
   }
 
+  // Applica lo username suggerito selezionato al form di registrazione
   selectSuggestion(s: string) {
     this.registerObj.username = s;
     this.fieldErrors.username = false;
   }
 
+  // Reindirizza al login mantenendo l'email inserita durante il tentativo di registrazione
   goToLoginWithEmail() {
     this.loginObj.email = this.registerObj.email;
     this.loginObj.password = '';
@@ -175,6 +172,7 @@ export class Login {
     this.resetErrors();
   }
 
+  // Naviga l'utente verso la dashboard principale
   tornaIndietro() {
     this.router.navigate(['/dashboard']);
   }
