@@ -1,9 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'; // Aggiunto Router
-import { FormsModule } from '@angular/forms'; // FONDAMENTALE per ngModel
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
-// --- SERVIZI NECESSARI PER IL TRADE ---
 import { MarketService, MarketAsset } from '../market.service';
 import { UserService } from '../../../services/user.service';
 import { PortfolioService } from '../../../services/portfolio.service';
@@ -13,7 +12,7 @@ declare const TradingView: any;
 @Component({
   selector: 'app-stock-chart',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule], // Aggiunto FormsModule e RouterModule
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './stock-chart.html',
   styleUrl: './stock-chart.css'
 })
@@ -22,10 +21,9 @@ export class StockChart implements OnInit, AfterViewInit {
   symbol: string = 'NASDAQ:AAPL';
   @ViewChild('containerDiv', { static: false }) containerDiv!: ElementRef;
 
-  // --- VARIABILI PER IL TRADE (COPIATE DA ASSET-LIST) ---
   isTradeModalOpen = false;
   isProcessing = false;
-  selectedAsset: any = null; // Conterrà i dati dell'asset corrente (Prezzo, nome, ecc)
+  selectedAsset: any = null;
   tradeAction: 'BUY' | 'SELL' = 'BUY';
   tradeQuantity: number | null = null;
   tradeAmount: number | null = null;
@@ -34,11 +32,11 @@ export class StockChart implements OnInit, AfterViewInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router, // Necessario per redirect
+    private router: Router,
     private marketService: MarketService,
     private userService: UserService,
     private portfolioService: PortfolioService,
-    private cd: ChangeDetectorRef, // Per aggiornare la UI
+    private cd: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -47,12 +45,10 @@ export class StockChart implements OnInit, AfterViewInit {
       const sym = params.get('symbol');
       if (sym) {
         this.symbol = sym;
-        // Appena ho il simbolo, cerco i dati aggiornati (prezzo, ecc) per il box trade
         this.loadAssetDetails(sym);
       }
     });
 
-    // Carico portafoglio se utente loggato
     if (this.userService.getCurrentUserId()) {
       this.loadMyPortfolio();
     }
@@ -68,30 +64,19 @@ export class StockChart implements OnInit, AfterViewInit {
     history.back();
   }
 
-  // ===========================================================
-  //  LOGICA TRADE (PORTATA DA ASSET-LIST)
-  // ===========================================================
-
-  // 1. Recupero Dati Asset (Necessario perché qui non siamo in una lista)
   loadAssetDetails(fullSymbol: string) {
-    // Cerco di capire il tipo per scaricare la lista giusta (Stocks o Crypto)
-    // Se non lo so per certo, potrei provare entrambi o fare una chiamata specifica getAsset(symbol)
-    // Qui assumo una logica semplice o uso 'STOCK' come default se non capisco
     const type = fullSymbol.includes('BINANCE') ? 'CRYPTO' : 'STOCK';
 
     this.marketService.getAssetsByType(type).subscribe(assets => {
-      // Trovo l'asset corrispondente nella lista
       const found = assets.find(a => a.symbol === fullSymbol);
       if (found) {
         this.selectedAsset = found;
       } else {
-        // Fallback se non trovato in lista (creo oggetto finto o gestisco errore)
         console.warn("Asset non trovato nel market list, impossibile tradare con prezzo esatto.");
       }
     });
   }
 
-  // 2. Recupero Portafoglio Utente
   loadMyPortfolio() {
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
@@ -107,14 +92,12 @@ export class StockChart implements OnInit, AfterViewInit {
     });
   }
 
-  // 3. Apertura Modale
   openTradePanel() {
     if (!this.userService.getCurrentUserId()) {
       this.showLoginModal = true;
       return;
     }
 
-    // Se non abbiamo ancora i dati dell'asset (prezzo), proviamo a ricaricarli
     if (!this.selectedAsset) {
       this.loadAssetDetails(this.symbol);
     }
@@ -135,10 +118,8 @@ export class StockChart implements OnInit, AfterViewInit {
 
   setAction(action: 'BUY' | 'SELL') {
     this.tradeAction = action;
-    // Ricalcolo se cambio azione (opzionale, ma utile per UX colori)
   }
 
-  // 4. Calcolatori
   onQuantityChange() {
     if (this.tradeQuantity && this.selectedAsset) {
       this.tradeAmount = Number((this.tradeQuantity * this.selectedAsset.currentPrice).toFixed(2));
@@ -159,7 +140,6 @@ export class StockChart implements OnInit, AfterViewInit {
     return this.myPortfolioAssets.get(symbol) || 0;
   }
 
-  // 5. Conferma Ordine
   confirmTrade() {
     if (!this.selectedAsset || !this.tradeQuantity || this.tradeQuantity <= 0) return;
 
@@ -187,7 +167,7 @@ export class StockChart implements OnInit, AfterViewInit {
         alert(`✅ ${tipoOperazione} di ${this.pulisciSimbolo(this.selectedAsset.symbol)} completato!`);
 
         this.closeTradePanel();
-        this.loadMyPortfolio(); // Ricarico portafoglio aggiornato
+        this.loadMyPortfolio();
         this.cd.detectChanges();
       },
       error: (err) => {
@@ -199,7 +179,6 @@ export class StockChart implements OnInit, AfterViewInit {
     });
   }
 
-  // Utility Immagini
   handleImgError(event: any, symbol: string) {
     if (!symbol) return;
     const isCrypto = symbol.includes('BINANCE');
@@ -225,9 +204,6 @@ export class StockChart implements OnInit, AfterViewInit {
     return nomePulito.replace('USDT', '').replace('USD', '').replace('EUR', '');
   }
 
-  // ===========================================================
-  //  FINE LOGICA TRADE
-  // ===========================================================
 
   loadTradingViewScript() {
     if (document.getElementById('tv-widget-script')) {

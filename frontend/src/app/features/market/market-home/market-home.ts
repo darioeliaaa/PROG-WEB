@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MarketService, MarketAsset } from '../market.service';
-import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-market-home',
@@ -18,9 +17,8 @@ export class MarketHomeComponent implements OnInit {
   topEtf: MarketAsset[] = [];
   newsList: any[] = [];
 
-  // Variabili di stato
   loading = true;
-  hasError = false; // <--- ECCO LA VARIABILE CHE MANCAVA
+  hasError = false;
 
   constructor(
     private marketService: MarketService,
@@ -35,7 +33,6 @@ export class MarketHomeComponent implements OnInit {
     this.loading = false;
     this.hasError = false;
 
-    // 1. CARICA STOCKS
     this.marketService.getAssetsByType('STOCK').subscribe({
       next: (res) => {
         this.topStocks = this.mergeDati(res, this.getFallbackStocks()).slice(0, 8);
@@ -43,12 +40,11 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore Stocks:', err);
-        this.topStocks = this.getFallbackStocks(); // Fallback
+        this.topStocks = this.getFallbackStocks();
         this.cd.detectChanges();
       }
     });
 
-    // 2. CARICA CRYPTO
     this.marketService.getAssetsByType('CRYPTO').subscribe({
       next: (res) => {
         this.topCrypto = this.mergeDati(res, this.getFallbackCrypto()).slice(0, 8);
@@ -56,12 +52,11 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore Crypto:', err);
-        this.topCrypto = this.getFallbackCrypto(); // Fallback
+        this.topCrypto = this.getFallbackCrypto();
         this.cd.detectChanges();
       }
     });
 
-    // 3. CARICA ETF
     this.marketService.getAssetsByType('ETF').subscribe({
       next: (res) => {
         this.topEtf = this.mergeDati(res, this.getFallbackEtf()).slice(0, 8);
@@ -69,12 +64,11 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore ETF:', err);
-        this.topEtf = this.getFallbackEtf(); // Fallback
+        this.topEtf = this.getFallbackEtf();
         this.cd.detectChanges();
       }
     });
 
-    // 4. CARICA NEWS
     this.marketService.getNews().subscribe({
       next: (res) => {
         if (res && res.length > 0) this.newsList = res;
@@ -83,13 +77,12 @@ export class MarketHomeComponent implements OnInit {
       },
       error: (err) => {
         console.warn('Errore News:', err);
-        this.usaNewsFinte(); // Fallback
+        this.usaNewsFinte();
         this.cd.detectChanges();
       }
     });
   }
 
-  // === HELPER PER UNIRE I DATI ===
   mergeDati(real: any[], fake: any[]): any[] {
     const safeReal = real || [];
     const combined = [...safeReal, ...fake];
@@ -115,7 +108,6 @@ export class MarketHomeComponent implements OnInit {
     }
   }
 
-  // === FALLBACK DATA ===
   getFallbackStocks(): any[] {
     return [
       { symbol: 'AAPL', name: 'Apple', currentPrice: 185.92, changePercent: 1.25, logoUrl: 'https://logo.clearbit.com/apple.com' },

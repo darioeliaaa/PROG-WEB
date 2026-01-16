@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 
-// INTERFACCIA ASSET
 export interface MarketAsset {
   symbol: string;
   name: string;
@@ -25,14 +24,11 @@ export interface MarketAsset {
 })
 export class MarketService {
 
-  // 1. CORREZIONE FONDAMENTALE: Punta alla radice dell'API
   private apiUrl = 'http://localhost:8080/api';
 
   private http = inject(HttpClient);
 
-  // --- GET LISTA ASSET (Stock, Crypto, ETF) ---
   getAssetsByType(typeFilter: string): Observable<MarketAsset[]> {
-    // Ora aggiungiamo qui il pezzo specifico dell'URL
     return this.http.get<MarketAsset[]>(`${this.apiUrl}/market/overview`).pipe(
       map(allAssets => {
         const filtered = allAssets.filter(asset =>
@@ -53,7 +49,6 @@ export class MarketService {
     );
   }
 
-  // --- NEWS ---
   getNews(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/news`).pipe(
       catchError(err => {
@@ -63,25 +58,19 @@ export class MarketService {
     );
   }
 
-  // --- TRADING REALE ---
 
-  // 1. GET: Quante azioni possiedo già?
   getHolding(userId: number, symbol: string): Observable<number> {
-    // URL Generato: http://localhost:8080/api/investments/holding/1/AAPL
     return this.http.get<number>(`${this.apiUrl}/investments/holding/${userId}/${symbol}`);
   }
 
   tradeAsset(request: any): Observable<any> {
-    // Nota: l'endpoint ora è '/trade', non più '/buy'
     return this.http.post(`${this.apiUrl}/investments/trade`, request);
   }
 
-  // (Opzionale) Vecchio metodo executeTrade se lo usi ancora da qualche parte
   executeTrade(transactionRequest: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/transactions`, transactionRequest);
   }
 
-  // --- DATI FINTI DI BACKUP ---
   private getMockData(type: string): MarketAsset[] {
     const t = type.toUpperCase();
     if (t === 'ETF') {

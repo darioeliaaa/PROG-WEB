@@ -21,19 +21,13 @@ export class MyPortfolioComponent implements OnInit {
 
   portfolio: PortfolioOverview | null = null;
   loading = true;
-
-  // 🔒 Variabile di stato login
   isLoggedIn = false;
-
-  // Variabili Trading
   isTradeModalOpen = false;
   selectedAsset: any = null;
   tradeAction: 'BUY' | 'SELL' = 'BUY';
   tradeQuantity: number | null = null;
   tradeAmount: number | null = null;
   isProcessing = false;
-
-  // --- CONFIGURAZIONE GRAFICI ---
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
@@ -67,17 +61,12 @@ export class MyPortfolioComponent implements OnInit {
 
   ngOnInit() {
     const userId = this.userService.getCurrentUserId();
-
-    // 1. Controlla se loggato e aggiorna la variabile per l'HTML
     this.isLoggedIn = !!userId;
     console.log("👤 OnInit - User ID:", userId, "Logged In:", this.isLoggedIn);
 
-    // FIX ERRORE TS2345: Controlliamo direttamente 'userId'
-    // TypeScript capisce che dentro questo IF, userId è un numero e non null.
     if (userId) {
       this.loadPortfolio(userId);
     } else {
-      // 🔒 Se NON loggato, ferma il caricamento per mostrare il blocco
       this.loading = false;
       this.cd.detectChanges();
     }
@@ -110,8 +99,6 @@ export class MyPortfolioComponent implements OnInit {
 
   setupCharts(data: PortfolioOverview) {
     if (!data.assets || data.assets.length === 0) return;
-
-    // --- 1. CIAMBELLA ---
     const labels = data.assets.map(a => a.symbol);
     const values = data.assets.map(a => a.currentValue);
 
@@ -133,7 +120,6 @@ export class MyPortfolioComponent implements OnInit {
       }]
     };
 
-    // --- 2. BARRE ---
     const assetLabels = data.assets.map(a => a.symbol);
     const investito = data.assets.map(a => a.quantity * a.avgBuyPrice);
     const attuale = data.assets.map(a => a.currentValue);
@@ -159,14 +145,12 @@ export class MyPortfolioComponent implements OnInit {
     };
   }
 
-  // --- UTILS ---
   pulisciSimbolo(simbolo: string): string {
     if (!simbolo) return '';
     let nomePulito = simbolo.includes(':') ? simbolo.split(':')[1] : simbolo;
     return nomePulito.replace('USDT', '').replace('USD', '').replace('EUR', '');
   }
 
-  // --- TRADING LOGIC ---
   openTradePanel(asset: any) {
     this.selectedAsset = asset;
     this.tradeAction = 'BUY';
