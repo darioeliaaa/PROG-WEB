@@ -3,11 +3,22 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Wallet } from '../models/wallet.model';
 
+/**
+ * Servizio per la gestione delle operazioni relative ai Wallet.
+ * Gestisce le chiamate API verso il backend Spring Boot.
+ */
 @Injectable({ providedIn: 'root' })
 export class WalletService {
+  // URL base per gli endpoint dei wallet
   private apiUrl = 'http://localhost:8080/api/wallets';
+
+  // Utilizzo della funzione inject per l'iniezione di HttpClient (pattern moderno Angular)
   private http = inject(HttpClient);
 
+  /**
+   * Genera gli header HTTP includendo il token di autenticazione JWT.
+   * Recupera il token dal localStorage.
+   */
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -15,14 +26,24 @@ export class WalletService {
     });
   }
 
+  /**
+   * Recupera tutti i wallet associati a uno specifico ID utente.
+   */
   getUserWallets(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/user/${userId}`);
   }
 
+  /**
+   * Rinomina un wallet esistente. Richiede l'ID dell'admin per i permessi.
+   */
   renameWallet(walletId: number, adminId: number, newName: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/${walletId}/rename?adminId=${adminId}&newName=${newName}`, {});
   }
 
+  /**
+   * Aggiorna le impostazioni del wallet (budget o limite trasferimento).
+   * Costruisce l'URL dinamicamente in base ai parametri forniti.
+   */
   updateSettings(walletId: number, adminId: number, budget: number, maxTransfer: number): Observable<any> {
     let url = `${this.apiUrl}/${walletId}/settings?adminId=${adminId}`;
     if (budget != null) url += `&budget=${budget}`;
@@ -30,19 +51,32 @@ export class WalletService {
     return this.http.put(url, {});
   }
 
+  /**
+   * Sovrascrive i limiti (budget e trasferimento massimo) del wallet.
+   */
   updateWalletLimits(adminId: number, walletId: number, budget: number, maxTransfer: number): Observable<any> {
     const url = `${this.apiUrl}/${walletId}/settings?adminId=${adminId}&budget=${budget}&maxTransfer=${maxTransfer}`;
     return this.http.put(url, {});
   }
 
+  /**
+   * Rimuove un membro specifico da un wallet condiviso.
+   */
   removeMember(walletId: number, adminId: number, memberId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${walletId}/remove-member/${memberId}?adminId=${adminId}`);
   }
 
+  /**
+   * Crea un nuovo wallet per l'utente specificato.
+   * Utilizza encodeURIComponent per gestire in sicurezza caratteri speciali nel nome.
+   */
   createWallet(userId: number, walletName: string): Observable<Wallet> {
     return this.http.post<Wallet>(`${this.apiUrl}/user/${userId}/create?walletName=${encodeURIComponent(walletName)}`, {});
   }
 
+  /**
+   * Permette a un utente di unirsi a un wallet tramite un codice di invito univoco.
+   */
   joinWalletByCode(inviteCode: string, userId: number): Observable<Wallet> {
     return this.http.post<Wallet>(
       `${this.apiUrl}/join-by-code?inviteCode=${inviteCode}&userId=${userId}`,
@@ -50,22 +84,37 @@ export class WalletService {
     );
   }
 
+  /**
+   * Permette a un utente di unirsi a un wallet tramite ID (senza codice).
+   */
   joinWallet(walletId: number, userId: number): Observable<Wallet> {
     return this.http.post<Wallet>(`${this.apiUrl}/${walletId}/join?userId=${userId}`, {});
   }
 
+  /**
+   * Recupera i dettagli completi di un singolo wallet tramite il suo ID.
+   */
   getWalletById(walletId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${walletId}`);
   }
 
+  /**
+   * Elimina permanentemente un wallet. Operazione riservata all'amministratore.
+   */
   deleteWallet(walletId: number, adminId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${walletId}?adminId=${adminId}`);
   }
 
+  /**
+   * Invia un comando per attivare/aprire il wallet per un utente.
+   */
   openWallet(walletId: number, userId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${walletId}/open?userId=${userId}`, {});
   }
 
+  /**
+   * Gestisce il trasferimento di fondi tra due wallet diversi.
+   */
   transferMoney(userId: number, fromId: number, toId: number, amount: number): Observable<any> {
     return this.http.post(
       `${this.apiUrl}/transfer?userId=${userId}&fromId=${fromId}&toId=${toId}&amount=${amount}`,
@@ -73,13 +122,15 @@ export class WalletService {
     );
   }
 
-  // ✅ METODO CORRETTO (Senza duplicati o errori di URL)
+  /**
+   * Trasferisce la proprietà (ruolo admin) di un wallet a un altro utente.
+   * Utilizza HttpParams (tramite l'oggetto params) per una gestione pulita della query string.
+   */
   transferOwnership(walletId: number, currentAdminId: number, newAdminId: number): Observable<any> {
-    // URL Corretto: apiUrl + /id + /endpoint (non ripetere /wallets!)
     const url = `${this.apiUrl}/${walletId}/transfer-ownership`;
 
     return this.http.put(url, {}, {
-      headers: this.getHeaders(),
+      headers: this.getHeaders(), // Inclusione degli header di autenticazione
       params: {
         currentAdminId: currentAdminId.toString(),
         newAdminId: newAdminId.toString()
