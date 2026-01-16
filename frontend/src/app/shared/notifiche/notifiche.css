@@ -1,30 +1,68 @@
+/* Importazione del font Plus Jakarta Sans, moderno e pulito */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :host {
   display: block;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; /* Impedisce lo scroll della pagina intera (gestito internamente) */
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: #ffffff;
   color: #1e293b;
 }
 
-/* Copiamo gli sfondi blob dalle settings */
+/* --- SFONDI BLOB ANIMATI --- */
+/* Container principale che funge da base per gli effetti di sfondo */
 .light-container { width: 100%; height: 100%; position: relative; background: #ffffff; z-index: 1; }
-.blob { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; animation: float 10s infinite alternate; }
-.blob-1 { top: -10%; left: -5%; width: 50vw; height: 50vw; background: #e0e7ff; }
-.blob-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background: #f3e8ff; animation-delay: -5s; }
-@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 20px); } }
 
-/* Grid Layout */
+/* Stile comune per i blob: sfocati, arrotondati e con animazione fluida */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  opacity: 0.4;
+  animation: float 10s infinite alternate; /* Animazione di galleggiamento */
+}
+
+/* Blob viola chiaro in alto a sinistra */
+.blob-1 { top: -10%; left: -5%; width: 50vw; height: 50vw; background: #e0e7ff; }
+
+/* Blob lilla in basso a destra con delay per non muoversi insieme al primo */
+.blob-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background: #f3e8ff; animation-delay: -5s; }
+
+/* Keyframes per l'effetto di movimento leggero dei blob */
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(30px, 20px); }
+}
+
+/* --- LAYOUT A GRIGLIA --- */
+/* Divide la pagina in due colonne: 38% per il titolo/hero e 62% per la lista notifiche */
 .layout-grid { display: grid; grid-template-columns: 38% 62%; height: 100%; }
 
-/* Hero Side */
-.hero-side { padding: 60px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid rgba(0,0,0,0.03); background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); }
-.back-link { position: absolute; top: 40px; left: 40px; background: none; border: none; color: #64748b; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+/* --- SEZIONE SINISTRA (HERO) --- */
+.hero-side {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid rgba(0,0,0,0.03);
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(20px); /* Effetto vetro sfocato */
+}
+
+/* Pulsante per tornare alla dashboard, posizionato in alto a sinistra */
+.back-link {
+  position: absolute; top: 40px; left: 40px;
+  background: none; border: none;
+  color: #64748b; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  transition: 0.2s;
+}
 .back-link:hover { color: #7D7DFA; transform: translateX(-3px); }
 
+/* Icona della campana con gradiente e ombra morbida */
 .icon-container {
   width: 80px; height: 80px; border-radius: 20px;
   background: linear-gradient(135deg, #7D7DFA, #6a0dad);
@@ -32,41 +70,74 @@
   margin-bottom: 30px; box-shadow: 0 15px 30px rgba(125, 125, 250, 0.25);
   font-size: 2.5rem;
 }
+
+/* Animazione "swing" che fa oscillare l'icona della campana */
 .bell-icon { animation: swing 3s ease-in-out infinite; display: inline-block; }
-@keyframes swing { 0%, 100% { transform: rotate(0); } 10%, 30%, 50%, 70%, 90% { transform: rotate(10deg); } 20%, 40%, 60%, 80% { transform: rotate(-10deg); } }
+
+@keyframes swing {
+  0%, 100% { transform: rotate(0); }
+  10%, 30%, 50%, 70%, 90% { transform: rotate(10deg); }
+  20%, 40%, 60%, 80% { transform: rotate(-10deg); }
+}
 
 h1 { font-size: 3.5rem; line-height: 1.1; margin: 0 0 15px 0; font-weight: 800; color: #0f172a; }
-.gradient-text { background: linear-gradient(135deg, #7D7DFA, #6a0dad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* Testo con gradiente (utilizzato per la parola "Notifiche") */
+.gradient-text {
+  background: linear-gradient(135deg, #7D7DFA, #6a0dad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .subtitle { font-size: 1.1rem; color: #64748b; line-height: 1.6; max-width: 80%; }
 
-/* Content Side */
+/* --- SEZIONE DESTRA (CONTENUTO) --- */
 .content-side { padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; }
-.notif-wrapper { width: 100%; max-width: 650px; }
-.group-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; font-weight: 700; margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
 
-/* Empty State */
+/* Wrapper che limita la larghezza massima per una migliore leggibilità */
+.notif-wrapper { width: 100%; max-width: 650px; }
+
+/* Titolo della sezione (es. "RECENTI") con stile minimalista */
+.group-title {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: #94a3b8; font-weight: 700; margin-bottom: 25px;
+  border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;
+}
+
+/* --- STATO VUOTO --- */
+/* Mostrato quando non ci sono notifiche (es. scudo o icona vuota) */
 .empty-state-notif { text-align: center; padding: 40px; }
 .shield-box { font-size: 4rem; margin-bottom: 20px; opacity: 0.8; }
 .empty-state-notif h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
 .empty-state-notif p { color: #64748b; font-size: 1rem; }
 
-/* Notification Card */
+/* --- CARD SINGOLA NOTIFICA --- */
 .notif-card {
   display: flex; align-items: flex-start; gap: 20px;
   background: white; border-radius: 16px; padding: 20px;
   margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   position: relative; overflow: hidden; border: 1px solid #f1f5f9;
 }
+
+/* Barra laterale colorata (es. rossa per notifiche urgenti o non lette) */
 .notif-status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #ef4444; }
+
 .notif-icon-small { font-size: 1.5rem; }
+
 .notif-details label { display: block; font-weight: 700; font-size: 1.1rem; color: #1e293b; margin-bottom: 4px; }
 .notif-details p { margin: 0; font-size: 0.95rem; color: #64748b; line-height: 1.4; }
+
+/* Timestamp della notifica in grigio chiaro */
 .notif-time { display: block; margin-top: 10px; font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
 
+/* --- RESPONSIVITÀ (MOBILE) --- */
 @media (max-width: 1024px) {
-  :host { overflow-y: auto; height: auto; }
-  .layout-grid { grid-template-columns: 1fr; display: block; }
-  .hero-side { padding: 40px; border-right: none; border-bottom: 1px solid #f1f5f9; text-align: center; align-items: center; }
+  :host { overflow-y: auto; height: auto; } /* Abilita lo scroll verticale su mobile */
+  .layout-grid { grid-template-columns: 1fr; display: block; } /* Le colonne diventano righe */
+  .hero-side {
+    padding: 40px; border-right: none; border-bottom: 1px solid #f1f5f9;
+    text-align: center; align-items: center;
+  }
   h1 { font-size: 2.5rem; }
   .content-side { padding: 40px 20px; }
 }
