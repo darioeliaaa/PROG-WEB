@@ -1,4 +1,3 @@
-/* IMPORT FONT */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =========================================
@@ -192,7 +191,7 @@
 .btn-icon-delete { background: transparent; border: none; color: #cbd5e1; cursor: pointer; padding: 8px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
 .btn-icon-delete:hover { background: #fee2e2; color: #ef4444; }
 
-/* Tasto Promuovi (Corona) */
+/* Tasto Promuovi */
 .btn-icon-promote { background: transparent; border: none; color: #cbd5e1; cursor: pointer; padding: 8px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
 .btn-icon-promote:hover { background: #fef3c7; color: #d97706; transform: translateY(-1px); }
 

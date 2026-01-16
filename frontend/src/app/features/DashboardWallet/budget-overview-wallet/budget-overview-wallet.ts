@@ -65,7 +65,7 @@ export class BudgetOverviewWallet implements OnChanges {
     }
   }
 
-  // Mappa le transazioni grezze del wallet in gruppi per categoria e genera i dati per i grafici income/expense
+  // Mappa le transazioni grezze del wallet in gruppi per categoria e genera i dati per i grafici
   private elaboraDati(transazioni: any[]) {
     if (!transazioni) return;
 

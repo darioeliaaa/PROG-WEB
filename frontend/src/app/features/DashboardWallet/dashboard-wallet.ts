@@ -234,7 +234,6 @@ export class DashboardWallet implements OnInit {
     return '📄';
   }
 
-  // Torna alla schermata principale dei wallet
   goBack() { this.router.navigate(['/wallet']); }
 
   // Apre la modale per aggiungere una nuova transazione
