@@ -6,6 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 
+// ✅ AGGIUNTO 'forgot-success'
+type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-success';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -15,19 +18,19 @@ import { UserService } from '../../../services/user.service';
 })
 export class Login {
 
-  // True = Mostra Login, False = Mostra Registrazione
-  isLoginMode: boolean = true;
+  currentView: ViewState = 'login';
 
-  // Oggetti per i dati dei form
+  // Dati Form
   loginObj: any = { email: '', password: '' };
   registerObj: any = { username: '', email: '', password: '' };
+  forgotObj: any = { email: '', code: '', newPassword: '' };
 
-  // Flag per gli errori specifici (per i bordi rossi)
+  generatedRecoveryCode: string = '';
+
+  // Gestione Errori
   fieldErrors: { username: boolean, email: boolean } = { username: false, email: false };
-
-  // Messaggi di stato
-  registerMessage: string = ''; // Messaggi verdi (successo) o generici
-  suggestedUsernames: string[] = []; // Array per i suggerimenti
+  registerMessage: string = '';
+  suggestedUsernames: string[] = [];
 
   constructor(
     private router: Router,
@@ -36,59 +39,47 @@ export class Login {
     private cdr: ChangeDetectorRef
   ) {}
 
-  // Cambio tra Login e Register
+  // --- NAVIGAZIONE ---
   toggleMode() {
-    this.isLoginMode = !this.isLoginMode;
+    this.currentView = this.currentView === 'login' ? 'register' : 'login';
     this.resetErrors();
   }
 
-  // Pulisce tutti gli stati di errore e i messaggi
+  showForgotPassword() {
+    this.currentView = 'forgot';
+    this.forgotObj = { email: '', code: '', newPassword: '' };
+    this.resetErrors();
+  }
+
+  backToLogin() {
+    this.currentView = 'login';
+    this.resetErrors();
+  }
+
   resetErrors() {
     this.registerMessage = '';
     this.fieldErrors = { username: false, email: false };
     this.suggestedUsernames = [];
   }
 
-  // --- LOGICA LOGIN ---
+  // --- LOGIN ---
   onLogin() {
-    this.resetErrors();
-    console.log("1. Pulsante Login cliccato");
-
     this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
       next: (res: any) => {
-        console.log("2. Risposta ricevuta dal server:", res);
-
         if (res && res.id) {
-          // SALVATAGGIO IMMEDIATO
-          const userData = JSON.stringify({ id: res.id, email: res.email });
-          localStorage.setItem('user', userData);
-
-          console.log("3. LocalStorage aggiornato con:", localStorage.getItem('user'));
-
-          // Aggiorniamo il servizio e navighiamo
+          localStorage.setItem('user', JSON.stringify({ id: res.id, email: res.email }));
           this.userService.login(res.id, res.email);
-
-          // Piccola pausa per essere sicuri che il browser scriva sul disco
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']);
-          }, 100);
-        } else {
-          console.error("Errore: Il server non ha inviato l'ID");
-          alert('Errore interno: dati utente non validi.');
+          this.router.navigate(['/dashboard']);
         }
       },
-      error: (err) => {
-        console.error("Errore chiamata HTTP:", err);
-        alert('Email o password non corretti.');
-      }
+      error: () => alert('Email o password non corretti.')
     });
   }
 
-  // --- LOGICA REGISTRAZIONE INTELLIGENTE ---
+  // --- REGISTRAZIONE ---
   onRegister() {
     this.resetErrors();
 
-    // Validazione base
     if (!this.registerObj.username || !this.registerObj.email || !this.registerObj.password) {
       this.registerMessage = 'Compila tutti i campi.';
       return;
@@ -102,83 +93,85 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/register', userToSend).subscribe({
       next: (res: any) => {
-        // SUCCESSO
-        this.registerMessage = 'Account creato! Login automatico...';
+        if (res.resetToken) {
+          this.generatedRecoveryCode = res.resetToken;
+          this.currentView = 'register-success';
+        } else {
+          this.currentView = 'login';
+        }
         this.cdr.detectChanges();
+      },
+      error: (err) => this.handleRegisterError(err)
+    });
+  }
 
-        // Magic UX: Copia SOLO l'email nel login (Sicurezza: password vuota)
-        this.loginObj.email = this.registerObj.email;
-        this.loginObj.password = ''; // Resettiamo la password per sicurezza
+  finishRegistration() {
+    this.generatedRecoveryCode = '';
+    this.registerObj = { username: '', email: '', password: '' };
+    this.loginObj.email = this.registerObj.email;
+    this.currentView = 'login';
+  }
 
-        // Attendi 1.5s e vai al login
-        setTimeout(() => {
-          this.isLoginMode = true;
-          this.registerMessage = '';
-          // Pulisci il form di registrazione
-          this.registerObj = { username: '', email: '', password: '' };
-          this.cdr.detectChanges();
-        }, 1500);
+  // --- RESET PASSWORD (MODIFICATO) ---
+  onResetPassword() {
+    if (!this.forgotObj.email || !this.forgotObj.code || !this.forgotObj.newPassword) {
+      alert("Compila tutti i campi.");
+      return;
+    }
+
+    const body = {
+      email: this.forgotObj.email,
+      code: this.forgotObj.code,
+      newPassword: this.forgotObj.newPassword
+    };
+
+    this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
+      next: (res: any) => {
+        // ✅ NESSUN ALERT: Cambiamo vista e mostriamo il messaggio bello
+        this.currentView = 'forgot-success';
+
+        // Pre-compiliamo l'email nel login per comodità
+        this.loginObj.email = this.forgotObj.email;
+        this.loginObj.password = ''; // Reset password field
       },
       error: (err) => {
-        console.error("Errore Backend:", err);
-
-        // --- ANALISI INTELLIGENTE DELL'ERRORE ---
-        let errorBody = '';
-        if (err.error && typeof err.error === 'string') errorBody = err.error.toLowerCase();
-        else if (err.error && err.error.message) errorBody = err.error.message.toLowerCase();
-        else if (err.error && err.error.field) errorBody = err.error.field.toLowerCase(); // Se usi il controller Java nuovo
-        else if (err.message) errorBody = err.message.toLowerCase();
-
-        // 1. CASO: USERNAME GIA' PRESO
-        if (errorBody.includes('username') || errorBody.includes('uk') || err.status === 409) {
-          this.fieldErrors.username = true;
-          this.generateUsernameSuggestions(this.registerObj.username);
-        }
-
-        // 2. CASO: EMAIL GIA' PRESA
-        if (errorBody.includes('email')) {
-          this.fieldErrors.email = true;
-          this.fieldErrors.username = false;
-        }
-
-        // 3. FALLBACK
-        if (!this.fieldErrors.username && !this.fieldErrors.email) {
-          this.fieldErrors.username = true;
-          this.generateUsernameSuggestions(this.registerObj.username);
-          this.registerMessage = "Errore: dati non validi o già in uso.";
-        }
-
-        this.cdr.detectChanges();
+        // Qui lasciamo l'alert o un messaggio di errore rosso nel form (come preferisci)
+        alert(err.error?.message || "Codice errato o email non valida.");
       }
     });
   }
 
-  // --- FUNZIONI DI SUPPORTO UX ---
+  // --- HELPERS ---
+  handleRegisterError(err: any) {
+    let errorBody = '';
+    if (err.error && typeof err.error === 'string') errorBody = err.error.toLowerCase();
+    else if (err.error && err.error.message) errorBody = err.error.message.toLowerCase();
+
+    if (errorBody.includes('username') || err.status === 409) {
+      this.fieldErrors.username = true;
+      this.generateUsernameSuggestions(this.registerObj.username);
+    }
+    if (errorBody.includes('email')) {
+      this.fieldErrors.email = true;
+    }
+    this.cdr.detectChanges();
+  }
 
   generateUsernameSuggestions(base: string) {
     if(!base) base = "User";
     const random = Math.floor(Math.random() * 1000);
-    const year = new Date().getFullYear();
-
-    this.suggestedUsernames = [
-      `${base}_${random}`,
-      `${base}.official`,
-      `${base}${year}`
-    ];
+    this.suggestedUsernames = [`${base}_${random}`, `${base}.official`, `${base}${new Date().getFullYear()}`];
   }
 
-  selectSuggestion(suggestion: string) {
-    this.registerObj.username = suggestion;
+  selectSuggestion(s: string) {
+    this.registerObj.username = s;
     this.fieldErrors.username = false;
-    this.suggestedUsernames = [];
-    this.registerMessage = '';
   }
 
-  // Clic su "Vuoi accedere invece?": va al login con SOLO email
   goToLoginWithEmail() {
     this.loginObj.email = this.registerObj.email;
-    this.loginObj.password = ''; // Assicuro che la password sia vuota
-    this.isLoginMode = true;
+    this.loginObj.password = '';
+    this.currentView = 'login';
     this.resetErrors();
   }
 

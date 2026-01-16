@@ -41,6 +41,7 @@ public class UserController {
     }
 
     try {
+      // Nota: newUser qui contiene già il resetToken generato dal Service
       User newUser = userService.registerUser(user);
       return ResponseEntity.ok(newUser);
     } catch (RuntimeException e) {
@@ -48,10 +49,9 @@ public class UserController {
     }
   }
 
-  // --- API LOGIN (PERFETTA: Usa già il Service che restituisce il Proxy) ---
+  // --- API LOGIN ---
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest loginData) {
-    // Qui userService.loginUser restituisce new UserProxy(...)
     User user = userService.loginUser(loginData.email, loginData.password);
 
     if (user != null) {
@@ -81,12 +81,6 @@ public class UserController {
     }
   }
 
-  // DTO Login
-  public static class LoginRequest {
-    public String email;
-    public String password;
-  }
-
   // --- UPDATE PROFILO ---
   @PutMapping("/{id}/update")
   public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody User userDetails) {
@@ -98,7 +92,6 @@ public class UserController {
       if (userDetails.getTelefono() != null) user.setTelefono(userDetails.getTelefono());
       if (userDetails.getIndirizzo() != null) user.setIndirizzo(userDetails.getIndirizzo());
 
-      // Impostazioni (aggiunte per completezza)
       user.setPrivacyMode(userDetails.isPrivacyMode());
       user.setBudgetAlerts(userDetails.isBudgetAlerts());
       if (userDetails.getLanguage() != null) user.setLanguage(userDetails.getLanguage());
@@ -113,18 +106,51 @@ public class UserController {
     }).orElse(ResponseEntity.notFound().build());
   }
 
-  // --- GET USER DETAILS (MODIFICATO!) ---
+  // --- GET USER DETAILS ---
   @GetMapping("/{id}")
   public ResponseEntity<User> getUserDetails(@PathVariable Long id) {
     try {
-      // ✅ USARE IL SERVICE INVECE DEL REPOSITORY!
-      // Usiamo il metodo che abbiamo creato apposta per restituire il Proxy.
-      // Se usassi userRepository.findById(id), scavalcheresti il Proxy manuale.
       User userProxy = userService.getUserByIdWithProxy(id);
-
       return ResponseEntity.ok(userProxy);
     } catch (RuntimeException e) {
       return ResponseEntity.notFound().build();
     }
+  }
+
+  // ==================================================
+  // ✅ NUOVO: LOGICA PASSWORD DIMENTICATA (Recovery Code)
+  // ==================================================
+
+  // NON C'È PIÙ L'ENDPOINT /forgot-password
+  // Perché il codice viene dato alla registrazione, non serve richiederlo.
+
+  // Endpoint Unico per il Reset
+  @PostMapping("/reset-password")
+  public ResponseEntity<?> resetPassword(@RequestBody ResetRequest request) {
+    try {
+      // Passiamo i dati al Service che controllerà se il codice è giusto
+      userService.resetPasswordWithRecoveryCode(request.email, request.code, request.newPassword);
+
+      Map<String, String> response = new HashMap<>();
+      response.put("message", "Password aggiornata con successo! Ora puoi accedere.");
+      return ResponseEntity.ok(response);
+    } catch (RuntimeException e) {
+      Map<String, String> error = new HashMap<>();
+      error.put("message", e.getMessage()); // Es: "Codice errato"
+      return ResponseEntity.badRequest().body(error);
+    }
+  }
+
+  // --- DTO CLASSES (Classi di supporto per i dati JSON) ---
+
+  public static class LoginRequest {
+    public String email;
+    public String password;
+  }
+
+  public static class ResetRequest {
+    public String email;
+    public String code;
+    public String newPassword;
   }
 }

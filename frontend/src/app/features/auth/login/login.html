@@ -2,40 +2,28 @@
 
   <div class="brand-side">
     <div class="brand-content">
-      <div class="logo">
-        <span class="logo-icon">💰</span> MoneyMind
-      </div>
-
+      <div class="logo"><span class="logo-icon">💰</span> MoneyMind</div>
       <h1>Prendi il controllo<br>delle tue finanze.</h1>
       <p>Gestisci investimenti, traccia le spese e pianifica il futuro con la dashboard finanziaria n.1 in Italia.</p>
-
       <div class="glass-card-decor">
         <div class="decor-row">
           <div class="decor-icon">📈</div>
-          <div class="decor-text">
-            <span>Portfolio</span>
-            <strong>+24.5%</strong>
-          </div>
+          <div class="decor-text"><span>Portfolio</span><strong>+24.5%</strong></div>
         </div>
         <div class="chart-line"></div>
       </div>
     </div>
-
     <div class="abstract-circle c1"></div>
     <div class="abstract-circle c2"></div>
   </div>
 
   <div class="form-side">
-
     <a (click)="tornaIndietro()" class="back-link">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
       Torna alla Dashboard
     </a>
 
-    <div class="form-wrapper fade-in" *ngIf="isLoginMode">
+    <div class="form-wrapper fade-in" *ngIf="currentView === 'login'">
       <div class="header-text">
         <h2>Bentornato! 👋</h2>
         <p>Inserisci i tuoi dati per accedere.</p>
@@ -50,105 +38,111 @@
           <label>Password</label>
           <input type="password" [(ngModel)]="loginObj.password" name="password" placeholder="••••••••" required>
         </div>
-
         <div class="extras">
-          <label class="checkbox-container">
-            <input type="checkbox"> Ricordami
-          </label>
-          <a class="forgot-link">Password dimenticata?</a>
+          <label class="checkbox-container"><input type="checkbox"> Ricordami</label>
+          <a class="forgot-link" (click)="showForgotPassword()">Password dimenticata?</a>
         </div>
-
         <button type="submit" class="btn-primary">Accedi</button>
       </form>
 
       <div class="divider"><span>oppure continua con</span></div>
-
       <div class="social-row">
-        <button class="social-btn">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Google
-        </button>
-        <button class="social-btn">
-          <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="FB"> Facebook
-        </button>
+        <button class="social-btn"><img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Google</button>
+        <button class="social-btn"><img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="FB"> Facebook</button>
       </div>
-
-      <p class="switch-text">
-        Non hai un account? <a (click)="toggleMode()">Registrati gratis</a>
-      </p>
+      <p class="switch-text">Non hai un account? <a (click)="toggleMode()">Registrati gratis</a></p>
     </div>
 
-    <div class="form-wrapper fade-in" *ngIf="!isLoginMode">
+    <div class="form-wrapper fade-in" *ngIf="currentView === 'register'">
       <div class="header-text">
         <h2>Crea Account 🚀</h2>
         <p>Inizia il tuo viaggio finanziario oggi.</p>
       </div>
 
       <form (ngSubmit)="onRegister()">
-
         <div class="input-group">
           <label>Nome Utente</label>
-          <input type="text"
-                 [(ngModel)]="registerObj.username"
-                 name="regUser"
-                 placeholder="Il tuo nome"
-                 required
-                 [class.error-border]="fieldErrors.username">
-
+          <input type="text" [(ngModel)]="registerObj.username" name="regUser" placeholder="Il tuo nome" required [class.error-border]="fieldErrors.username">
           <div *ngIf="fieldErrors.username">
-            <div class="field-error-msg">
-              <span>⚠️ Questo username è già in uso.</span>
-            </div>
-
+            <div class="field-error-msg"><span>⚠️ Username già in uso.</span></div>
             <div class="suggestions-box">
               Prova uno di questi:
               <div class="chips-container">
-                <span class="suggestion-chip"
-                      *ngFor="let suggestion of suggestedUsernames"
-                      (click)="selectSuggestion(suggestion)">
-                  {{ suggestion }}
-                </span>
+                <span class="suggestion-chip" *ngFor="let suggestion of suggestedUsernames" (click)="selectSuggestion(suggestion)">{{ suggestion }}</span>
               </div>
             </div>
           </div>
         </div>
-
         <div class="input-group">
           <label>Email</label>
-          <input type="email"
-                 [(ngModel)]="registerObj.email"
-                 name="regEmail"
-                 placeholder="nome@esempio.com"
-                 required
-                 [class.error-border]="fieldErrors.email">
-
+          <input type="email" [(ngModel)]="registerObj.email" name="regEmail" placeholder="nome@esempio.com" required [class.error-border]="fieldErrors.email">
           <div *ngIf="fieldErrors.email" class="field-error-msg">
-            <span>⚠️ Email già registrata.
-              <a (click)="goToLoginWithEmail()" class="login-link-smart">Vuoi accedere invece?</a>
-            </span>
+            <span>⚠️ Email già registrata. <a (click)="goToLoginWithEmail()" class="login-link-smart">Vuoi accedere?</a></span>
           </div>
         </div>
-
         <div class="input-group">
           <label>Password</label>
-          <input type="password"
-                 [(ngModel)]="registerObj.password"
-                 name="regPass"
-                 placeholder="Crea una password forte"
-                 required>
+          <input type="password" [(ngModel)]="registerObj.password" name="regPass" required>
         </div>
-
         <button type="submit" class="btn-primary btn-register">Crea Account</button>
       </form>
+      <p class="switch-text">Hai già un account? <a (click)="toggleMode()">Accedi qui</a></p>
+    </div>
 
-      <div *ngIf="registerMessage && !fieldErrors.username"
-           class="success-box"
-           [class.error-box]="registerMessage.includes('Errore')">
-        {{ registerMessage }}
+    <div class="form-wrapper fade-in" *ngIf="currentView === 'register-success'">
+      <div class="header-text">
+        <h2>🎉 Account Creato!</h2>
+        <p style="color: #e65100; font-weight: bold;">⚠️ ATTENZIONE: SALVA QUESTO CODICE</p>
+      </div>
+      <div style="background: #fff8e1; border: 2px dashed #ffa000; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 25px;">
+        <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #555;">
+          Questo è il tuo <strong>Codice di Recupero</strong>.<br>
+          È l'UNICO modo per resettare la password se la dimentichi.
+        </p>
+        <div style="font-size: 2em; font-weight: 800; letter-spacing: 3px; color: #333; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; user-select: all; margin-top: 10px;">
+          {{ generatedRecoveryCode }}
+        </div>
+        <p style="margin-top: 10px; font-size: 0.8em; color: #777;">(Copia e incolla in un posto sicuro)</p>
+      </div>
+      <button (click)="finishRegistration()" class="btn-primary">Ho salvato il codice, vai al Login</button>
+    </div>
+
+    <div class="form-wrapper fade-in" *ngIf="currentView === 'forgot'">
+      <div class="header-text">
+        <h2>Recupero Account 🔐</h2>
+        <p>Inserisci il codice ricevuto alla registrazione.</p>
+      </div>
+      <form (ngSubmit)="onResetPassword()">
+        <div class="input-group">
+          <label>La tua Email</label>
+          <input type="email" [(ngModel)]="forgotObj.email" name="forgotEmail" placeholder="nome@esempio.com" required>
+        </div>
+        <div class="input-group">
+          <label>Codice di Recupero</label>
+          <input type="text" [(ngModel)]="forgotObj.code" name="token" placeholder="Es. A1B2C3" required style="text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
+        </div>
+        <div class="input-group">
+          <label>Nuova Password</label>
+          <input type="password" [(ngModel)]="forgotObj.newPassword" name="newPass" placeholder="Nuova password forte" required>
+        </div>
+        <button type="submit" class="btn-primary">Reimposta Password</button>
+      </form>
+      <p class="switch-text"><a (click)="backToLogin()">Annulla</a></p>
+    </div>
+
+    <div class="form-wrapper fade-in" *ngIf="currentView === 'forgot-success'">
+      <div class="header-text" style="margin-bottom: 30px;">
+        <div style="font-size: 4em; margin-bottom: 10px;">✅</div>
+        <h2 style="color: #2e7d32;">Password Aggiornata!</h2>
+        <p>Il tuo account è al sicuro.</p>
       </div>
 
-      <p class="switch-text">
-        Hai già un account? <a (click)="toggleMode()">Accedi qui</a>
-      </p>
+      <div style="background: #e8f5e9; border: 1px solid #c8e6c9; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; color: #2e7d32;">
+        La password è stata modificata con successo.<br>
+        Ora puoi accedere con le nuove credenziali.
+      </div>
+
+      <button (click)="backToLogin()" class="btn-primary">Vai al Login</button>
     </div>
 
   </div>
