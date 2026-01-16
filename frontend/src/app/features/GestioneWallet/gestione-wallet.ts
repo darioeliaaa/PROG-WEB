@@ -1,11 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. ChangeDetectorRef gestisce aggiornamenti UI manuali
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { WalletService } from '../../services/wallet.service';
 import { UserService } from '../../services/user.service';
-import { Wallet } from '../../models/wallet.model';
-import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-gestione-wallet',
@@ -32,7 +30,7 @@ export class GestioneWallet implements OnInit {
     private walletService: WalletService,
     private router: Router,
     private UserService: UserService,
-    private cdr: ChangeDetectorRef // ✅ 2. Fondamentale per aggiornare la vista in operazioni asincrone complesse
+    private cdr: ChangeDetectorRef // Fondamentale per aggiornare la vista in operazioni asincrone complesse
   ) {}
 
   /**
@@ -43,7 +41,7 @@ export class GestioneWallet implements OnInit {
   }
 
   /**
-   * ✅ 3. Logica di inizializzazione "Smart":
+   * Logica di inizializzazione "Smart":
    * Risolve il problema del refresh della pagina dove il servizio potrebbe non aver ancora
    * caricato l'ID dal localStorage/sessione. Se fallisce, riprova dopo mezzo secondo.
    */
@@ -102,7 +100,7 @@ export class GestioneWallet implements OnInit {
         }
 
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ 4. Notifica Angular che i dati filtrati sono pronti per il rendering
+        this.cdr.detectChanges(); // Notifica Angular che i dati filtrati sono pronti per il rendering
       },
       error: () => {
         this.isError = true;
@@ -208,9 +206,6 @@ export class GestioneWallet implements OnInit {
     });
   }
 
-  /**
-   * Navigazione programmatica per tornare alla vista principale.
-   */
   backToDashboard() {
     this.router.navigate(['/dashboard']);
   }
