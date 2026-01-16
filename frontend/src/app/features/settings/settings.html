@@ -1,62 +1,75 @@
 <div class="light-container">
-
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
 
   <div class="layout-grid">
-
     <aside class="hero-side">
       <button class="back-link" (click)="backToDashboard()">
         <span class="icon">←</span> Torna alla Dashboard
       </button>
 
       <div class="hero-content">
-        <div class="icon-container">
+        <div class="avatar-container">
           <span class="gear-icon">⚙️</span>
         </div>
         <h1>Impostazioni <span class="gradient-text">Sistema</span>.</h1>
         <p class="subtitle">Personalizza l'esperienza MoneyMind.<br>Sicurezza e preferenze in un click.</p>
+
+        <div class="status-badge" [ngClass]="isError ? 'error' : 'success'" *ngIf="message">
+          <span class="dot"></span> {{ message }}
+        </div>
       </div>
     </aside>
 
-    <main class="content-side">
-      <div class="settings-wrapper">
+    <main class="form-side">
+      <div class="clean-form">
 
-        <section class="settings-group">
-          <h3 class="group-title">Generale</h3>
+        <div class="input-wrap">
+          <label>Valuta Principale</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="systemSettings.currency" [disabled]="isSaving">
+              <option value="EUR">Euro (€)</option>
+              <option value="USD">Dollar ($)</option>
+            </select>
+          </div>
+        </div>
 
-          <div class="setting-item">
-            <div class="setting-info">
-              <label>Valuta Principale</label>
-              <p>La moneta utilizzata per i calcoli globali</p>
+        <div class="divider"></div>
+
+        <div class="row-settings">
+          <div class="setting-text">
+            <label>Modalità Privacy</label>
+            <p>Nasconde i saldi sensibili nella dashboard</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="systemSettings.privacyMode" [disabled]="isSaving">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="input-wrap">
+          <label style="color: #7D7DFA;">Sicurezza Account</label>
+          <div class="token-card">
+            <div class="token-header">
+              <div class="token-info">
+                <strong>Codice di Recupero</strong>
+                <span class="small-desc">Usa questo codice per il reset password.</span>
+              </div>
+              <button type="button" class="btn-reveal" (click)="toggleToken()">
+                {{ isTokenVisible ? 'Nascondi' : 'Mostra' }}
+              </button>
             </div>
-            <div class="control-wrapper">
-              <select [(ngModel)]="systemSettings.currency">
-                <option value="EUR">Euro (€)</option>
-                <option value="USD">Dollar ($)</option>
-              </select>
+            <div *ngIf="isLoadingToken" class="token-loader">
+              <div class="loader-dark"></div>
+            </div>
+            <div class="token-display fade-in" *ngIf="isTokenVisible && !isLoadingToken">
+              <span class="code-text">{{ recoveryToken }}</span>
+              <span class="code-note">Custodiscilo in un luogo sicuro.</span>
             </div>
           </div>
-
-
-        </section>
-
-        <section class="settings-group">
-          <h3 class="group-title">Esperienza & Sicurezza</h3>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <label>Modalità Privacy</label>
-              <p>Nasconde i saldi totali nella dashboard</p>
-            </div>
-            <div class="control-wrapper">
-              <label class="toggle-switch">
-                <input type="checkbox" [(ngModel)]="systemSettings.privacyMode">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
+        </div>
 
         <div class="footer-actions">
           <button class="btn-cancel" (click)="backToDashboard()">Annulla</button>
@@ -65,9 +78,7 @@
             <span *ngIf="isSaving" class="loader"></span>
           </button>
         </div>
-
       </div>
     </main>
-
   </div>
 </div>

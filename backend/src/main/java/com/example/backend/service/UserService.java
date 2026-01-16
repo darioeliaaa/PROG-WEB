@@ -73,7 +73,15 @@ public class UserService {
 
   // --- 3. GET USER ---
   public User getUserByIdWithProxy(Long id) {
-    User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    User user = userRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+    // ✅ FIX: Se l'utente è vecchio e non ha il token, generalo ORA.
+    if (user.getResetToken() == null || user.getResetToken().isEmpty()) {
+      user.setResetToken(generateResetToken());
+      userRepository.save(user); // Salviamo subito nel DB
+    }
+
     return new UserProxy(user, transactionRepository);
   }
 

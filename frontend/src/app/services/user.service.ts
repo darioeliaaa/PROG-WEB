@@ -147,4 +147,10 @@ export class UserService {
   getUserProfile(userId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${userId}`);
   }
+
+  // ✅ METODO AGGIUNTO: Recupera dettagli utente (incluso resetToken per la sicurezza)
+  // Risolve l'errore TS2339 in SettingsComponent
+  getUserDetails(userId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${userId}`);
+  }
 }

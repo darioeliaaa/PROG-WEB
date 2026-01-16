@@ -225,3 +225,101 @@
   .settings-footer { flex-direction: column-reverse; gap: 15px; }
   .btn-save-primary, .btn-delete-wallet { width: 100%; }
 }
+/* =========================================
+   ===== 10. AUTH OVERLAY (CARD LOCK)  =====
+   ========================================= */
+
+/* Contenitore che deve avvolgere tutto il tuo HTML */
+.locked-view-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Sfocatura del contenuto */
+.blurred-content {
+  filter: blur(12px) grayscale(20%);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* La card centrale "Area Riservata" */
+.auth-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5000; /* Più alto di tutti i modali */
+
+  background: white;
+  padding: 40px 30px;
+  border-radius: 32px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: popIn 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.2);
+}
+
+/* Cerchio con icona (Lucchetto/Scudo) */
+.lock-icon-circle {
+  width: 80px;
+  height: 80px;
+  background: #eef2ff;
+  color: #4f46e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.lock-icon-circle svg {
+  width: 40px;
+  height: 40px;
+}
+
+.auth-overlay h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.auth-overlay p {
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Bottone "Accedi ora" */
+.btn-auth-lock {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 16px 45px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+}
+
+.btn-auth-lock:hover {
+  background: #4338ca;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
