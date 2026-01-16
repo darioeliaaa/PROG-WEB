@@ -20,7 +20,7 @@ public class MarketAsset {
   // --- COSTRUTTORI ---
   public MarketAsset() {}
 
-  // --- GETTER E SETTER (FONDAMENTALI: Senza questi Java non vede i dati!) ---
+  // --- GETTER E SETTER ---
 
   public Long getId() {
     return id;

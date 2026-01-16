@@ -29,15 +29,15 @@ public class MarketService {
   private final String BASE_URL = "https://finnhub.io/api/v1";
   private final RestTemplate restTemplate = new RestTemplate();
 
-  // ✅ 1. LA MEMORIA CACHE
+  // LA MEMORIA CACHE
   private List<AssetQuoteDTO> cachedData = new ArrayList<>();
 
   // ----------------------------------------------------------------
-  // METODO DASHBOARD (Blindato con Cache + Dati Ricchi)
+  // METODO DASHBOARD (Cache + Dati Ricchi)
   // ----------------------------------------------------------------
   public List<AssetQuoteDTO> getDashboardAssets(boolean forceRefresh) {
 
-    // ✅ CONTROLLO CACHE
+    // CONTROLLO CACHE
     if (!cachedData.isEmpty() && !forceRefresh) {
       System.out.println("🛡️ RISPARMIO API: Uso dati in memoria");
       return cachedData;
@@ -102,7 +102,7 @@ public class MarketService {
       }
     }
 
-    // ✅ AGGIORNAMENTO CACHE
+    // AGGIORNAMENTO CACHE
     if (!newData.isEmpty()) {
       this.cachedData = newData;
       System.out.println("✅ Cache aggiornata (" + newData.size() + " asset)!");
@@ -129,9 +129,6 @@ public class MarketService {
   }
 
   // ----------------------------------------------------------------
-  // UTILITY: Prezzo Singolo (usato da InvestmentService se serve)
-  // ----------------------------------------------------------------
-  // ----------------------------------------------------------------
   // UTILITY VELOCE: Prezzo Singolo dalla Cache
   // ----------------------------------------------------------------
   public double getCurrentPrice(String symbol) {
@@ -149,7 +146,7 @@ public class MarketService {
   }
 
   // ================================================================
-  // CLASSI INTERNE PER MAPPARE IL JSON (Molto più pulito di Map<String, Object>)
+  // CLASSI INTERNE PER MAPPARE IL JSON (
   // ================================================================
 
   private static class FinnhubQuote {

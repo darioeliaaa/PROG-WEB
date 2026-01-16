@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -20,8 +19,6 @@ public class Wallet {
   @Column(name = "max_transfer_limit")
   private BigDecimal maxTransferLimit;
 
-  // ✅ NUOVO CAMPO: Codice Invito (Es: "X9B2K1")
-  // unique = true: Garantisce che non esistano due codici uguali nel DB
   @Column(unique = true, length = 6)
   private String inviteCode;
 

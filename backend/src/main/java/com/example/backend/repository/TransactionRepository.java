@@ -18,15 +18,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
   void deleteByWallet(Wallet wallet);
 
-  // ✅ QUESTO È QUELLO CHE SERVE AL PROXY (UserProxy)!
-  // Senza questa riga precisa, il Proxy darà errore di compilazione.
   List<Transaction> findByUserId(Long userId);
 
   // Trova transazioni dell'utente, ordinate per data decrescente (per la dashboard)
   List<Transaction> findByUserIdOrderByDateDesc(Long userId, Pageable pageable);
 
 
-  // METODO DI PULIZIA
   @Modifying
   @Query("DELETE FROM Transaction t WHERE t.wallet.id = :walletId")
   void deleteByWalletId(@Param("walletId") Long walletId);

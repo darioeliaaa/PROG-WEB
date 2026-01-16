@@ -30,11 +30,11 @@ public class Transaction {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  @JsonIgnore // <--- FONDAMENTALE: Spezza il ciclo User -> Transactions -> User
+  @JsonIgnore
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "wallet_id", nullable = false)
-  @JsonIgnore // <--- FONDAMENTALE: Spezza il ciclo Wallet -> Transactions -> Wallet
+  @JsonIgnore
   private Wallet wallet;
 }

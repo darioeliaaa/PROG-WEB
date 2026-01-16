@@ -18,7 +18,6 @@ public class PortfolioProxy extends Portfolio {
     this.setName(nome);
     this.investmentRepository = repo;
 
-    // 🔥 CORREZIONE FONDAMENTALE 🔥
     // L'Entity Portfolio inizializza la lista come "new ArrayList()".
     // Dobbiamo forzarla a NULL, altrimenti il controllo "if (== null)" sotto fallisce
     // e non scarica mai i dati dal DB.
@@ -27,7 +26,6 @@ public class PortfolioProxy extends Portfolio {
 
   @Override
   public List<Investment> getInvestments() {
-    // Ora super.getInvestments() è sicuramente NULL grazie al costruttore
     if (super.getInvestments() == null) {
 
       System.out.println("--- 🛡️ PROXY PORTFOLIO ATTIVATO: Caricamento Lazy Investimenti per ID: " + this.getId() + " ---");

@@ -47,13 +47,11 @@ public class SecurityConfig {
     // Consenti solo il tuo Frontend Angular
     configuration.setAllowedOrigins(List.of("http://localhost:4200"));
 
-    // Consenti tutti i metodi HTTP (fondamentale per il PUT/DELETE)
+    // Consenti tutti i metodi HTTP
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-    // Consenti tutti gli header (Authorization, Content-Type, ecc.)
     configuration.setAllowedHeaders(List.of("*"));
 
-    // Importante per i cookie/token se ne userai in futuro
     configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

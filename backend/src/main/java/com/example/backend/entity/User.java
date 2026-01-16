@@ -25,8 +25,7 @@ public class User {
 
   private String password;
 
-  // --- CAMPO PER IL RECUPERO PASSWORD ---
-  private String resetToken; // ✅ NUOVO
+  private String resetToken;
 
   // --- CAMPI PROFILO ---
   private String nome;
@@ -88,7 +87,6 @@ public class User {
   public String getPassword() { return password; }
   public void setPassword(String password) { this.password = password; }
 
-  // ✅ GETTER E SETTER NUOVI PER RESET TOKEN
   public String getResetToken() { return resetToken; }
   public void setResetToken(String resetToken) { this.resetToken = resetToken; }
 
