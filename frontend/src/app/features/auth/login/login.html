@@ -28,7 +28,6 @@
         <h2>Bentornato! 👋</h2>
         <p>Inserisci i tuoi dati per accedere.</p>
       </div>
-
       <form (ngSubmit)="onLogin()">
         <div class="input-group">
           <label>Email</label>
@@ -44,7 +43,6 @@
         </div>
         <button type="submit" class="btn-primary">Accedi</button>
       </form>
-
       <div class="divider"><span>oppure continua con</span></div>
       <div class="social-row">
         <button class="social-btn"><img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Google</button>
@@ -80,10 +78,22 @@
             <span>⚠️ Email già registrata. <a (click)="goToLoginWithEmail()" class="login-link-smart">Vuoi accedere?</a></span>
           </div>
         </div>
+
         <div class="input-group">
           <label>Password</label>
-          <input type="password" [(ngModel)]="registerObj.password" name="regPass" required>
+          <input type="password"
+                 [(ngModel)]="registerObj.password"
+                 (input)="checkPasswordStrength(registerObj.password)"
+                 name="regPass"
+                 placeholder="Crea una password forte"
+                 required
+                 [class.error-border]="passwordError">
+
+          <div *ngIf="passwordError" class="field-error-msg">
+            <span>⚠️ {{ passwordError }}</span>
+          </div>
         </div>
+
         <button type="submit" class="btn-primary btn-register">Crea Account</button>
       </form>
       <p class="switch-text">Hai già un account? <a (click)="toggleMode()">Accedi qui</a></p>
@@ -121,10 +131,22 @@
           <label>Codice di Recupero</label>
           <input type="text" [(ngModel)]="forgotObj.code" name="token" placeholder="Es. A1B2C3" required style="text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
         </div>
+
         <div class="input-group">
           <label>Nuova Password</label>
-          <input type="password" [(ngModel)]="forgotObj.newPassword" name="newPass" placeholder="Nuova password forte" required>
+          <input type="password"
+                 [(ngModel)]="forgotObj.newPassword"
+                 (input)="checkPasswordStrength(forgotObj.newPassword)"
+                 name="newPass"
+                 placeholder="Nuova password forte"
+                 required
+                 [class.error-border]="passwordError">
+
+          <div *ngIf="passwordError" class="field-error-msg">
+            <span>⚠️ {{ passwordError }}</span>
+          </div>
         </div>
+
         <button type="submit" class="btn-primary">Reimposta Password</button>
       </form>
       <p class="switch-text"><a (click)="backToLogin()">Annulla</a></p>
@@ -136,12 +158,10 @@
         <h2 style="color: #2e7d32;">Password Aggiornata!</h2>
         <p>Il tuo account è al sicuro.</p>
       </div>
-
       <div style="background: #e8f5e9; border: 1px solid #c8e6c9; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; color: #2e7d32;">
         La password è stata modificata con successo.<br>
         Ora puoi accedere con le nuove credenziali.
       </div>
-
       <button (click)="backToLogin()" class="btn-primary">Vai al Login</button>
     </div>
 
