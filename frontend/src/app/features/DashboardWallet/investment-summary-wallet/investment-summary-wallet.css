@@ -58,7 +58,7 @@ h3 {
   letter-spacing: 0.5px;
 }
 
-/* Tipografia del saldo: font Inter pesantissimo per risaltare */
+/* Tipografia del saldo: font Inter per risaltare */
 .balance-amount {
   font-size: 2.5rem;
   font-weight: 800;
