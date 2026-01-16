@@ -1,9 +1,6 @@
-/* IMPORT FONT (Essenziale per il look moderno) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* =========================================
-   ===== 1. LAYOUT & BASE =====
-   ========================================= */
+/* Reset e base - lo sfondo f8faff è quel tocco azzurrino che pulisce tutto */
 .dashboard-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -12,13 +9,11 @@
   display: flex;
   flex-direction: column;
   gap: 25px;
-  background-color: #f8faff; /* Sfondo leggermente azzurrino */
+  background-color: #f8faff;
   min-height: 100vh;
 }
 
-/* =========================================
-   ===== 2. HEADER E CONTROLLI =====
-   ========================================= */
+/* Header: gestione titoli con gradiente per l'effetto premium */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -46,28 +41,23 @@
   font-weight: 500;
 }
 
-/* CONTENITORE CONTROLLI (Allinea Bottone e Data) */
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 15px; /* Spazio tra i due bottoni */
+  gap: 15px;
 }
 
-/* =========================================
-   ===== 3. ELEMENTI PILLOLA (DATA & BOTTONE) =====
-   ========================================= */
-
-/* --- A. SELETTORE DATA --- */
+/* Selettore data a pillola - occhio all'altezza fissa (44px) per allinearlo al bottone */
 .month-selector {
   display: flex;
   align-items: center;
   gap: 10px;
   background: #ffffff;
   padding: 6px 12px;
-  border-radius: 50px; /* Pillola */
+  border-radius: 50px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border: none;
-  height: 44px; /* Altezza fissa per allineamento */
+  height: 44px;
   box-sizing: border-box;
   transition: box-shadow 0.3s ease;
 }
@@ -105,41 +95,35 @@
   transform: scale(1.1);
 }
 
-/* --- B. BOTTONE AGGIUNGI FONDI (Nuovo Stile) --- */
+/* Bottone Aggiungi: il cerchietto cambia colore prima del testo per feedback immediato */
 .btn-add-funds {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  /* Sfondo Bianco come la data */
   background: white;
   color: #1e293b;
   border: none;
-  padding: 6px 16px 6px 6px; /* Padding asimmetrico per ospitare il cerchietto */
+  padding: 6px 16px 6px 6px;
   border-radius: 50px;
-  height: 44px; /* Stessa altezza della data */
-
+  height: 44px;
   font-weight: 600;
   font-size: 0.95rem;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
-
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
   transition: all 0.2s ease;
 }
 
-/* Hover Effect */
 .btn-add-funds:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(125, 125, 250, 0.2); /* Ombra leggermente viola */
-  color: #7D7DFA; /* Testo diventa viola */
+  box-shadow: 0 6px 20px rgba(125, 125, 250, 0.2);
+  color: #7D7DFA;
 }
 
-/* Cerchietto con il "+" */
 .icon-circle {
   width: 32px;
   height: 32px;
-  background-color: #f1f5f9; /* Grigio chiaro default */
+  background-color: #f1f5f9;
   color: #1e293b;
   border-radius: 50%;
   display: flex;
@@ -150,16 +134,12 @@
   transition: background 0.2s, color 0.2s;
 }
 
-/* Quando passi sopra il bottone, il cerchietto si accende */
 .btn-add-funds:hover .icon-circle {
   background-color: #7D7DFA;
   color: white;
 }
 
-/* =========================================
-   ===== 4. GAMIFICATION BAR =====
-   ========================================= */
-
+/* Gamification: l'animazione slideDown dà il senso di caricamento dinamico */
 .gamification-wrapper {
   width: 100%;
   margin-bottom: 20px;
@@ -290,10 +270,7 @@
   transform: translateX(5px);
 }
 
-/* =========================================
-   ===== 5. ANIMAZIONI & GRAFICI =====
-   ========================================= */
-
+/* Animazioni grafici */
 .chart-section {
   width: 100%;
   opacity: 0;
@@ -315,10 +292,7 @@
   100% { background-position: -100% 0; }
 }
 
-/* =========================================
-   ===== 6. MODALE (POPUP OVERLAY) =====
-   ========================================= */
-/* --- MODALE (POPUP OVERLAY) --- */
+/* Modali: il backdrop-filter: blur(5px) è quello che dà l'effetto vetro sullo sfondo */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -331,20 +305,16 @@
   z-index: 2000;
 }
 
-/* CONTENITORE WIDE (Largo abbastanza per la riga orizzontale) */
 .modal-content {
   background: white;
   width: 90%;
-  max-width: 600px; /* Larghezza ottimale Desktop */
+  max-width: 600px;
   border-radius: 24px;
   padding: 30px;
   box-shadow: 0 25px 60px rgba(0,0,0,0.3);
   position: relative;
-
-  /* NIENTE SCROLL */
   max-height: none;
   overflow: visible;
-
   animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
 
@@ -361,9 +331,7 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* =========================================
-   ===== 7. RESPONSIVE =====
-   ========================================= */
+/* Gestione Mobile */
 @media (max-width: 768px) {
   .dashboard-container { padding: 20px 15px; }
   .dashboard-header { flex-direction: column; align-items: flex-start; gap: 15px; }
@@ -378,34 +346,27 @@
   .card-left { width: 100%; }
   .card-right { width: 100%; justify-content: space-between; }
   .progress-container { max-width: 100%; }
-
   .text-box p { display: none; }
 }
 
-/* =========================================
-   ===== 8. SEZIONE MOVIMENTI (UNIFIED ELITE) =====
-   ========================================= */
-
+/* Sezione Movimenti: design pulito con hover 1.01 per dare profondità */
 .transactions-container {
   width: 100%;
   margin-top: 15px;
   margin-bottom: 25px;
 }
 
-/* --- LA CARD UNICA --- */
 .transactions-unified-card {
   background: #ffffff;
-  border-radius: 28px; /* Curve molto morbide */
+  border-radius: 28px;
   padding: 25px;
-  /* Ombra complessa per effetto profondità */
   box-shadow:
     0 20px 40px -10px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(0, 0, 0, 0.02); /* Bordo sottilissimo */
+    0 0 0 1px rgba(0, 0, 0, 0.02);
   position: relative;
   overflow: hidden;
 }
 
-/* HEADER DENTRO LA CARD */
 .card-header-row {
   display: flex;
   justify-content: space-between;
@@ -440,7 +401,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Link elegante */
 .btn-text-link {
   background: transparent;
   border: none;
@@ -456,7 +416,6 @@
   transform: translateX(2px);
 }
 
-/* --- LISTA E RIGHE --- */
 .unified-list {
   display: flex;
   flex-direction: column;
@@ -466,32 +425,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 10px; /* Padding interno per hover */
-  border-radius: 16px; /* Arrotondamento all'hover */
+  padding: 16px 10px;
+  border-radius: 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  border-bottom: 1px solid #f8fafc; /* Linea separatrice quasi invisibile */
+  border-bottom: 1px solid #f8fafc;
 }
 
-/* Rimuovi bordo ultimo elemento */
 .unified-row:last-child {
   border-bottom: none;
 }
 
-/* EFFETTO HOVER "ELITE" */
 .unified-row:hover {
   background-color: #f8fafc;
   transform: scale(1.01);
 }
 
-/* --- PARTE SINISTRA --- */
-.row-left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-/* ICONA GLOW (Il tocco di classe) */
+/* Icone Movimenti: il gradiente cambia in base a is-positive (Entrata/Uscita) */
 .icon-glow-box {
   width: 48px;
   height: 48px;
@@ -501,31 +451,25 @@
   justify-content: center;
   font-size: 1.4rem;
   transition: transform 0.2s;
-
-  /* Default: Grigio Sfumato */
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   color: #475569;
 }
 
-/* Colore Icona per ENTRATE */
 .unified-row.is-positive .icon-glow-box {
   background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   color: #065f46;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); /* Glow verde */
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
-/* Colore Icona per USCITE (Default nel loop se non è positiva) */
 .unified-row:not(.is-positive) .icon-glow-box {
   background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
   color: #be123c;
-  /* box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15); Glow rosso (opzionale, togli se troppo forte) */
 }
 
 .unified-row:hover .icon-glow-box {
   transform: scale(1.1) rotate(-5deg);
 }
 
-/* TESTI */
 .text-group {
   display: flex;
   flex-direction: column;
@@ -560,7 +504,6 @@
   opacity: 0.5;
 }
 
-/* --- PARTE DESTRA (IMPORTO) --- */
 .row-amount {
   font-size: 1.15rem;
   font-weight: 800;
@@ -578,9 +521,8 @@
 }
 
 .row-amount.income { color: #10b981; }
-.row-amount.expense { color: #1e293b; } /* Nero elegante per spese, o usa #f43f5e per rosso */
+.row-amount.expense { color: #1e293b; }
 
-/* EMPTY STATE */
 .empty-state-elegant {
   text-align: center;
   padding: 40px 0;
@@ -591,34 +533,27 @@
   margin-bottom: 10px;
   opacity: 0.3;
 }
-/* =========================================
-   ===== 9. MODALE STORICO (BLURRED) =====
-   ========================================= */
 
-/* Sfondo a tutto schermo con SFOCATURA */
+/* Modale Storico: la sfocatura (blur: 14px) crea un distacco netto tra la card e il background */
 .history-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-
-  /* Colore scuro semitrasparente + BLUR INTENSO */
   background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(14px); /* <--- QUESTO FA LA MAGIA */
-  -webkit-backdrop-filter: blur(14px); /* Safari support */
-
-  z-index: 3000; /* Sopra a tutto */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 3000;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.3s ease-out;
 }
 
-/* La Card Centrale Alta */
 .history-card {
   background: #ffffff;
   width: 90%;
   max-width: 600px;
-  height: 85vh; /* Molto alta */
+  height: 85vh;
   border-radius: 28px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -627,7 +562,6 @@
   animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header del Modale */
 .history-header {
   padding: 25px 30px;
   background: #ffffff;
@@ -635,7 +569,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-shrink: 0; /* Non si schiaccia */
+  flex-shrink: 0;
 }
 
 .h-titles h2 {
@@ -651,7 +585,6 @@
   font-size: 0.9rem;
 }
 
-/* Bottone Chiudi Rotondo */
 .close-history-btn {
   background: #f8fafc;
   border: none;
@@ -663,20 +596,20 @@
   transition: all 0.2s;
   display: flex; align-items: center; justify-content: center;
 }
+
 .close-history-btn:hover {
   background: #fee2e2;
   color: #ef4444;
   transform: rotate(90deg);
 }
 
-/* AREA LISTA SCORREVOLE */
 .history-list-scroll {
-  flex: 1; /* Occupa tutto lo spazio rimasto */
-  overflow-y: auto; /* SCROLL ABILITATO */
+  flex: 1;
+  overflow-y: auto;
   padding: 15px 25px;
 }
 
-/* Stilizzazione Scrollbar (Chrome/Safari/Edge) */
+/* Scrollbar personalizzata per restare in tema con la UI */
 .history-list-scroll::-webkit-scrollbar {
   width: 8px;
 }
@@ -686,10 +619,9 @@
 .history-list-scroll::-webkit-scrollbar-thumb {
   background-color: #cbd5e1;
   border-radius: 20px;
-  border: 2px solid #ffffff; /* Bordo bianco per staccare */
+  border: 2px solid #ffffff;
 }
 
-/* Animazione entrata dal basso */
 @keyframes slideUpModal {
   from { transform: translateY(50px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }

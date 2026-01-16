@@ -10,23 +10,15 @@ import { MyPortfolioComponent } from './features/portfolio/my-portfolio/my-portf
 import { StockChart } from './features/market/stock-chart/stock-chart';
 import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
-import {NotifichePage} from './shared/notifiche/notifiche';
-
+import { NotifichePage } from './shared/notifiche/notifiche';
 import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
 import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
 
+// Configura l'elenco dei percorsi dell'applicazione e associa ogni URL al relativo componente
 export const routes: Routes = [
-
-  // Redirect iniziale
   { path: '', redirectTo: 'market', pathMatch: 'full' },
-
-  // Dashboard Generale
   { path: 'dashboard', component: Dashboard },
-
-  // Dashboard specifica del Wallet (quella su cui stiamo lavorando)
   { path: 'dashboardWallet/:id', component: DashboardWallet },
-
-  // Market Routes
   {
     path: 'market',
     component: MarketHomeComponent
@@ -48,8 +40,6 @@ export const routes: Routes = [
     data: { type: 'CRYPTO' }
   },
   { path: 'market/chart/:symbol', component: StockChart },
-
-  // Altre feature
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
@@ -57,8 +47,5 @@ export const routes: Routes = [
   { path: 'wallet', component: WalletComponent },
   { path: 'gestioneWallet', component: GestioneWallet },
   { path: 'portfolio', component: MyPortfolioComponent },
-
-  // Chi siamo
   { path: 'chi-siamo', component: ChiSiamoComponent },
-
 ];
