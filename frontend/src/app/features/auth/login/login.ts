@@ -63,7 +63,7 @@ export class Login {
     this.passwordError = ''; // Reset errore password
   }
 
-  // --- ✅ NUOVO: VALIDAZIONE PASSWORD FORTE ---
+  //VALIDAZIONE PASSWORD FORTE ---
   checkPasswordStrength(password: string) {
     if (!password) {
       this.passwordError = '';
@@ -88,13 +88,6 @@ export class Login {
       this.passwordError = "Manca un numero.";
       return false;
     }
-    // Opzionale: se vuoi forzare anche il carattere speciale scommenta sotto
-    /*
-    if (!hasSpecial) {
-      this.passwordError = "Manca un carattere speciale (!@#$).";
-      return false;
-    }
-    */
 
     this.passwordError = ''; // Tutto ok
     return true;
@@ -138,7 +131,6 @@ export class Login {
     this.http.post('http://localhost:8080/api/users/register', userToSend).subscribe({
       next: (res: any) => {
 
-        // ✅ SOLUZIONE: Usiamo NgZone per forzare l'aggiornamento grafico IMMEDIATO
         this.zone.run(() => {
           if (res.resetToken) {
             this.generatedRecoveryCode = res.resetToken;
@@ -146,13 +138,11 @@ export class Login {
           } else {
             this.currentView = 'login';
           }
-          // Per sicurezza, lasciamo anche il cdr, ma NgZone fa il lavoro grosso
           this.cdr.detectChanges();
         });
 
       },
       error: (err) => {
-        // Anche l'errore va gestito nella zone per mostrare subito il bordo rosso
         this.zone.run(() => {
           this.handleRegisterError(err);
         });
@@ -175,7 +165,7 @@ export class Login {
     // 4. Forziamo il cambio vista e l'aggiornamento UI
     this.zone.run(() => {
       this.currentView = 'login';
-      this.cdr.detectChanges(); // Forza Angular a leggere il nuovo valore di loginObj.email
+      this.cdr.detectChanges();
     });
   }
 
@@ -201,7 +191,6 @@ export class Login {
     this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
       next: (res: any) => {
 
-        // ✅ FIX: Usiamo NgZone per aggiornare subito la schermata
         this.zone.run(() => {
           this.currentView = 'forgot-success';
 
@@ -209,12 +198,11 @@ export class Login {
           this.loginObj.email = this.forgotObj.email;
           this.loginObj.password = '';
 
-          this.cdr.detectChanges(); // Sicurezza extra
+          this.cdr.detectChanges();
         });
 
       },
       error: (err) => {
-        // Anche l'alert o i messaggi di errore meglio gestirli nella zone
         this.zone.run(() => {
           alert(err.error?.message || "Codice errato o email non valida.");
         });
@@ -222,7 +210,7 @@ export class Login {
     });
   }
 
-  // --- HELPERS ---
+
   handleRegisterError(err: any) {
     let errorBody = '';
     if (err.error && typeof err.error === 'string') errorBody = err.error.toLowerCase();
