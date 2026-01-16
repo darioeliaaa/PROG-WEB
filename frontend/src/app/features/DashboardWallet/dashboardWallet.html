@@ -5,13 +5,25 @@
       <button class="btn-text-link" (click)="goBack()" style="margin-bottom: 5px; font-size: 0.9rem;">
         ← Torna ai Wallet
       </button>
-      <h1>{{ walletName }}</h1>
-      <p class="subtitle" *ngIf="inviteCode">
-        Codice Invito: <strong style="color: #4f46e5;">{{ inviteCode }}</strong>
+
+      <div class="title-row">
+        <h1>{{ wallet?.name || 'Caricamento...' }}</h1>
+        <span class="role-badge" *ngIf="isAdmin">ADMIN</span>
+      </div>
+
+      <p class="subtitle" *ngIf="isAdmin && wallet?.inviteCode">
+        Codice Invito: <strong class="code-highlight">{{ wallet?.inviteCode }}</strong>
       </p>
     </div>
 
     <div class="header-controls">
+      <button class="btn-settings" *ngIf="isAdmin" (click)="openSettings()" title="Impostazioni Wallet">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+
       <button class="btn-add-funds" (click)="openModal()">
         <div class="icon-circle">+</div>
         <span>Nuova Spesa</span>
@@ -72,17 +84,10 @@
   </section>
 
   <section class="chart-section fade-in">
-    <app-budget-overview-wallet
-      [currentDate]="currentDate"
-      [datiReali]="datiMensili">
-    </app-budget-overview-wallet>
+    <app-budget-overview-wallet [currentDate]="currentDate" [datiReali]="datiMensili"></app-budget-overview-wallet>
   </section>
-
   <section class="chart-section fade-in">
-    <app-yearly-history-wallet
-      [currentDate]="currentDate"
-      [allTransactions]="transazioniTotali">
-    </app-yearly-history-wallet>
+    <app-yearly-history-wallet [currentDate]="currentDate" [allTransactions]="transazioniTotali"></app-yearly-history-wallet>
   </section>
 
   <div class="modal-overlay fade-in" *ngIf="isModalOpen" (click)="closeModal()">
@@ -91,19 +96,14 @@
         <h3>Nuova Transazione</h3>
         <button class="close-btn" (click)="closeModal()">✕</button>
       </div>
-      <app-movimenti
-        [walletId]="walletId"
-        (saved)="handleTransactionSaved()">
-      </app-movimenti>
+      <app-movimenti [walletId]="walletId" (saved)="handleTransactionSaved()"></app-movimenti>
     </div>
   </div>
 
   <div class="history-overlay fade-in" *ngIf="isHistoryOpen" (click)="closeHistory()">
     <div class="history-card" (click)="$event.stopPropagation()">
       <div class="history-header">
-        <div class="h-titles">
-          <h2>Storico {{ walletName }}</h2>
-        </div>
+        <div class="h-titles"><h2>Storico {{ wallet?.name }}</h2></div>
         <button class="close-history-btn" (click)="closeHistory()">✕</button>
       </div>
       <div class="history-list-scroll">
@@ -120,6 +120,101 @@
               {{ t.type === 'ENTRATA' ? '+' : '-' }}{{ t.amount | number:'1.2-2' }} €
             </span>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay fade-in" *ngIf="isSettingsOpen" (click)="closeSettings()">
+    <div class="modal-content settings-content" (click)="$event.stopPropagation()">
+      <div class="settings-card">
+
+        <div class="success-overlay" *ngIf="successMessage">
+          <div class="success-icon">✓</div>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <div class="settings-header">
+          <div class="header-titles">
+            <h3>Impostazioni Wallet</h3>
+            <p>Gestisci limiti e membri del gruppo</p>
+          </div>
+          <button class="btn-close-icon" (click)="closeSettings()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <div class="settings-body" *ngIf="wallet">
+          <div class="inputs-grid">
+            <div class="input-group">
+              <label>Budget Mensile</label>
+              <div class="input-with-icon">
+                <span class="currency-symbol">€</span>
+                <input type="number" [(ngModel)]="wallet.monthlyBudget" name="monthlyBudget" placeholder="Illimitato">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Limite Prelievo (Singolo)</label>
+              <div class="input-with-icon">
+                <span class="currency-symbol">€</span>
+                <input type="number" [(ngModel)]="wallet.maxTransferLimit" name="maxTransferLimit" placeholder="Illimitato">
+              </div>
+            </div>
+          </div>
+
+          <div class="members-section">
+            <div class="section-title">
+              <h4>Membri del team</h4>
+              <span class="badge-count">{{ wallet.members?.length || 0 }}</span>
+            </div>
+
+            <div class="members-list-container">
+              <div *ngFor="let m of wallet.members" class="member-item">
+
+                <div class="member-left">
+                  <div class="avatar-circle">
+                    {{ m.username ? m.username.charAt(0).toUpperCase() : '?' }}
+                  </div>
+                  <div class="member-details">
+                    <span class="member-name">{{ m.username }}</span>
+                    <span class="role-tag admin" *ngIf="wallet.admin && m.id === wallet.admin.id">Admin</span>
+                    <span class="role-tag member" *ngIf="!wallet.admin || m.id !== wallet.admin.id">Membro</span>
+                  </div>
+                </div>
+
+                <div class="member-actions" *ngIf="m.id && m.id !== currentUserId">
+
+                  <button class="btn-icon-promote"
+                          (click)="promoteMember(m.id, m.username || 'Utente')"
+                          title="Rendi Amministratore">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path> </svg>
+                  </button>
+
+                  <button class="btn-icon-delete"
+                          (click)="removeMember(m.id)"
+                          title="Rimuovi utente">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-footer">
+            <button class="btn-delete-wallet" (click)="deleteWallet()">
+              Elimina Wallet
+            </button>
+            <button class="btn-save-primary" (click)="saveSettings()">
+              Salva Modifiche
+            </button>
+          </div>
+
         </div>
       </div>
     </div>

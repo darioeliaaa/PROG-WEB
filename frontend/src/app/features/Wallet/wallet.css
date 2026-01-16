@@ -156,3 +156,26 @@
   }
   .btn-leave { opacity: 1; color: #ef4444; }
 }
+/* Rendi le icone non cliccabili, così il click va dritto al bottone */
+.btn-leave svg,
+.btn-primary svg,
+.btn-secondary svg {
+  pointer-events: none;
+}
+
+/* Assicuriamoci che il bottone esci sia sopra a tutto */
+.btn-leave {
+  position: relative;
+  z-index: 10;
+}
+/* In wallet.css */
+.btn-delete {
+  background: transparent; border: none; cursor: pointer;
+  padding: 8px; border-radius: 8px; opacity: 0; transition: all 0.2s;
+  position: relative; z-index: 10;
+}
+.btn-delete:hover { background: #fee2e2; }
+.btn-delete svg { pointer-events: none; }
+
+/* Mostra i bottoni in hover sulla card */
+.wallet-card:hover .btn-delete { opacity: 1; }

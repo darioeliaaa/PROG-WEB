@@ -25,7 +25,10 @@ public class User {
 
   private String password;
 
-  // --- CAMPI PROFILO (Gamification) ---
+  // --- CAMPO PER IL RECUPERO PASSWORD ---
+  private String resetToken; // ✅ NUOVO
+
+  // --- CAMPI PROFILO ---
   private String nome;
   private String cognome;
   private String sesso;
@@ -33,7 +36,6 @@ public class User {
   private String telefono;
   private String indirizzo;
 
-  // --- RELAZIONE WALLET ---
   @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(
     name = "user_wallets",
@@ -43,21 +45,14 @@ public class User {
   @JsonIgnoreProperties("members")
   private Set<Wallet> wallets = new HashSet<>();
 
-  // --- RELAZIONE TRANSAZIONI (IL CUORE DEL PROXY) ---
-  // 1. fetch = FetchType.LAZY: Abilita il proxy.
-  // 2. NESSUN @JsonIgnore qui! Vogliamo che Spring provi a leggere questa lista
-  //    quando invia il JSON al frontend. È questo che farà scattare il tuo
-  //    UserProxy manuale e stamperà il messaggio in console.
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Transaction> transactions = new ArrayList<>();
 
-  // --- CAMPI IMPOSTAZIONI ---
   private String language = "it";
   private String currency = "EUR";
   private boolean privacyMode = false;
   private boolean budgetAlerts = true;
 
-  // --- COSTRUTTORI ---
   public User() {}
 
   public User(String username, String email, String password) {
@@ -66,7 +61,6 @@ public class User {
     this.password = password;
   }
 
-  // --- METODO GAMIFICATION ---
   public int getProfileCompletion() {
     int totalFields = 8;
     int filledFields = 0;
@@ -93,6 +87,10 @@ public class User {
 
   public String getPassword() { return password; }
   public void setPassword(String password) { this.password = password; }
+
+  // ✅ GETTER E SETTER NUOVI PER RESET TOKEN
+  public String getResetToken() { return resetToken; }
+  public void setResetToken(String resetToken) { this.resetToken = resetToken; }
 
   public String getNome() { return nome; }
   public void setNome(String nome) { this.nome = nome; }

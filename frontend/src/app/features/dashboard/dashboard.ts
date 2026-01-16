@@ -148,24 +148,28 @@ export class Dashboard implements OnInit {
     const userId = this.userService.getCurrentUserId();
     if (!userId) return;
 
+    // Puliamo i dati vecchi per evitare che si vedano durante il caricamento
+    this.transazioniTotali = [];
+    this.recentTransactions = [];
+
     this.walletService.getUserWallets(userId).subscribe({
       next: (wallets) => {
         if (!wallets || wallets.length === 0) return;
-        const mainWalletId = wallets[0].id;
+
+        // --- FIX CRUCIALE ---
+        // Cerchiamo il wallet che ha personal === true
+        const personalWallet = wallets.find(w => w.personal === true);
+
+        // Se lo troviamo usiamo quello, altrimenti per sicurezza prendiamo il primo
+        const mainWalletId = personalWallet ? personalWallet.id : wallets[0].id;
 
         this.transactionService.getTransactionsByWallet(mainWalletId).subscribe({
           next: (allTransactions) => {
-            // 1. Ordina e salva TUTTE le transazioni
             this.transazioniTotali = this.ordinaTransazioni(allTransactions);
-
-            // 2. Calcolo saldo reale
             this.calcolaSaldoTotaleAssoluto();
-
-            // 3. Estrai ultimi 5 movimenti
             this.recentTransactions = this.transazioniTotali.slice(0, 5);
-
-            // 4. Filtra i dati mese
             this.filtraDatiLocali();
+            this.cd.detectChanges();
           },
           error: (err) => console.error("Errore transazioni:", err)
         });
