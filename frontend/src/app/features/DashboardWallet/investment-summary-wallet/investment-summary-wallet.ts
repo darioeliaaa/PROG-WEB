@@ -13,8 +13,6 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
 
   @Input() currentDate!: Date;
   @Input() tutteLeTransazioni: any[] = [];
-
-  // ✅ Riceve il saldo reale (assoluto) dalla Dashboard
   @Input() saldoReale: number = 0;
 
   totaleEntrate: number = 0;
@@ -22,15 +20,15 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
   saldoAttuale: number = 0;
   userSettings: any;
   peekBalance: boolean = false;
+  trendData: { label: string; value: number; heightPercent: number; isCurrent: boolean }[] = [];
 
+  // Inizializza le impostazioni utente in modo sincrono per evitare flash di dati non formattati
   constructor(private userService: UserService, private cd: ChangeDetectorRef) {
     this.userSettings = this.userService.getSettingsSync();
   }
 
-  trendData: { label: string; value: number; heightPercent: number; isCurrent: boolean }[] = [];
-
+  // Resta in ascolto di modifiche globali alle impostazioni come la valuta o la modalità privacy
   ngOnInit() {
-    // ASCOLTO CONTINUO: aggiorna il componente se cambiano privacy o valuta
     this.userService.userSettings$.subscribe({
       next: (settings) => {
         if (settings) {
@@ -41,37 +39,28 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
     });
   }
 
+  // Monitora gli input e ricalcola totali e trend ogni volta che le transazioni o il saldo vengono aggiornati
   ngOnChanges(changes: SimpleChanges) {
-    // RISOLUZIONE CONFLITTO:
-    // Ricalcoliamo quando cambiano le transazioni o il saldo reale passato dal padre.
-    // Includiamo 'currentDate' se necessario, ma come da versione entrante,
-    // i totali globali sono indipendenti dalla data selezionata.
     if (changes['tutteLeTransazioni'] || changes['saldoReale'] || changes['currentDate']) {
-
-      // Assicuriamoci di avere i settings aggiornati per i calcoli
       this.userSettings = this.userService.getSettingsSync();
-
-      // Utilizziamo il nuovo metodo della versione b7b2b38
       this.calcolaTotaliGlobali();
       this.calcoloTrendUltimi6Mesi();
     }
   }
 
+  // Alterna la visibilità dei numeri sensibili nel template
   togglePeek() {
     this.peekBalance = !this.peekBalance;
   }
 
-  // Calcolo dei totali ASSOLUTI (Indipendenti dal mese selezionato)
+  // Esegue la somma algebrica di tutte le transazioni per determinare i volumi totali di entrata e uscita
   calcolaTotaliGlobali(): void {
-    // Sincronizziamo il saldo con quello ricevuto dall'input del padre
     this.saldoAttuale = this.saldoReale;
-
     this.totaleEntrate = 0;
     this.totaleUscite = 0;
 
     if (!this.tutteLeTransazioni) return;
 
-    // Somma su TUTTO lo storico
     this.tutteLeTransazioni.forEach(t => {
       const importo = Number(t.amount);
       if (t.type === 'ENTRATA') this.totaleEntrate += importo;
@@ -79,7 +68,7 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
     });
   }
 
-  // Calcolo lo storico degli ultimi 6 mesi
+  // Genera lo storico mensile degli ultimi 6 mesi calcolando le altezze relative per il mini-chart
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
     const trendTemp = [];
@@ -124,4 +113,3 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
     });
   }
 }
-

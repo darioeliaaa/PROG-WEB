@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID; // ✅ Import necessario
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -29,14 +29,21 @@ public class UserService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  // --- 1. REGISTRAZIONE (Genera il Codice di Recupero) ---
   public User registerUser(User user) {
     if (userRepository.findByEmail(user.getEmail()).isPresent()) {
       throw new RuntimeException("Email già registrata!");
     }
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+    // ✅ QUI GENERIAMO IL CODICE DI RECUPERO (es. "A1B2C3")
+    // Questo codice viene salvato nel DB e non cambierà (a meno che tu non voglia).
+    user.setResetToken(generateResetToken());
+
     User savedUser = userRepository.save(user);
 
+    // Creazione Wallet Personale
     Wallet personalWallet = new Wallet();
     personalWallet.setName("Mio Portafoglio");
     personalWallet.setPersonal(true);
@@ -44,6 +51,7 @@ public class UserService {
     personalWallet.setMonthlyBudget(BigDecimal.ZERO);
     personalWallet.setAdmin(savedUser);
     personalWallet.getMembers().add(savedUser);
+    personalWallet.setInviteCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase());
 
     walletRepository.save(personalWallet);
     savedUser.getWallets().add(personalWallet);
@@ -51,45 +59,50 @@ public class UserService {
     return userRepository.save(savedUser);
   }
 
+  // --- 2. LOGIN ---
   public User loginUser(String email, String password) {
     Optional<User> userOptional = userRepository.findByEmail(email);
-
     if (userOptional.isPresent()) {
       User user = userOptional.get();
       if (passwordEncoder.matches(password, user.getPassword())) {
-        System.out.println("Login effettuato: Restituisco UserProxy per ottimizzare le risorse.");
         return new UserProxy(user, transactionRepository);
       }
     }
     return null;
   }
 
+  // --- 3. GET USER ---
   public User getUserByIdWithProxy(Long id) {
     User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Utente non trovato"));
     return new UserProxy(user, transactionRepository);
   }
 
-  // --- ✅ 1. INIZIA RESET PASSWORD (Genera Token) ---
-  public String startPasswordReset(String email) {
+  // --- 4. RESET PASSWORD CON CODICE DI RECUPERO ---
+  // Non serve più "startPasswordReset" perché il codice esiste già dalla registrazione.
+
+  public void resetPasswordWithRecoveryCode(String email, String recoveryCode, String newPassword) {
+    // A. Cerchiamo l'utente tramite email
     User user = userRepository.findByEmail(email)
-      .orElseThrow(() -> new RuntimeException("Nessun utente trovato con questa email"));
+      .orElseThrow(() -> new RuntimeException("Nessun utente trovato con questa email."));
 
-    // Genera token semplice di 6 caratteri (es. A1B2C3)
-    String token = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    // B. Controlliamo se il codice inserito corrisponde a quello nel DB
+    String dbToken = user.getResetToken();
 
-    user.setResetToken(token);
+    if (dbToken == null || !dbToken.equalsIgnoreCase(recoveryCode.trim())) {
+      throw new RuntimeException("Il codice di recupero non è corretto.");
+    }
+
+    // C. Se è giusto, aggiorniamo la password
+    user.setPassword(passwordEncoder.encode(newPassword));
+
+    // NOTA: NON cancelliamo il resetToken (user.setResetToken(null))
+    // così l'utente può riutilizzare lo stesso codice in futuro se dimentica di nuovo la password.
+
     userRepository.save(user);
-
-    return token; // Lo restituiamo al controller per vederlo nel debug
   }
 
-  // --- ✅ 2. COMPLETA RESET PASSWORD (Verifica e Cambia) ---
-  public void completePasswordReset(String token, String newPassword) {
-    User user = userRepository.findByResetToken(token)
-      .orElseThrow(() -> new RuntimeException("Codice non valido o scaduto"));
-
-    user.setPassword(passwordEncoder.encode(newPassword));
-    user.setResetToken(null); // Cancella il token dopo l'uso
-    userRepository.save(user);
+  // --- HELPER ---
+  private String generateResetToken() {
+    return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
   }
 }

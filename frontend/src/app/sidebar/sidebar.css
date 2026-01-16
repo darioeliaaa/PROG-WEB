@@ -1,31 +1,21 @@
-/* IMPORT FONT */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* =========================================
-   1. CONTENITORE PRINCIPALE (SILK GRADIENT)
-   ========================================= */
+/* Struttura base: il justify-content: space-between tiene il footer sempre in basso */
 .sidebar {
-  /* Dimensioni e Layout */
-  width: 80px; /* Larghezza chiusa */
-  height: 100vh; /* Tutta l'altezza */
+  width: 80px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  /* QUESTA È LA CHIAVE: Spinge i due blocchi (top e footer) agli estremi */
   justify-content: space-between;
-
   padding: 24px 12px;
 
-  /* SFONDO GRADIENTE ELEGANTE */
+  /* Gradiente silk: non cambiare i colori per mantenere coerenza col brand */
   background: linear-gradient(180deg, #8E8EFA 0%, #7D7DFA 100%);
   color: #ffffff;
-
-  /* Ombra morbida colorata */
   box-shadow: 4px 0 30px rgba(125, 125, 250, 0.2);
-
-  /* Bordo sottile "Vetro" a destra */
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 
-  /* Animazione Apertura */
+  /* Animazione fluida per l'apertura */
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
   white-space: nowrap;
@@ -33,37 +23,33 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* STATO APERTO (Hover) */
+/* Espansione sidebar: occhio al padding che aumenta per distanziare i testi */
 .sidebar:hover {
-  width: 260px; /* Si allarga */
-  padding: 24px 20px; /* Più spazio laterale */
+  width: 260px;
+  padding: 24px 20px;
 }
 
-/* =========================================
-   2. BLOCCHI STRUTTURALI (NUOVI)
-   ========================================= */
+/* Parte alta della sidebar */
 .sidebar-top {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
+/* Parte bassa (es. logout o impostazioni) */
 .sidebar-footer {
   width: 100%;
-  /* Opzionale: margine extra sopra per staccarlo visivamente se lo schermo è piccolo */
   margin-top: 20px;
 }
 
-/* =========================================
-   3. SEZIONE LOGO
-   ========================================= */
+/* Sezione brand e logo */
 .logo-section {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 40px;
   height: 50px;
-  padding-left: 4px; /* Allineamento ottico */
+  padding-left: 4px;
 }
 
 .logo-icon {
@@ -101,14 +87,11 @@
   transition-delay: 0.1s;
 }
 
-/* =========================================
-   4. MENU DI NAVIGAZIONE
-   ========================================= */
+/* Lista link di navigazione */
 .nav-menu {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* Rimosso flex-grow: 1 perché ora gestiamo lo spazio con il parent */
 }
 
 .nav-item {
@@ -125,13 +108,12 @@
   border: 1px solid transparent;
 }
 
-/* Hover semplice */
 .nav-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
-/* STATO ATTIVO: EFFETTO VETRO */
+/* Effetto vetro per la voce selezionata */
 .nav-item.active {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
@@ -141,7 +123,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* Icone */
 .icon-box {
   width: 24px;
   height: 24px;
@@ -149,7 +130,7 @@
   align-items: center;
   justify-content: center;
   min-width: 24px;
-  margin-left: 4px; /* Centratura precisa quando chiusa */
+  margin-left: 4px;
 }
 
 .icon-box svg {
@@ -158,7 +139,7 @@
   stroke-width: 2px;
 }
 
-/* Testo Link */
+/* Testo che appare solo quando la sidebar è larga */
 .link-text {
   font-size: 0.95rem;
   opacity: 0;

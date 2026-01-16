@@ -1,6 +1,7 @@
+/* Card principale: il gradiente sfuma verso il viola del brand per profondità */
 .summary-card {
-  /* Gradiente viola/blu come il tuo screenshot */
-  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgb(125, 125, 250)); /* Leggermente azzurrino */  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgb(125, 125, 250));
+  border-radius: 24px;
   padding: 25px;
   display: flex;
   justify-content: space-between;
@@ -9,6 +10,8 @@
   color: #333;
   min-height: 140px;
 }
+
+/* Bottone per mostrare/nascondere il saldo (occhio all'allineamento) */
 .peek-toggle-btn {
   background: transparent;
   border: none;
@@ -22,18 +25,20 @@
   transition: all 0.2s ease;
   opacity: 0.6;
   vertical-align: middle;
-  margin-left: 8px; }
+  margin-left: 8px;
+}
 
 .peek-toggle-btn:hover {
   opacity: 1;
   color: #000;
-  transform: scale(1.1); }
+  transform: scale(1.1);
+}
 
-/* Assicuriamoci che l'icona dentro sia visibile */
 .peek-toggle-btn i {
   display: block !important;
   visibility: visible !important;
 }
+
 .peek-toggle-btn:focus {
   outline: none;
 }
@@ -53,7 +58,7 @@ h3 {
   letter-spacing: 0.5px;
 }
 
-/* IL NUMERO GIGANTE */
+/* Tipografia del saldo principale */
 .balance-amount {
   font-size: 2.5rem;
   font-weight: 800;
@@ -62,7 +67,6 @@ h3 {
   font-family: 'Inter', sans-serif;
 }
 
-/* Badge piccolo */
 .performance-badge {
   display: inline-block;
   font-size: 0.9rem;
@@ -75,14 +79,14 @@ h3 {
   opacity: 0.7;
 }
 
-/* ... mantieni le regole precedenti per .glass-card, .info-group ecc ... */
+/* --- SEZIONE MINI CHART --- */
 
-/* Modifica la sezione mini-chart */
+/* Allineamento barre in basso per simulare un grafico di crescita */
 .mini-chart {
   display: flex;
-  align-items: flex-end; /* Allinea in basso */
-  gap: 6px; /* Spazio tra le barre */
-  height: 60px; /* Altezza ridotta perché non c'è testo */
+  align-items: flex-end;
+  gap: 6px;
+  height: 60px;
   opacity: 1;
   padding-bottom: 5px;
 }
@@ -93,8 +97,8 @@ h3 {
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  width: 10px; /* Barre leggermente più snelle */
-  cursor: pointer; /* Fa capire che puoi passarci sopra col mouse */
+  width: 10px;
+  cursor: pointer;
 }
 
 .bar {
@@ -105,12 +109,13 @@ h3 {
   min-height: 2px;
 }
 
+/* Stile per evidenziare la barra corrente o selezionata */
 .bar.active {
   background-color: rgba(64, 0, 255, 0.4);
   box-shadow: 0 0 8px rgb(101, 101, 248);
 }
 
-/* HOVER EFFECT: Quando passi sopra una barra, si illumina */
+/* Feedback visivo al passaggio del mouse sulle singole barre */
 .bar-wrapper:hover .bar {
   background-color: #ffffff;
   opacity: 1;

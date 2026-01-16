@@ -491,7 +491,7 @@
   gap: 18px;
 }
 
-/* ICONA GLOW (Il tocco di classe) */
+/* ICONA GLOW (Il tocco di classe) . */
 .icon-glow-box {
   width: 48px;
   height: 48px;
@@ -694,3 +694,4 @@
   from { transform: translateY(50px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
+

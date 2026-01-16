@@ -10,27 +10,29 @@ import { MyPortfolioComponent } from './features/portfolio/my-portfolio/my-portf
 import { StockChart } from './features/market/stock-chart/stock-chart';
 import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
-
 import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
 import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
 
+/**
+ * Configurazione principale delle rotte dell'applicazione.
+ * Associa ogni URL al componente corrispondente.
+ */
 export const routes: Routes = [
-
-  // Redirect iniziale
+  // Rotta di default: reindirizza alla pagina Market quando l'URL è vuoto
   { path: '', redirectTo: 'market', pathMatch: 'full' },
 
-  // Dashboard Generale
+  // Dashboard generale dell'utente
   { path: 'dashboard', component: Dashboard },
 
-  // Dashboard specifica del Wallet (quella su cui stiamo lavorando)
+  // Dashboard specifica per un singolo Wallet, identificato tramite ID dinamico
   { path: 'dashboardWallet/:id', component: DashboardWallet },
 
-  // Market Routes
+  // Home page della sezione mercato/investimenti
   {
     path: 'market',
     component: MarketHomeComponent
   },
-
+  
   {
     path: 'market/azioni',
     component: AssetListComponent,
@@ -46,9 +48,11 @@ export const routes: Routes = [
     component: AssetListComponent,
     data: { type: 'CRYPTO' }
   },
+
+  // Visualizzazione dei grafici per un titolo specifico (es. AAPL, BTC) tramite simbolo
   { path: 'market/chart/:symbol', component: StockChart },
 
-  // Altre feature
+  // Altre rotte dell'applicazione
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
@@ -56,8 +60,5 @@ export const routes: Routes = [
   { path: 'wallet', component: WalletComponent },
   { path: 'gestioneWallet', component: GestioneWallet },
   { path: 'portfolio', component: MyPortfolioComponent },
-
-  // Chi siamo
   { path: 'chi-siamo', component: ChiSiamoComponent },
-
 ];

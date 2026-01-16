@@ -36,44 +36,35 @@ export class YearlyHistory implements OnChanges {
     }
   };
 
+  // Inizializza i componenti necessari di Chart.js per il rendering dei grafici a barre
   constructor() {
     Chart.register(...registerables);
   }
 
+  // Intercetta l'aggiornamento dell'elenco transazioni per ricalcolare i dati annuali
   ngOnChanges(changes: SimpleChanges) {
-    // LOG 1: Vediamo se Angular rileva i cambiamenti
     if (changes['allTransactions']) {
-      console.log("📊 [YearlyHistory] Nuovi dati ricevuti:", this.allTransactions);
       this.calcolaDatiLocali();
     }
   }
 
+  // Filtra le transazioni per l'anno visualizzato e aggrega i totali di entrate e uscite per ogni mese
   calcolaDatiLocali() {
     if (!this.allTransactions || this.allTransactions.length === 0) {
-      console.warn("⚠️ [YearlyHistory] Array transazioni vuoto!");
       return;
     }
 
     const annoTarget = this.currentDate.getFullYear();
-    console.log(`📅 [YearlyHistory] Filtro per anno: ${annoTarget}`);
-
     const entrateMensili = new Array(12).fill(0);
     const usciteMensili = new Array(12).fill(0);
-    let transazioniTrovate = 0;
 
     this.allTransactions.forEach(t => {
-      // LOG 2: Vediamo come sono fatte le date
-      // Usa new Date() che è più sicuro dello split
       const dataT = new Date(t.date);
 
-      // Controllo se l'anno coincide
       if (dataT.getFullYear() === annoTarget) {
-        transazioniTrovate++;
         const meseIndex = dataT.getMonth();
         const importo = Number(t.amount);
 
-        // LOG 3: Controlliamo se riconosce ENTRATA/USCITA
-        // Nota: Assicurati che nel DB sia 'ENTRATA' tutto maiuscolo
         if (t.type === 'ENTRATA') {
           entrateMensili[meseIndex] += importo;
         } else if (t.type === 'USCITA') {
@@ -82,20 +73,11 @@ export class YearlyHistory implements OnChanges {
       }
     });
 
-    console.log(`✅ [YearlyHistory] Trovate ${transazioniTrovate} transazioni per il ${annoTarget}`);
-    console.log("📈 Entrate per mese:", entrateMensili);
-    console.log("📉 Uscite per mese:", usciteMensili);
-
-    // AGGIORNAMENTO DATI
     this.barChartData.datasets[0].data = entrateMensili;
     this.barChartData.datasets[1].data = usciteMensili;
 
-    // FORZA L'AGGIORNAMENTO DEL GRAFICO
     if (this.chart) {
       this.chart.update();
-      console.log("🔄 [YearlyHistory] Grafico aggiornato!");
-    } else {
-      console.error("❌ [YearlyHistory] Impossibile aggiornare: Componente grafico non pronto.");
     }
   }
 }

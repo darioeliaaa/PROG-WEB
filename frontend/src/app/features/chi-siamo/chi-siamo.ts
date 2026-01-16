@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ChiSiamoComponent {
 
-  // ✅ HERO WIDGETS: RIMASTI CONCISI
+  // Definisce i dati per i widget informativi visualizzati nella sezione Hero
   heroWidgets = [
     {
       icon: '💎',
@@ -36,7 +36,7 @@ export class ChiSiamoComponent {
     }
   ];
 
-  // ✅ FEATURES: EQUILIBRATE (1 frase concreta per punto)
+  // Elenco delle caratteristiche principali dell'applicazione per la bento grid
   features = [
     {
       title: 'Intelligenza Predittiva',
@@ -64,7 +64,7 @@ export class ChiSiamoComponent {
     }
   ];
 
-  // TEAM: 4 Uomini - Stile Notion (Bianco e Nero)
+  // Configurazione dei membri del team con i relativi avatar in stile Notion
   team = [
     {
       name: 'Dario E.',
