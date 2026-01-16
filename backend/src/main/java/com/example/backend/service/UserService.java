@@ -37,8 +37,8 @@ public class UserService {
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    // ✅ QUI GENERIAMO IL CODICE DI RECUPERO (es. "A1B2C3")
-    // Questo codice viene salvato nel DB e non cambierà (a meno che tu non voglia).
+    // QUI GENERIAMO IL CODICE DI RECUPERO (es. "A1B2C3")
+    // Questo codice viene salvato nel DB e non cambierà.
     user.setResetToken(generateResetToken());
 
     User savedUser = userRepository.save(user);
@@ -76,17 +76,16 @@ public class UserService {
     User user = userRepository.findById(id)
       .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-    // ✅ FIX: Se l'utente è vecchio e non ha il token, generalo ORA.
+    // Se l'utente è vecchio e non ha il token, generalo ORA.
     if (user.getResetToken() == null || user.getResetToken().isEmpty()) {
       user.setResetToken(generateResetToken());
-      userRepository.save(user); // Salviamo subito nel DB
+      userRepository.save(user);
     }
 
     return new UserProxy(user, transactionRepository);
   }
 
   // --- 4. RESET PASSWORD CON CODICE DI RECUPERO ---
-  // Non serve più "startPasswordReset" perché il codice esiste già dalla registrazione.
 
   public void resetPasswordWithRecoveryCode(String email, String recoveryCode, String newPassword) {
     // A. Cerchiamo l'utente tramite email
@@ -103,13 +102,9 @@ public class UserService {
     // C. Se è giusto, aggiorniamo la password
     user.setPassword(passwordEncoder.encode(newPassword));
 
-    // NOTA: NON cancelliamo il resetToken (user.setResetToken(null))
-    // così l'utente può riutilizzare lo stesso codice in futuro se dimentica di nuovo la password.
-
     userRepository.save(user);
   }
 
-  // --- HELPER ---
   private String generateResetToken() {
     return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
   }

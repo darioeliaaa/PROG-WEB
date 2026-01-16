@@ -4,10 +4,10 @@
 :host {
   display: block;
   width: 100%;
-  height: 100%; /* Forza l'altezza intera della viewport */
-  overflow: hidden; /* Niente scrollbar sulla pagina principale */
+  height: 100%;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-  color: #1e293b; /* Slate-800 */
+  color: #1e293b;
 }
 
 .chart-page-container {
@@ -22,24 +22,22 @@
    2. HEADER (BARRA STRUMENTI)
    ========================================= */
 .header-actions {
-  flex-shrink: 0; /* Altezza fissa, non si schiaccia */
-  height: 60px;   /* Altezza confortevole */
+  flex-shrink: 0;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   background-color: #ffffff;
 
-  /* Bordo inferiore sottile e moderno */
   border-bottom: 1px solid #e2e8f0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Ombra impercettibile */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-/* GRUPPO TITOLO */
 .title-group {
   display: flex;
-  align-items: baseline; /* Allinea il testo sulla base */
+  align-items: baseline;
   gap: 12px;
 }
 
@@ -47,15 +45,15 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f172a; /* Nero Inchiostro */
-  letter-spacing: -0.03em; /* Tracking stretto */
+  color: #0f172a;
+  letter-spacing: -0.03em;
   line-height: 1;
 }
 
 .asset-subtitle {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b; /* Grigio medio */
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background: #f1f5f9;
@@ -71,35 +69,30 @@
   align-items: center;
   gap: 8px;
 
-  /* Stile "Ghost" (senza sfondo finché non passi sopra) */
   background-color: transparent;
-  color: #475569; /* Slate-600 */
-  border: 1px solid #e2e8f0; /* Bordo grigio chiaro */
+  color: #475569;
+  border: 1px solid #e2e8f0;
   padding: 8px 16px;
-  border-radius: 8px; /* Curve morbide */
+  border-radius: 8px;
 
-  /* Tipografia */
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover Effect */
 .back-btn:hover {
-  background-color: #f8fafc; /* Slate-50 */
-  color: #0f172a; /* Slate-900 */
+  background-color: #f8fafc;
+  color: #0f172a;
   border-color: #cbd5e1;
   transform: translateY(-1px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* Active Effect */
 .back-btn:active {
   transform: translateY(0);
 }
 
-/* Icona Freccia (CSS puro per la freccia) */
 .back-arrow::before {
   content: "←";
   font-size: 1.2em;
@@ -109,29 +102,27 @@
 }
 
 .back-btn:hover .back-arrow::before {
-  transform: translateX(-3px); /* La freccia si muove a sinistra all'hover */
+  transform: translateX(-3px);
 }
 
 /* =========================================
    4. WRAPPER DEL GRAFICO (FULLSCREEN)
    ========================================= */
 .tv-wrapper {
-  flex: 1; /* Prende tutto lo spazio rimanente in altezza */
+  flex: 1;
   width: 100%;
   position: relative;
   background: #ffffff;
-  overflow: hidden; /* Impedisce scrollbar indesiderate */
+  overflow: hidden;
 }
 
-/* Il container vero e proprio */
 .tradingview_widget {
   width: 100% !important;
   height: 100% !important;
   border: none;
-  display: block; /* Rimuove spazi fantasma */
+  display: block;
 }
 
-/* RESPONSIVE */
 @media (max-width: 600px) {
   .header-actions {
     height: 50px;
@@ -143,7 +134,7 @@
   }
 
   .asset-subtitle {
-    display: none; /* Nascondi sottotitolo su mobile per spazio */
+    display: none;
   }
 
   .back-btn {
@@ -151,7 +142,6 @@
     font-size: 0.8rem;
   }
 }
-/* ... (Tutto il tuo CSS esistente rimane uguale, aggiungi questo sotto) ... */
 
 /* =========================================
    5. BOTTONE TRADE (HEADER)
@@ -165,8 +155,8 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  margin-left: auto; /* Spinge a destra se necessario */
-  margin-right: 10px; /* Spazio dal tasto Back */
+  margin-left: auto;
+  margin-right: 10px;
   box-shadow: 0 4px 6px -1px rgba(125, 125, 250, 0.3);
   transition: all 0.2s ease;
 }
@@ -181,11 +171,10 @@
    STILE UNIFICATO TRADE MODAL (stile Portfolio)
    ========================================= */
 
-/* 1. SFONDO OVERLAY (Scuro e Sfuocato) */
 .trade-modal-backdrop {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Scuro come nel portfolio */
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
   z-index: 1000;
   display: flex;
@@ -194,13 +183,12 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* 2. CARD BIANCA CENTRALE */
 .trade-modal {
   width: 90%;
-  max-width: 550px; /* Larghezza controllata */
+  max-width: 550px;
   background: white;
   padding: 30px;
-  border-radius: 24px; /* Curve morbide */
+  border-radius: 24px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -208,7 +196,6 @@
   gap: 20px;
 }
 
-/* 3. HEADER INTERNO */
 .stylish-header {
   display: flex; justify-content: space-between; align-items: center;
 }
@@ -220,7 +207,6 @@
   font-size: 0.75rem; color: #64748b; border: 1px solid #e2e8f0; font-weight: 600;
 }
 
-/* 4. TOGGLE BUTTONS (Acquista/Vendi) */
 .toggle-buttons {
   display: flex; background: #f1f5f9; padding: 4px; border-radius: 14px;
 }
@@ -229,11 +215,9 @@
   border-radius: 12px; font-weight: 600; color: #64748b; cursor: pointer;
   transition: 0.2s; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-/* Stati Attivi */
 .btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-/* 5. INPUT QUANTITÀ GIGANTE */
 .center-input-section {
   display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 10px 0;
 }
@@ -248,14 +232,12 @@
   outline: none; padding: 0 0 5px 0; margin: 0;
   border-bottom: 2px solid #e2e8f0;
   color: #1e293b; transition: border-color 0.3s;
-  border-radius: 0; /* Importante per rimuovere curve default su iOS */
+  border-radius: 0;
 }
-/* Colori Input Dinamici */
 .big-input.text-green { border-bottom-color: #10b981; color: #10b981; }
 .big-input.text-red { border-bottom-color: #ef4444; color: #ef4444; }
 .big-input::placeholder { color: #cbd5e1; opacity: 0.5; }
 
-/* 6. INPUT VALUTA (PICCOLO) E INFO */
 .form-group label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; }
 .small-wrapper { border-bottom: 1px solid #e2e8f0; position: relative; display: flex; align-items: center; }
 .small-input {
@@ -270,7 +252,6 @@
 }
 .bold-text { font-weight: 700; color: #1e293b; }
 
-/* 7. BOTTONI AZIONE (Il Viola Portfolio) */
 .form-actions { display: flex; gap: 15px; margin-top: 10px; }
 
 .btn-primary {
@@ -290,11 +271,9 @@
 }
 .btn-secondary:hover { background: #f8fafc; color: #334155; }
 
-/* Rimuovi frecce input number */
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
 
-/* Animazioni */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
@@ -314,7 +293,6 @@ input[type=number] { -moz-appearance: textfield; }
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Icona X di chiusura */
 .close-icon-btn {
   position: absolute; top: 20px; right: 20px;
   background: transparent; border: none; cursor: pointer;
@@ -324,7 +302,6 @@ input[type=number] { -moz-appearance: textfield; }
 .close-icon-btn:hover { background-color: #f1f5f9; color: #ef4444; }
 .close-icon-btn svg { width: 22px; height: 22px; }
 
-/* Icona Scudo con Gradiente */
 .lock-icon-circle {
   width: 84px; height: 84px;
   background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
@@ -336,7 +313,6 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .lock-icon-circle svg { width: 38px; height: 38px; stroke-width: 2.5px; }
 
-/* Tipografia Card Login */
 .stylish-lock-card h3 {
   font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 800;
   color: #1e293b; margin: 0 0 12px 0; letter-spacing: -0.5px;
@@ -346,7 +322,6 @@ input[type=number] { -moz-appearance: textfield; }
   line-height: 1.6; margin: 0 0 35px 0; padding: 0 5px;
 }
 
-/* Bottone Accedi (Gradiente) */
 .btn-auth-lock {
   background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
   color: white; border: none; padding: 16px 0; width: 100%; border-radius: 16px;

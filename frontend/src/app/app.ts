@@ -20,7 +20,6 @@ export class AppComponent {
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
-  // Monitora la navigazione per impostare la visualizzazione delle sidebar e resettare lo scroll
   constructor(private router: Router) {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
@@ -36,7 +35,6 @@ export class AppComponent {
     });
   }
 
-  // Riporta la posizione dello scroll del contenitore principale all'inizio (top)
   scrollToTop() {
     if (this.scrollContainer && this.scrollContainer.nativeElement) {
       this.scrollContainer.nativeElement.scrollTop = 0;

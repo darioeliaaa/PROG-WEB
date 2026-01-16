@@ -33,8 +33,6 @@ public class TransactionController {
     return list;
   }
 
-  // ✅ METODO DI SALVATAGGIO "BLINDATO"
-  // Accetta una Map invece dell'Entity per evitare problemi con i Proxy
   @PostMapping("/user/{userId}/wallet/{walletId}")
   public ResponseEntity<?> addTransaction(
     @PathVariable Long userId,

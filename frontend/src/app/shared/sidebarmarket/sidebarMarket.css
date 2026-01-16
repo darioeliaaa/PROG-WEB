@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Base della sidebar - occhio allo z-index se aggiungo altri elementi sopra */
 .sidebar {
   width: 80px;
   height: 100vh;
@@ -10,7 +9,6 @@
   position: relative;
   z-index: 1000;
 
-  /* Il gradiente deve rimanere uguale alla sidebar principale per coerenza */
   background: linear-gradient(180deg, #8E8EFA 0%, #7D7DFA 100%);
 
   color: #ffffff;
@@ -23,13 +21,11 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* Espansione al passaggio del mouse */
 .sidebar:hover {
   width: 260px;
   padding: 24px 20px;
 }
 
-/* Header col logo */
 .logo-section {
   display: flex; align-items: center; gap: 16px; margin-bottom: 40px; height: 50px; padding-left: 4px;
 }
@@ -44,7 +40,6 @@
 }
 .logo-icon svg { width: 24px; height: 24px; color: white; }
 
-/* Gestione testo logo: appare solo quando la sidebar si allarga */
 .brand-container {
   display: flex; flex-direction: column;
   opacity: 0; transform: translateX(-10px); transition: all 0.3s ease;
@@ -55,7 +50,6 @@
 
 .sidebar:hover .brand-container { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
 
-/* Voci del menu */
 .nav-menu { display: flex; flex-direction: column; gap: 5px; flex-grow: 1; }
 
 .nav-item {
@@ -72,7 +66,7 @@
   color: white;
 }
 
-/* Stile per la pagina in cui ci si trova */
+
 .nav-item.active {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff; font-weight: 600;
@@ -87,7 +81,7 @@
 .link-text { font-size: 0.95rem; opacity: 0; transition: opacity 0.2s ease; }
 .sidebar:hover .link-text { opacity: 1; transition-delay: 0.15s; }
 
-/* Logica della freccetta nei sottomenu */
+
 .arrow-icon {
   margin-left: auto;
   opacity: 0; width: 16px; height: 16px; transition: all 0.3s;
@@ -96,7 +90,7 @@
 .arrow-icon svg { width: 16px; height: 16px; stroke-width: 3px; }
 .rotated { transform: rotate(180deg); }
 
-/* Contenitore dei sottomenu - animazione d'entrata */
+
 .sub-menu-container {
   display: none; flex-direction: column; gap: 4px; margin-top: 5px;
   animation: slideDown 0.3s ease-out forwards;
@@ -107,7 +101,7 @@
 
 @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Voci specifiche del sottomenu */
+
 .sub-item {
   height: 40px;
   padding-left: 54px;
@@ -128,5 +122,5 @@
 .sub-text { opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
 .sidebar:hover .sub-text { opacity: 1; transition-delay: 0.1s; }
 
-/* Separatore tra menu e sezione back */
+
 .menu-divider { height: 1px; background-color: rgba(255, 255, 255, 0.15); margin: 10px 0; width: 100%; }

@@ -14,7 +14,6 @@ public class InvestmentController {
   @Autowired
   private InvestmentService investmentService;
 
-  // ✅ MODIFICATO: Da "/buy" a "/trade" per gestire anche le vendite
   @PostMapping("/trade")
   public ResponseEntity<?> trade(@RequestBody TradeRequestDTO request) {
     try {
@@ -27,11 +26,9 @@ public class InvestmentController {
 
       return ResponseEntity.ok("{\"message\": \"Operazione eseguita con successo!\"}");
     } catch (RuntimeException e) {
-      // STAMPA L'ERRORE NEL TERMINALE
       System.err.println("❌ ERRORE TRADE: " + e.getMessage());
       e.printStackTrace();
 
-      // RESTITUISCE IL MESSAGGIO AL FRONTEND
       return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
     }
   }

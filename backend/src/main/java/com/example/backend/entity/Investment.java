@@ -24,7 +24,6 @@ public class Investment {
   // Ultima data di acquisto/aggiornamento
   private LocalDate lastUpdateDate;
 
-  // --- CAMBIAMENTO: Collegato al Portfolio, non all'User ---
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "portfolio_id")
   @JsonIgnore // Evita loop infiniti nel JSON
@@ -33,7 +32,6 @@ public class Investment {
   // Costruttore vuoto JPA
   public Investment() {}
 
-  // Costruttore di comodità
   public Investment(Portfolio portfolio, String symbol, String name) {
     this.portfolio = portfolio;
     this.symbol = symbol;

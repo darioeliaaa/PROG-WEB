@@ -3,22 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Wallet } from '../models/wallet.model';
 
-/**
- * Servizio per la gestione delle operazioni relative ai Wallet.
- * Gestisce le chiamate API verso il backend Spring Boot.
- */
+
 @Injectable({ providedIn: 'root' })
 export class WalletService {
-  // URL base per gli endpoint dei wallet
   private apiUrl = 'http://localhost:8080/api/wallets';
 
-  // Utilizzo della funzione inject per l'iniezione di HttpClient (pattern moderno Angular)
   private http = inject(HttpClient);
 
-  /**
-   * Genera gli header HTTP includendo il token di autenticazione JWT.
-   * Recupera il token dal localStorage.
-   */
+
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -84,9 +76,6 @@ export class WalletService {
     );
   }
 
-  /**
-   * Permette a un utente di unirsi a un wallet tramite ID (senza codice).
-   */
   joinWallet(walletId: number, userId: number): Observable<Wallet> {
     return this.http.post<Wallet>(`${this.apiUrl}/${walletId}/join?userId=${userId}`, {});
   }
@@ -105,9 +94,6 @@ export class WalletService {
     return this.http.delete(`${this.apiUrl}/${walletId}?adminId=${adminId}`);
   }
 
-  /**
-   * Invia un comando per attivare/aprire il wallet per un utente.
-   */
   openWallet(walletId: number, userId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${walletId}/open?userId=${userId}`, {});
   }
@@ -124,13 +110,12 @@ export class WalletService {
 
   /**
    * Trasferisce la proprietà (ruolo admin) di un wallet a un altro utente.
-   * Utilizza HttpParams (tramite l'oggetto params) per una gestione pulita della query string.
    */
   transferOwnership(walletId: number, currentAdminId: number, newAdminId: number): Observable<any> {
     const url = `${this.apiUrl}/${walletId}/transfer-ownership`;
 
     return this.http.put(url, {}, {
-      headers: this.getHeaders(), // Inclusione degli header di autenticazione
+      headers: this.getHeaders(), 
       params: {
         currentAdminId: currentAdminId.toString(),
         newAdminId: newAdminId.toString()
