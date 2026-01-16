@@ -45,7 +45,7 @@ public class AssetQuoteDTO {
     this.currency = currency;
   }
 
-  // --- GETTER E SETTER (Generali tutti, ecco i principali nuovi) ---
+  // --- GETTER E SETTER ---
 
   public String getSymbol() { return symbol; }
   public void setSymbol(String symbol) { this.symbol = symbol; }

@@ -22,7 +22,6 @@ public class TestController {
     return "Backend Moneymind Funzionante! 🚀";
   }
 
-  // 🔥 RIPARA IL SALDO: Clicca questo link per forzare i soldi nel wallet
   // Usa: http://localhost:8080/fix-money?userId=1&amount=50000
   @GetMapping("/fix-money")
   public String fixMoney(@RequestParam Long userId, @RequestParam int amount) {

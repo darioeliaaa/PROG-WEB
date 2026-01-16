@@ -41,7 +41,6 @@ public class UserController {
     }
 
     try {
-      // Nota: newUser qui contiene già il resetToken generato dal Service
       User newUser = userService.registerUser(user);
       return ResponseEntity.ok(newUser);
     } catch (RuntimeException e) {

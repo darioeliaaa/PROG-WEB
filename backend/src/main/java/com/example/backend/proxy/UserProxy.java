@@ -26,18 +26,15 @@ public class UserProxy extends User {
     this.setTelefono(userBase.getTelefono());
     this.setIndirizzo(userBase.getIndirizzo());
 
-    // Copiamo le impostazioni
     this.setLanguage(userBase.getLanguage());
     this.setCurrency(userBase.getCurrency());
     this.setPrivacyMode(userBase.isPrivacyMode());
     this.setBudgetAlerts(userBase.isBudgetAlerts());
 
-    // ✅ FIX IMPORTANTE: Copiamo anche il Reset Token!
     this.setResetToken(userBase.getResetToken());
 
     this.transactionRepository = repo;
 
-    // Logica Lazy Loading transazioni
     super.setTransactions(null);
   }
 

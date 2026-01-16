@@ -21,7 +21,7 @@ public class InvestmentService {
   @Autowired private TransactionRepository transactionRepository;
   @Autowired private UserRepository userRepository;
 
-  // ✅ 1. METODO PER CALCOLARE IL SALDO REALE DAI MOVIMENTI
+  // METODO PER CALCOLARE IL SALDO REALE DAI MOVIMENTI
   // Somma tutte le ENTRATE e sottrae tutte le USCITE
   public BigDecimal getRealBalance(Long walletId) {
     List<Transaction> transactions = transactionRepository.findByWalletId(walletId);
@@ -37,7 +37,7 @@ public class InvestmentService {
     return balance;
   }
 
-  // ✅ 2. ESEGUE LA TRANSAZIONE (BUY o SELL)
+  // ESEGUE LA TRANSAZIONE (BUY o SELL)
   @Transactional
   public void executeTrade(TradeRequestDTO request) {
     // Recuperi base
@@ -66,7 +66,7 @@ public class InvestmentService {
     double costDouble = request.getQuantity() * request.getPriceAtTransaction();
     BigDecimal totalCost = BigDecimal.valueOf(costDouble);
 
-    // 1. CALCOLO IL SALDO REALE (Non uso più monthlyBudget)
+    // 1. CALCOLO IL SALDO REALE
     BigDecimal currentBalance = getRealBalance(wallet.getId());
 
     // 2. CONTROLLO FONDI
@@ -100,7 +100,6 @@ public class InvestmentService {
     portfolioRepository.save(portfolio);
 
     // 5. REGISTRO LA TRANSAZIONE (USCITA)
-    // Non tocco wallet.setMonthlyBudget, salvo solo la transazione!
     Transaction t = new Transaction();
     t.setUser(user);
     t.setWallet(wallet);
