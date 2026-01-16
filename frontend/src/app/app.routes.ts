@@ -10,7 +10,6 @@ import { MyPortfolioComponent } from './features/portfolio/my-portfolio/my-portf
 import { StockChart } from './features/market/stock-chart/stock-chart';
 import { SettingsComponent } from './features/settings/settings';
 import { WalletComponent } from './features/Wallet/wallet';
-import {NotifichePage} from './shared/notifiche/notifiche';
 
 import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
 import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
@@ -31,7 +30,7 @@ export const routes: Routes = [
     path: 'market',
     component: MarketHomeComponent
   },
-  { path: 'notifiche', component: NotifichePage },
+
   {
     path: 'market/azioni',
     component: AssetListComponent,
