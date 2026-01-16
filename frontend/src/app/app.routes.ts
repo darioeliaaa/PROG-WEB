@@ -23,7 +23,7 @@ export const routes: Routes = [
   // Dashboard Generale
   { path: 'dashboard', component: Dashboard },
 
-  // Dashboard specifica del Wallet (quella su cui stiamo lavorando)
+  // Dashboard specifica del Wallet
   { path: 'dashboardWallet/:id', component: DashboardWallet },
 
   // Market Routes
