@@ -18,7 +18,6 @@ public class Portfolio {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  // Campo necessario per il PortfolioProxy (costruttore)
   private String name;
 
   // Relazione con Utente (Padre)
@@ -32,11 +31,10 @@ public class Portfolio {
   // Totale investito
   private double totalInvested = 0.0;
 
-  // --- RELAZIONE INVESTIMENTI (IL CUORE DEL PROXY) ---
-  // 1. fetch = FetchType.LAZY: Requisito esame.
-  // 2. NESSUN @JsonIgnore: Così il JSON prova a leggerla e attiva il Proxy.
-  // 3. @ToString.Exclude: FONDAMENTALE. Impedisce che un semplice System.out.println(portfolio)
-  //    faccia scattare il proxy nel momento sbagliato.
+  // --- RELAZIONE INVESTIMENTI  ---
+  // NESSUN @JsonIgnore: Così il JSON prova a leggerla e attiva il Proxy.
+  // @ToString.Exclude: FONDAMENTALE. Impedisce che un semplice System.out.println(portfolio)
+  // faccia scattare il proxy nel momento sbagliato.
   @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude

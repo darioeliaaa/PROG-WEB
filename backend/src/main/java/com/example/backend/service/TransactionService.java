@@ -28,7 +28,7 @@ public class TransactionService {
   // 1. SALVATAGGIO
   @Transactional
   public Transaction saveTransaction(Long userId, Long walletId, Transaction transaction) {
-    // Carichiamo l'utente REALE dal DB (aggirando eventuali proxy in memoria)
+    // Carichiamo l'utente REALE dal DB
     User user = userRepository.findById(userId)
       .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 

@@ -10,7 +10,6 @@ public class PortfolioOverviewDTO {
   private double totalProfit;
   private double totalProfitPercent;
 
-  // ✅ ECCO IL CAMPO CHE MANCAVA!
   private double availableCash;
 
   private List<AssetPerformanceDTO> assets;

@@ -30,7 +30,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
   @Query(value = "DELETE FROM user_wallets WHERE wallet_id = :walletId", nativeQuery = true)
   void detachAllMembers(@Param("walletId") Long walletId);
 
-  // --- ✅ NUOVO METODO: Aggiornamento Forzato Admin ---
   // Scrive direttamente nel DB saltando i controlli di cache JPA
   @Modifying
   @Query("UPDATE Wallet w SET w.admin = :newAdmin WHERE w.id = :walletId")
