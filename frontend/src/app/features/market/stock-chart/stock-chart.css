@@ -297,3 +297,62 @@ input[type=number] { -moz-appearance: textfield; }
 /* Animazioni */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(40px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+
+/* =========================================
+   6. LOGIN CARD (REPLICA STILE ASSET LIST / DASHBOARD)
+   ========================================= */
+.login-prompt-card.stylish-lock-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 32px;
+  padding: 45px 35px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(100, 116, 139, 0.15);
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Icona X di chiusura */
+.close-icon-btn {
+  position: absolute; top: 20px; right: 20px;
+  background: transparent; border: none; cursor: pointer;
+  color: #94a3b8; padding: 8px; border-radius: 50%;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.close-icon-btn:hover { background-color: #f1f5f9; color: #ef4444; }
+.close-icon-btn svg { width: 22px; height: 22px; }
+
+/* Icona Scudo con Gradiente */
+.lock-icon-circle {
+  width: 84px; height: 84px;
+  background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 25px rgba(115, 115, 243, 0.25);
+  color: white;
+}
+.lock-icon-circle svg { width: 38px; height: 38px; stroke-width: 2.5px; }
+
+/* Tipografia Card Login */
+.stylish-lock-card h3 {
+  font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 800;
+  color: #1e293b; margin: 0 0 12px 0; letter-spacing: -0.5px;
+}
+.stylish-lock-card p {
+  font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #64748b;
+  line-height: 1.6; margin: 0 0 35px 0; padding: 0 5px;
+}
+
+/* Bottone Accedi (Gradiente) */
+.btn-auth-lock {
+  background: linear-gradient(135deg, #8E8EFA 0%, #7373f3 100%);
+  color: white; border: none; padding: 16px 0; width: 100%; border-radius: 16px;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(115, 115, 243, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.btn-auth-lock:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(115, 115, 243, 0.4); }

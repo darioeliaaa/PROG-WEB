@@ -69,34 +69,40 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
   }
 
   // Genera lo storico mensile degli ultimi 6 mesi calcolando le altezze relative per il mini-chart
+  // ... dentro investment-summary.ts
+
+  // ... dentro investment-summary-wallet.ts
+
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
     const trendTemp = [];
+    const dataRiferimento = new Date(this.currentDate);
     let maxValoreAssoluto = 0;
 
-    const oggi = new Date();
-
     for (let i = mesi - 1; i >= 0; i--) {
-      const dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - i, 1);
-      const mese = dataTarget.getMonth();
-      const anno = dataTarget.getFullYear();
+      // Ultimo istante del mese analizzato
+      const dataLimite = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i + 1, 0, 23, 59, 59);
+      const dataEtichetta = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i, 1);
 
-      const transazioniMese = this.tutteLeTransazioni.filter(t => {
-        const d = new Date(t.date);
-        return d.getMonth() === mese && d.getFullYear() === anno;
+      // SALDO PROGRESSIVO
+      let saldoAlMomento = 0;
+
+      this.tutteLeTransazioni.forEach(t => {
+        const dataTransazione = new Date(t.date);
+
+        // Somma tutto ciò che è accaduto fino a quel momento
+        if (dataTransazione.getTime() <= dataLimite.getTime()) {
+          const importo = Number(t.amount);
+          if (t.type === 'ENTRATA') saldoAlMomento += importo;
+          if (t.type === 'USCITA') saldoAlMomento -= importo;
+        }
       });
 
-      let saldoMese = 0;
-      transazioniMese.forEach(t => {
-        if(t.type === 'ENTRATA') saldoMese += Number(t.amount);
-        if(t.type === 'USCITA') saldoMese -= Number(t.amount);
-      });
-
-      if (Math.abs(saldoMese) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoMese);
+      if (Math.abs(saldoAlMomento) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoAlMomento);
 
       trendTemp.push({
-        label: dataTarget.toLocaleString('it-IT', { month: 'short' }),
-        value: saldoMese,
+        label: dataEtichetta.toLocaleString('it-IT', { month: 'short' }),
+        value: saldoAlMomento,
         heightPercent: 0,
         isCurrent: i === 0
       });
@@ -107,7 +113,7 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
       if (maxValoreAssoluto > 0) {
         percent = (Math.abs(item.value) / maxValoreAssoluto) * 100;
       }
-      if (item.value !== 0 && percent < 10) percent = 10;
+      if (item.value !== 0 && percent < 5) percent = 5;
 
       return { ...item, heightPercent: percent };
     });

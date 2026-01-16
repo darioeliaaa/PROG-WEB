@@ -70,47 +70,62 @@ export class InvestmentSummary implements OnInit, OnChanges {
   }
 
   // Elabora i saldi mensili dell'ultimo semestre per generare le altezze proporzionali delle barre nel mini-chart
+  // ... dentro investment-summary.ts
+
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
     const trendTemp = [];
-    let maxValoreAssoluto = 0;
 
-    const oggi = new Date();
+    // Usiamo la data selezionata nella dashboard come riferimento
+    const dataRiferimento = new Date(this.currentDate);
     const multiplier = this.userSettings?.currency === 'USD' ? 1.09 : 1;
 
+    // Troviamo il valore massimo per scalare le barre graficamente
+    let maxValoreAssoluto = 0;
+
     for (let i = mesi - 1; i >= 0; i--) {
-      const dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - i, 1);
-      const mese = dataTarget.getMonth();
-      const anno = dataTarget.getFullYear();
+      // 1. Calcoliamo la data "limite" (L'ultimo giorno del mese che stiamo analizzando)
+      // Esempio: se siamo a Maggio e i=1 (Aprile), prendiamo il 30 Aprile alle 23:59:59
+      const dataLimite = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i + 1, 0, 23, 59, 59);
 
-      const transazioniMese = this.tutteLeTransazioni.filter(t => {
-        const d = new Date(t.date);
-        return d.getMonth() === mese && d.getFullYear() === anno;
+      // Per l'etichetta del grafico (es. "Apr")
+      const dataEtichetta = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i, 1);
+
+      // 2. CALCOLO SALDO PROGRESSIVO (CUMULATIVO)
+      // Sommiamo TUTTE le transazioni avvenute PRIMA o DURANTE quella data limite
+      let saldoAlMomento = 0;
+
+      this.tutteLeTransazioni.forEach(t => {
+        const dataTransazione = new Date(t.date);
+
+        // Se la transazione è avvenuta entro la fine di quel mese, la contiamo nel saldo
+        if (dataTransazione.getTime() <= dataLimite.getTime()) {
+          const valoreConvertito = Number(t.amount) * multiplier;
+          if (t.type === 'ENTRATA') saldoAlMomento += valoreConvertito;
+          if (t.type === 'USCITA') saldoAlMomento -= valoreConvertito;
+        }
       });
 
-      let saldoMese = 0;
-      transazioniMese.forEach(t => {
-        const valoreConvertito = Number(t.amount) * multiplier;
-        if(t.type === 'ENTRATA') saldoMese += valoreConvertito;
-        if(t.type === 'USCITA') saldoMese -= valoreConvertito;
-      });
-
-      if (Math.abs(saldoMese) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoMese);
+      // Aggiorniamo il massimo per il calcolo delle barre percentuali
+      if (Math.abs(saldoAlMomento) > maxValoreAssoluto) maxValoreAssoluto = Math.abs(saldoAlMomento);
 
       trendTemp.push({
-        label: dataTarget.toLocaleString('it-IT', { month: 'short' }),
-        value: saldoMese,
+        label: dataEtichetta.toLocaleString('it-IT', { month: 'short' }),
+        value: saldoAlMomento,
         heightPercent: 0,
         isCurrent: i === 0
       });
     }
 
+    // 3. Calcolo altezze barre (Normalizzazione)
     this.trendData = trendTemp.map(item => {
       let percent = 0;
       if (maxValoreAssoluto > 0) {
+        // Usiamo il valore assoluto rispetto al massimo trovato nel periodo
         percent = (Math.abs(item.value) / maxValoreAssoluto) * 100;
       }
-      if (item.value !== 0 && percent < 10) percent = 10;
+      // Assicuriamo una minima visibilità alla barra (es. 5%) se non è zero
+      if (item.value !== 0 && percent < 5) percent = 5;
 
       return { ...item, heightPercent: percent };
     });

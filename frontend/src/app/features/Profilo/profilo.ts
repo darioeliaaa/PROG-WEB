@@ -61,23 +61,22 @@ export class Profilo implements OnInit {
    * Scarica i dati del profilo dal backend.
    * Utilizza l'operatore 'finalize' per spegnere lo stato di caricamento indipendentemente dall'esito.
    */
+  // In profilo.ts
+
   loadUserData() {
     if (!this.userId) return;
 
     this.userService.getUserProfile(this.userId)
       .pipe(finalize(() => {
-        // Nasconde il loader globale della pagina
         this.isLoadingData = false;
         this.cd.detectChanges();
       }))
       .subscribe({
         next: (data) => {
+          // Ora i dati arriveranno popolati correttamente dal Proxy!
           this.userData = data;
 
-          /**
-           * FIX DATA: Formatta la data ricevuta dal database (LocalDateTime/Timestamp)
-           * per renderla compatibile con l'input HTML di tipo 'date' (formato yyyy-MM-dd).
-           */
+          // Mantieni solo il fix per la data
           if (this.userData.dataDiNascita && this.userData.dataDiNascita.includes('T')) {
             this.userData.dataDiNascita = this.userData.dataDiNascita.split('T')[0];
           }

@@ -21,6 +21,11 @@ public class UserProxy extends User {
     this.setUsername(userBase.getUsername());
     this.setWallets(userBase.getWallets());
 
+    this.setSesso(userBase.getSesso());
+    this.setDataDiNascita(userBase.getDataDiNascita());
+    this.setTelefono(userBase.getTelefono());
+    this.setIndirizzo(userBase.getIndirizzo());
+
     // Copiamo le impostazioni
     this.setLanguage(userBase.getLanguage());
     this.setCurrency(userBase.getCurrency());

@@ -432,4 +432,7 @@ export class AssetListComponent implements OnInit {
     return nomePulito.replace('USDT', '').replace('USD', '').replace('EUR', '');
 
   }
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

@@ -275,4 +275,7 @@ export class StockChart implements OnInit, AfterViewInit {
       });
     }
   }
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
 }
