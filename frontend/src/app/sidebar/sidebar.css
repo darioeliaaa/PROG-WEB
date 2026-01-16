@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Struttura base: il justify-content: space-between tiene il footer sempre in basso */
 .sidebar {
   width: 80px;
   height: 100vh;
@@ -9,13 +8,11 @@
   justify-content: space-between;
   padding: 24px 12px;
 
-  /* Gradiente silk: non cambiare i colori per mantenere coerenza col brand */
   background: linear-gradient(180deg, #8E8EFA 0%, #7D7DFA 100%);
   color: #ffffff;
   box-shadow: 4px 0 30px rgba(125, 125, 250, 0.2);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 
-  /* Animazione fluida per l'apertura */
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
   white-space: nowrap;
@@ -23,26 +20,22 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* Espansione sidebar: occhio al padding che aumenta per distanziare i testi */
 .sidebar:hover {
   width: 260px;
   padding: 24px 20px;
 }
 
-/* Parte alta della sidebar */
 .sidebar-top {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* Parte bassa (es. logout o impostazioni) */
 .sidebar-footer {
   width: 100%;
   margin-top: 20px;
 }
 
-/* Sezione brand e logo */
 .logo-section {
   display: flex;
   align-items: center;
@@ -87,7 +80,6 @@
   transition-delay: 0.1s;
 }
 
-/* Lista link di navigazione */
 .nav-menu {
   display: flex;
   flex-direction: column;
@@ -113,7 +105,6 @@
   color: white;
 }
 
-/* Effetto vetro per la voce selezionata */
 .nav-item.active {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
@@ -139,7 +130,6 @@
   stroke-width: 2px;
 }
 
-/* Testo che appare solo quando la sidebar è larga */
 .link-text {
   font-size: 0.95rem;
   opacity: 0;
