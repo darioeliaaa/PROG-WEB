@@ -21,31 +21,28 @@ public class UserProxy extends User {
     this.setUsername(userBase.getUsername());
     this.setWallets(userBase.getWallets());
 
-    // Copiamo le impostazioni per evitare che tornino null
+    // Copiamo le impostazioni
     this.setLanguage(userBase.getLanguage());
     this.setCurrency(userBase.getCurrency());
     this.setPrivacyMode(userBase.isPrivacyMode());
     this.setBudgetAlerts(userBase.isBudgetAlerts());
 
+    // ✅ FIX IMPORTANTE: Copiamo anche il Reset Token!
+    this.setResetToken(userBase.getResetToken());
+
     this.transactionRepository = repo;
 
-    // 🔥 CORREZIONE FONDAMENTALE 🔥
-    // Distruggiamo la ArrayList vuota creata dall'Entity User.
-    // Settando a NULL, abilitiamo il Lazy Loading manuale qui sotto.
+    // Logica Lazy Loading transazioni
     super.setTransactions(null);
   }
 
   @Override
   public List<Transaction> getTransactions() {
-    // Ora entra qui perché l'abbiamo settato a null nel costruttore
     if (super.getTransactions() == null) {
-
-      System.out.println("--- 🛡️ PROXY USER ATTIVATO: Sto recuperando lo storico transazioni per Utente ID: " + this.getId() + " ---");
-
+      System.out.println("--- 🛡️ PROXY USER ATTIVATO: Recupero storico transazioni ID: " + this.getId() + " ---");
       List<Transaction> realTransactions = transactionRepository.findByUserId(this.getId());
       super.setTransactions(realTransactions);
     }
-
     return super.getTransactions();
   }
 }

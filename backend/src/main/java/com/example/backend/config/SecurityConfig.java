@@ -39,7 +39,7 @@ public class SecurityConfig {
     return http.build();
   }
 
-  // ✅ CONFIGURAZIONE CORS GLOBALE E ROBUSTA
+  // CONFIGURAZIONE CORS GLOBALE E ROBUSTA
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
