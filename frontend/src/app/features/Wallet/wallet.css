@@ -1,5 +1,7 @@
+/* IMPORT FONT: Caricamento del font Plus Jakarta Sans per un'estetica moderna e leggibile */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
+/* CONTAINER PRINCIPALE: Centratura e spaziatura del contenuto */
 .main-container {
   max-width: 900px;
   margin: 0 auto;
@@ -9,6 +11,7 @@
 }
 
 /* --- HEADER --- */
+/* Disposizione flessibile per titolo e pulsanti di azione */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -20,6 +23,7 @@
 
 .header-buttons { display: flex; gap: 12px; }
 
+/* STILE BOTTONI: Transizioni fluide ed effetti di elevazione (shadow) */
 .btn-primary, .btn-secondary {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;
@@ -31,6 +35,7 @@
 .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; }
 
 /* --- INPUT PANEL --- */
+/* Pannello per creazione/join con animazione a comparsa (slideDown) */
 .action-panel {
   background: white; padding: 20px; border-radius: 16px; margin-bottom: 30px;
   border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -40,6 +45,7 @@
 .input-wrapper input {
   flex: 1; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; transition: border 0.2s;
 }
+/* Focus state: evidenzia il campo attivo con il colore primario */
 .input-wrapper input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 .btn-confirm { background: #0f172a; color: white; border: none; padding: 0 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .uppercase { text-transform: uppercase; }
@@ -47,8 +53,10 @@
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* --- WALLET LIST --- */
+/* Lista verticale di card wallet */
 .wallet-list { display: flex; flex-direction: column; gap: 20px; }
 
+/* CARD WALLET: Layout orizzontale con altezza fissa per pulizia visiva */
 .wallet-card {
   background: white;
   border-radius: 16px;
@@ -59,7 +67,7 @@
   border: 1px solid #f1f5f9;
   cursor: pointer;
   transition: all 0.2s ease;
-  height: 110px; /* Altezza consistente */
+  height: 110px;
 }
 
 .wallet-card:hover {
@@ -67,17 +75,17 @@
   box-shadow: 0 12px 24px -6px rgba(0,0,0,0.08);
 }
 
-/* STRISCIA LATERALE */
+/* STRISCIA LATERALE: Codifica a colori per distinguere Admin da Member */
 .color-stripe { width: 6px; height: 100%; flex-shrink: 0; }
-.theme-admin .color-stripe { background: #4f46e5; } /* Viola Admin */
-.theme-member .color-stripe { background: #10b981; } /* Verde Member */
+.theme-admin .color-stripe { background: #4f46e5; } /* Indaco per Admin */
+.theme-member .color-stripe { background: #10b981; } /* Smeraldo per Member */
 
-/* CONTENUTO */
+/* CONTENUTO CARD */
 .card-content {
   flex: 1; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
 }
 
-/* SX: ICONA + TESTI */
+/* SX: ICONA + TESTI - Utilizzo di gradienti per icone premium */
 .card-header-row { display: flex; align-items: center; gap: 20px; min-width: 40%; }
 
 .wallet-icon-box {
@@ -91,28 +99,31 @@
 
 .wallet-texts h2 { margin: 4px 0 0 0; font-size: 1.25rem; font-weight: 700; color: #1e293b; }
 
+/* Badge per il ruolo all'interno della card */
 .badge {
   font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;
 }
 .theme-admin .badge { color: #4f46e5; background: #eef2ff; }
 .theme-member .badge { color: #059669; background: #ecfdf5; }
 
-/* CENTRO: STATISTICHE */
+/* CENTRO: STATISTICHE - Visualizzazione di budget e membri */
 .card-stats-row { display: flex; gap: 40px; }
 .stat-item { display: flex; flex-direction: column; }
 .stat-item .label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
 .stat-item .value { font-size: 1.1rem; font-weight: 600; color: #334155; margin-top: 2px; }
 .value-with-icon { display: flex; align-items: center; gap: 6px; color: #64748b; font-weight: 600; }
 
-/* DX: AZIONI */
+/* DX: AZIONI - Sezione dedicata ai pulsanti di uscita/eliminazione */
 .card-actions {
   display: flex; align-items: center; gap: 15px; padding-right: 20px;
   border-left: 1px solid #f1f5f9; padding-left: 20px; margin-left: 10px;
 }
 
+/* Micro-interazione sulla freccia al passaggio del mouse sulla card */
 .arrow-box { color: #cbd5e1; transition: transform 0.2s; }
 .wallet-card:hover .arrow-box { color: #4f46e5; transform: translateX(4px); }
 
+/* Pulsanti contestuali (Leave/Delete) visibili solo in hover */
 .btn-leave {
   background: transparent; border: none; color: #ef4444; cursor: pointer;
   padding: 8px; border-radius: 8px; opacity: 0; transition: all 0.2s;
@@ -120,19 +131,20 @@
 .btn-leave:hover { background: #fee2e2; }
 .wallet-card:hover .btn-leave { opacity: 1; }
 
-/* EMPTY STATE */
+/* EMPTY STATE: Visualizzazione quando non ci sono wallet disponibili */
 .empty-state { text-align: center; padding: 50px; background: white; border-radius: 16px; border: 1px dashed #cbd5e1; }
 .empty-icon-box { margin-bottom: 15px; }
 .empty-state h3 { margin: 0; color: #334155; }
 .empty-state p { color: #94a3b8; margin-top: 5px; }
 
-/* OVERLAY LOGIN */
+/* OVERLAY LOGIN: Effetto blur e blocco interazioni per utenti non autenticati */
 .locked-view-container { position: relative; min-height: 100vh; }
 .blurred-content { filter: blur(8px); opacity: 0.5; pointer-events: none; }
 .auth-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 80vh; z-index: 50;
   display: flex; justify-content: center; align-items: center;
 }
+/* Glassmorphism per il box di autenticazione */
 .glass-box {
   background: rgba(255,255,255,0.95); padding: 40px; border-radius: 24px; text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.12); border: 1px solid white; width: 320px;
@@ -144,7 +156,7 @@
   margin-top: 15px; background: #0f172a; color: white; padding: 12px 0; width: 100%; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;
 }
 
-/* RESPONSIVE */
+/* RESPONSIVE: Adattamento del layout per schermi mobili */
 @media (max-width: 768px) {
   .wallet-card { height: auto; flex-direction: column; }
   .color-stripe { width: 100%; height: 6px; }
@@ -156,19 +168,19 @@
   }
   .btn-leave { opacity: 1; color: #ef4444; }
 }
-/* Rendi le icone non cliccabili, così il click va dritto al bottone */
+
+/* Miglioramento della cliccabilità e posizionamento dei pulsanti di gestione */
 .btn-leave svg,
 .btn-primary svg,
 .btn-secondary svg {
   pointer-events: none;
 }
 
-/* Assicuriamoci che il bottone esci sia sopra a tutto */
 .btn-leave {
   position: relative;
   z-index: 10;
 }
-/* In wallet.css */
+
 .btn-delete {
   background: transparent; border: none; cursor: pointer;
   padding: 8px; border-radius: 8px; opacity: 0; transition: all 0.2s;
@@ -177,5 +189,4 @@
 .btn-delete:hover { background: #fee2e2; }
 .btn-delete svg { pointer-events: none; }
 
-/* Mostra i bottoni in hover sulla card */
 .wallet-card:hover .btn-delete { opacity: 1; }
