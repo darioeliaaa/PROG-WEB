@@ -1,16 +1,22 @@
+/* IMPORTAZIONE FONT: Utilizzo di 'Jost', un font geometrico sans-serif molto leggibile e professionale */
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
 
 /* ===== STRUTTURA FLAT & PULITA ===== */
+:host {
+  display: block;
+}
+
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: #f8fafc; /* Grigio chiarissimo per defaticare la vista */
   font-family: 'Jost', sans-serif;
-  padding: 40px 10%;
+  padding: 40px 10%; /* Padding generoso per creare respiro nel layout */
   box-sizing: border-box;
 }
 
 /* ===== HEADER CON AVATAR ===== */
+/* Layout della testata che separa le informazioni utente dai pulsanti di navigazione */
 .page-header {
   display: flex;
   align-items: center;
@@ -26,6 +32,7 @@
   gap: 20px;
 }
 
+/* Cerchio avatar con gradiente lilla, coordinato con il brand dell'app */
 .avatar-circle {
   width: 64px;
   height: 64px;
@@ -54,6 +61,7 @@
   font-size: 0.95rem;
 }
 
+/* Bottone di ritorno con stile "Outline" minimalista */
 .back-btn {
   background: white;
   border: 1px solid #e2e8f0;
@@ -75,7 +83,7 @@
 /* ===== GRIGLIA FORM ===== */
 .form-section {
   max-width: 900px;
-  /* Animazione di entrata fluida */
+  /* Animazione di entrata fluida verso l'alto */
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -84,6 +92,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Utilizzo di CSS Grid per allineare i campi del modulo in due colonne */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -91,6 +100,7 @@
   row-gap: 30px;
 }
 
+/* Classe per estendere un input su entrambe le colonne (es. nome wallet o azioni globali) */
 .full-width {
   grid-column: span 2;
 }
@@ -101,6 +111,7 @@
   flex-direction: column;
 }
 
+/* Etichette degli input: piccole, in maiuscolo e distanziate (stile Fintech) */
 .form-group label {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -110,7 +121,7 @@
   margin-bottom: 8px;
 }
 
-/* Helper text (piccole scritte sotto gli input) */
+/* Testo di aiuto sotto i campi per guidare l'utente */
 .form-group small {
   margin-top: 6px;
   color: #94a3b8;
@@ -132,10 +143,7 @@
   box-sizing: border-box;
 }
 
-.form-group input::placeholder {
-  color: #94a3b8;
-}
-
+/* Effetto Focus: aggiunge un alone lilla (ring) per evidenziare il campo attivo */
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
@@ -144,7 +152,7 @@
   background-color: #ffffff;
 }
 
-/* ===== LISTA MEMBRI (Nuovo Stile) ===== */
+/* ===== LISTA MEMBRI (Layout orizzontale per ogni riga) ===== */
 .members-list {
   list-style: none;
   padding: 0;
@@ -178,13 +186,8 @@
   align-items: center;
   gap: 8px;
 }
-.member-name::before {
-  content: '👤'; /* Piccola icona utente decorativa */
-  font-size: 0.9rem;
-  opacity: 0.6;
-}
 
-/* Bottone Rimuovi Piccolo */
+/* Bottone per rimuovere un utente dal wallet condiviso */
 .btn-remove-small {
   background-color: #fee2e2;
   color: #991b1b;
@@ -199,7 +202,6 @@
 
 .btn-remove-small:hover {
   background-color: #fecaca;
-  color: #7f1d1d;
 }
 
 /* ===== BOTTONE SALVA PRINCIPALE ===== */
@@ -207,14 +209,14 @@
   background-color: #7D7DFA;
   color: white;
   border: none;
-  padding: 14px 30px; /* Più grande */
+  padding: 14px 30px;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 4px 6px -1px rgba(125, 125, 250, 0.3);
-  width: 100%; /* Full width per impatto */
+  width: 100%;
   margin-top: 10px;
 }
 
@@ -224,7 +226,8 @@
   box-shadow: 0 10px 15px -3px rgba(125, 125, 250, 0.4);
 }
 
-/* ===== DANGER ZONE (Elimina Wallet) ===== */
+/* ===== DANGER ZONE (Sezione critica per eliminazione) ===== */
+/* Stile visivo che comunica cautela attraverso l'uso del colore rosso e del bordo tratteggiato */
 .danger-zone {
   margin-top: 20px;
   padding: 20px;
@@ -235,7 +238,7 @@
 }
 
 .btn-danger {
-  background-color: #ef4444; /* Rosso Pieno */
+  background-color: #ef4444;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -245,15 +248,10 @@
   cursor: pointer;
   transition: background 0.2s;
   width: 100%;
-  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
-}
-
-.btn-danger:hover {
-  background-color: #dc2626;
-  box-shadow: 0 6px 10px -2px rgba(239, 68, 68, 0.4);
 }
 
 /* ===== FEEDBACK MESSAGES ===== */
+/* Box per comunicare l'esito delle operazioni (Successo/Errore) */
 .feedback-box {
   padding: 15px;
   margin-bottom: 30px;
@@ -267,11 +265,10 @@
 .success { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
 .error { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
 
-/* Responsive */
+/* RESPONSIVE: Ottimizzazione per dispositivi mobili (Stacking dei campi) */
 @media (max-width: 768px) {
   .dashboard-container { padding: 20px; }
-  .form-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; } /* I campi passano da due colonne a una riga singola */
   .full-width { grid-column: span 1; }
   .header-left { width: 100%; }
-  .back-btn { width: 100%; text-align: center; }
 }

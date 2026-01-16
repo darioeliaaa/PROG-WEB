@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. Importa ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ✅ 1. ChangeDetectorRef gestisce aggiornamenti UI manuali
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,33 +15,45 @@ import { User } from '../../models/user.model';
   styleUrls: ['./GestioneWallet.css']
 })
 export class GestioneWallet implements OnInit {
+  // Array dei wallet in cui l'utente ha permessi amministrativi
   adminWallets: any[] = [];
+  // Il wallet correntemente selezionato nel dropdown per la modifica
   selectedWallet: any | null = null;
+  // Variabili per il feedback utente (messaggi di successo o errore)
   message: string = '';
   isError: boolean = false;
+  // Dati dell'utente amministratore
   currentUserId!: number;
   currentUserName: string = '';
+  // Stato di caricamento per mostrare eventuali spinner
   loading: boolean = false;
 
   constructor(
     private walletService: WalletService,
     private router: Router,
     private UserService: UserService,
-    private cdr: ChangeDetectorRef // ✅ 2. Inietta il rilevatore di modifiche
+    private cdr: ChangeDetectorRef // ✅ 2. Fondamentale per aggiornare la vista in operazioni asincrone complesse
   ) {}
 
+  /**
+   * Ciclo di vita: Avvia la procedura di recupero dell'identità utente.
+   */
   ngOnInit(): void {
     this.initUser();
   }
 
-  // ✅ 3. Logica di inizializzazione "Smart" (con retry)
+  /**
+   * ✅ 3. Logica di inizializzazione "Smart":
+   * Risolve il problema del refresh della pagina dove il servizio potrebbe non aver ancora
+   * caricato l'ID dal localStorage/sessione. Se fallisce, riprova dopo mezzo secondo.
+   */
   initUser() {
     const userId = this.UserService.getCurrentUserId();
 
     if (userId) {
       this.startPage(userId);
     } else {
-      // Se l'ID non c'è subito, aspettiamo 500ms e riproviamo (risolve il problema del refresh)
+      // Meccanismo di retry per garantire la robustezza al ricaricamento del browser
       setTimeout(() => {
         const retryId = this.UserService.getCurrentUserId();
         if (retryId) {
@@ -55,46 +67,55 @@ export class GestioneWallet implements OnInit {
     }
   }
 
+  /**
+   * Configura la pagina recuperando il profilo utente e la lista dei wallet.
+   */
   startPage(userId: number) {
     this.currentUserId = userId;
 
-    // Carica nome utente
+    // Recupera il profilo per visualizzare il nome dell'admin nell'intestazione
     this.UserService.getUserProfile(this.currentUserId).subscribe(user => {
       this.currentUserName = user.nome || user.cognome || 'Admin';
     });
 
-    // Carica i wallet
     this.loadAdminWallets();
   }
 
+  /**
+   * Carica i wallet dal server e applica filtri stringenti:
+   * - L'utente deve essere l'admin.
+   * - Non deve essere un wallet personale (la gestione è per i condivisi).
+   */
   loadAdminWallets() {
     this.loading = true;
     this.walletService.getUserWallets(this.currentUserId).subscribe({
       next: (wallets) => {
-        // Filtra: Solo Admin, Solo ID Corrente, NO Wallet Personali
+        // Filtro logico lato client per isolare i wallet amministrabili
         this.adminWallets = wallets.filter(w =>
           w.admin &&
           w.admin.id === this.currentUserId &&
           !w.personal
         );
 
-        // Se la lista è vuota dopo il filtro, pulisci la selezione
         if (this.adminWallets.length === 0) {
           this.selectedWallet = null;
         }
 
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ 4. Forza l'aggiornamento grafico immediato
+        this.cdr.detectChanges(); // ✅ 4. Notifica Angular che i dati filtrati sono pronti per il rendering
       },
       error: () => {
         this.isError = true;
         this.message = "Errore caricamento wallet";
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ Aggiorna anche in caso di errore
+        this.cdr.detectChanges();
       }
     });
   }
 
+  /**
+   * Gestisce il cambio di selezione nel menu a tendina.
+   */
   selectWallet(event: Event) {
     const selectEl = event.target as HTMLSelectElement;
     const index = Number(selectEl.value);
@@ -105,10 +126,12 @@ export class GestioneWallet implements OnInit {
     }
   }
 
+  /**
+   * Salva le modifiche ai limiti finanziari (budget e tetto trasferimenti).
+   */
   saveSettings(): void {
     if (!this.selectedWallet) return;
 
-    // Prendiamo i valori (se vuoti manda 0)
     const budget = this.selectedWallet.monthlyBudget || 0;
     const limit = this.selectedWallet.maxTransferLimit || 0;
 
@@ -121,7 +144,7 @@ export class GestioneWallet implements OnInit {
       next: () => {
         this.message = 'Impostazioni aggiornate con successo!';
         this.isError = false;
-        this.cdr.detectChanges(); // Aggiorna feedback
+        this.cdr.detectChanges(); // Mostra il feedback positivo nella UI
       },
       error: (err) => {
         console.error(err);
@@ -132,6 +155,10 @@ export class GestioneWallet implements OnInit {
     });
   }
 
+  /**
+   * Espelle un partecipante dal wallet.
+   * Aggiorna la lista locale istantaneamente per una UX reattiva.
+   */
   removeMember(memberId: number): void {
     if (!this.selectedWallet) return;
     if (!confirm("Vuoi davvero rimuovere questo membro?")) return;
@@ -142,11 +169,11 @@ export class GestioneWallet implements OnInit {
       memberId
     ).subscribe({
       next: () => {
-        // Rimuovi localmente dalla lista
+        // Ottimizzazione locale: rimuove il membro dall'array senza rifare la chiamata GET
         this.selectedWallet.members = this.selectedWallet.members.filter((m: { id: number; }) => m.id !== memberId);
         this.message = 'Membro rimosso!';
         this.isError = false;
-        this.cdr.detectChanges(); // Forza aggiornamento lista
+        this.cdr.detectChanges();
       },
       error: () => {
         this.message = 'Errore durante la rimozione del membro.';
@@ -156,6 +183,9 @@ export class GestioneWallet implements OnInit {
     });
   }
 
+  /**
+   * Elimina l'intero wallet dal database. Operazione irreversibile.
+   */
   deleteWallet(): void {
     if (!this.selectedWallet) return;
     if (!confirm("ATTENZIONE: il wallet sarà eliminato definitivamente. Continuare?")) return;
@@ -168,7 +198,7 @@ export class GestioneWallet implements OnInit {
         this.message = 'Wallet eliminato!';
         this.isError = false;
         this.selectedWallet = null;
-        this.loadAdminWallets(); // Ricarica la lista per mostrare la schermata vuota
+        this.loadAdminWallets(); // Ricarica la lista per riflettere l'eliminazione
       },
       error: () => {
         this.message = 'Errore durante l\'eliminazione del wallet.';
@@ -178,6 +208,9 @@ export class GestioneWallet implements OnInit {
     });
   }
 
+  /**
+   * Navigazione programmatica per tornare alla vista principale.
+   */
   backToDashboard() {
     this.router.navigate(['/dashboard']);
   }
