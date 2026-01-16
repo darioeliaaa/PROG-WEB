@@ -1,7 +1,9 @@
-/* IMPORT FONT: Caricamento del font Plus Jakarta Sans per un'estetica moderna e leggibile */
+/* =========================================
+   ===== 1. FONT & BASE =====
+   ========================================= */
+/* IMPORT FONT: Plus Jakarta Sans per un'estetica moderna */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-/* CONTAINER PRINCIPALE: Centratura e spaziatura del contenuto */
 .main-container {
   max-width: 900px;
   margin: 0 auto;
@@ -10,8 +12,9 @@
   color: #1e293b;
 }
 
-/* --- HEADER --- */
-/* Disposizione flessibile per titolo e pulsanti di azione */
+/* =========================================
+   ===== 2. HEADER E BOTTONI =====
+   ========================================= */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -23,7 +26,7 @@
 
 .header-buttons { display: flex; gap: 12px; }
 
-/* STILE BOTTONI: Transizioni fluide ed effetti di elevazione (shadow) */
+/* STILE BOTTONI */
 .btn-primary, .btn-secondary {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;
@@ -34,8 +37,9 @@
 .btn-secondary { background: white; color: #475569; border: 1px solid #e2e8f0; }
 .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; }
 
-/* --- INPUT PANEL --- */
-/* Pannello per creazione/join con animazione a comparsa (slideDown) */
+/* =========================================
+   ===== 3. INPUT PANEL (CREA/JOIN) =====
+   ========================================= */
 .action-panel {
   background: white; padding: 20px; border-radius: 16px; margin-bottom: 30px;
   border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -45,18 +49,17 @@
 .input-wrapper input {
   flex: 1; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; transition: border 0.2s;
 }
-/* Focus state: evidenzia il campo attivo con il colore primario */
 .input-wrapper input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 .btn-confirm { background: #0f172a; color: white; border: none; padding: 0 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 .uppercase { text-transform: uppercase; }
 
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- WALLET LIST --- */
-/* Lista verticale di card wallet */
+/* =========================================
+   ===== 4. WALLET LIST & CARDS =====
+   ========================================= */
 .wallet-list { display: flex; flex-direction: column; gap: 20px; }
 
-/* CARD WALLET: Layout orizzontale con altezza fissa per pulizia visiva */
 .wallet-card {
   background: white;
   border-radius: 16px;
@@ -75,17 +78,17 @@
   box-shadow: 0 12px 24px -6px rgba(0,0,0,0.08);
 }
 
-/* STRISCIA LATERALE: Codifica a colori per distinguere Admin da Member */
+/* STRISCIA LATERALE */
 .color-stripe { width: 6px; height: 100%; flex-shrink: 0; }
-.theme-admin .color-stripe { background: #4f46e5; } /* Indaco per Admin */
-.theme-member .color-stripe { background: #10b981; } /* Smeraldo per Member */
+.theme-admin .color-stripe { background: #4f46e5; }
+.theme-member .color-stripe { background: #10b981; }
 
 /* CONTENUTO CARD */
 .card-content {
   flex: 1; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
 }
 
-/* SX: ICONA + TESTI - Utilizzo di gradienti per icone premium */
+/* SX: ICONA + TESTI */
 .card-header-row { display: flex; align-items: center; gap: 20px; min-width: 40%; }
 
 .wallet-icon-box {
@@ -99,64 +102,53 @@
 
 .wallet-texts h2 { margin: 4px 0 0 0; font-size: 1.25rem; font-weight: 700; color: #1e293b; }
 
-/* Badge per il ruolo all'interno della card */
 .badge {
   font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;
 }
 .theme-admin .badge { color: #4f46e5; background: #eef2ff; }
 .theme-member .badge { color: #059669; background: #ecfdf5; }
 
-/* CENTRO: STATISTICHE - Visualizzazione di budget e membri */
+/* CENTRO: STATISTICHE */
 .card-stats-row { display: flex; gap: 40px; }
 .stat-item { display: flex; flex-direction: column; }
 .stat-item .label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
 .stat-item .value { font-size: 1.1rem; font-weight: 600; color: #334155; margin-top: 2px; }
 .value-with-icon { display: flex; align-items: center; gap: 6px; color: #64748b; font-weight: 600; }
 
-/* DX: AZIONI - Sezione dedicata ai pulsanti di uscita/eliminazione */
+/* DX: AZIONI */
 .card-actions {
   display: flex; align-items: center; gap: 15px; padding-right: 20px;
   border-left: 1px solid #f1f5f9; padding-left: 20px; margin-left: 10px;
 }
 
-/* Micro-interazione sulla freccia al passaggio del mouse sulla card */
 .arrow-box { color: #cbd5e1; transition: transform 0.2s; }
 .wallet-card:hover .arrow-box { color: #4f46e5; transform: translateX(4px); }
 
-/* Pulsanti contestuali (Leave/Delete) visibili solo in hover */
-.btn-leave {
-  background: transparent; border: none; color: #ef4444; cursor: pointer;
+/* Pulsanti contestuali (Leave/Delete) */
+.btn-leave, .btn-delete {
+  background: transparent; border: none; cursor: pointer;
   padding: 8px; border-radius: 8px; opacity: 0; transition: all 0.2s;
+  position: relative; z-index: 10;
 }
-.btn-leave:hover { background: #fee2e2; }
-.wallet-card:hover .btn-leave { opacity: 1; }
+.btn-leave { color: #ef4444; }
+.btn-delete svg { stroke: #ef4444; }
 
-/* EMPTY STATE: Visualizzazione quando non ci sono wallet disponibili */
+.btn-leave:hover, .btn-delete:hover { background: #fee2e2; }
+.wallet-card:hover .btn-leave, .wallet-card:hover .btn-delete { opacity: 1; }
+
+/* Impedire click involontari sulle icone SVG dentro i bottoni */
+.btn-leave svg, .btn-delete svg, .btn-primary svg, .btn-secondary svg { pointer-events: none; }
+
+/* EMPTY STATE */
 .empty-state { text-align: center; padding: 50px; background: white; border-radius: 16px; border: 1px dashed #cbd5e1; }
 .empty-icon-box { margin-bottom: 15px; }
 .empty-state h3 { margin: 0; color: #334155; }
 .empty-state p { color: #94a3b8; margin-top: 5px; }
 
-/* OVERLAY LOGIN: Effetto blur e blocco interazioni per utenti non autenticati */
-.locked-view-container { position: relative; min-height: 100vh; }
-.blurred-content { filter: blur(8px); opacity: 0.5; pointer-events: none; }
-.auth-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 80vh; z-index: 50;
-  display: flex; justify-content: center; align-items: center;
-}
-/* Glassmorphism per il box di autenticazione */
-.glass-box {
-  background: rgba(255,255,255,0.95); padding: 40px; border-radius: 24px; text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.12); border: 1px solid white; width: 320px;
-}
-.icon-circle-lock {
-  width: 50px; height: 50px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; color: #64748b;
-}
-.btn-auth {
-  margin-top: 15px; background: #0f172a; color: white; padding: 12px 0; width: 100%; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;
-}
 
-/* RESPONSIVE: Adattamento del layout per schermi mobili */
+/* =========================================
+   ===== 5. RESPONSIVE =====
+   ========================================= */
 @media (max-width: 768px) {
   .wallet-card { height: auto; flex-direction: column; }
   .color-stripe { width: 100%; height: 6px; }
@@ -166,27 +158,116 @@
   .card-actions {
     width: 100%; justify-content: space-between; border-left: none; border-top: 1px solid #f1f5f9; padding: 15px 20px; margin: 0; box-sizing: border-box;
   }
-  .btn-leave { opacity: 1; color: #ef4444; }
+  /* Su mobile i tasti delete/leave sono sempre visibili */
+  .btn-leave, .btn-delete { opacity: 1; }
 }
 
-/* Miglioramento della cliccabilità e posizionamento dei pulsanti di gestione */
-.btn-leave svg,
-.btn-primary svg,
-.btn-secondary svg {
-  pointer-events: none;
-}
+/* =========================================
+   ===== 6. AREA RISERVATA (LOCK SCREEN - FIXED & CLEAN) =====
+   ========================================= */
 
-.btn-leave {
+/* 1. Contenitore principale */
+.locked-view-container {
   position: relative;
-  z-index: 10;
+  width: 100%;
+  min-height: 100vh;
 }
 
-.btn-delete {
-  background: transparent; border: none; cursor: pointer;
-  padding: 8px; border-radius: 8px; opacity: 0; transition: all 0.2s;
-  position: relative; z-index: 10;
+/* 2. L'EFFETTO SFOCATURA (Solo sul contenuto sotto) */
+.blurred-content {
+  filter: blur(10px);    /* Sfocatura decisa */
+  opacity: 0.5;          /* Leggermente trasparente */
+  pointer-events: none;  /* Impedisce i click sotto */
+  user-select: none;     /* Impedisce selezione testo */
+  transition: all 0.3s ease;
 }
-.btn-delete:hover { background: #fee2e2; }
-.btn-delete svg { pointer-events: none; }
 
-.wallet-card:hover .btn-delete { opacity: 1; }
+/* 4. LA CARD (Il box bianco centrale) */
+.glass-box {
+  background: #ffffff;  /* QUI va il bianco */
+  width: 90%;
+  max-width: 440px;     /* Larghezza ottimale */
+  padding: 50px 40px;   /* Spaziatura interna abbondante */
+  border-radius: 32px;  /* Angoli molto rotondi come nella foto */
+  text-align: center;
+
+  /* Ombra morbida e diffusa (Soft Shadow) */
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.15);
+
+  /* Bordo sottilissimo per definizione */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  animation: popUp 0.4s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+
+/* 5. ICONA SCUDO/LUCCHETTO */
+.icon-circle-lock {
+  width: 72px;
+  height: 72px;
+  /* Gradiente Viola come nella tua foto */
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px auto;
+
+  /* Ombra colorata sotto l'icona (Glow effect) */
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
+.icon-circle-lock svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2px;
+}
+
+/* 6. TESTI */
+.glass-box h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b; /* Scuro */
+  margin: 0 0 12px 0;
+}
+
+.glass-box p {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #64748b; /* Grigio */
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+  padding: 0 10px;
+}
+
+/* 7. BOTTONE ACCEDI */
+.btn-auth {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); /* Viola Intenso */
+  color: white;
+  border: none;
+  padding: 14px 0;
+  width: 100%;
+  border-radius: 12px; /* Arrotondato ma non a pillola estrema */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-auth:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px -5px rgba(79, 70, 229, 0.45);
+}
+
+.btn-auth:active {
+  transform: scale(0.98);
+}
+
+/* Animazione Card */
+@keyframes popUp {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
