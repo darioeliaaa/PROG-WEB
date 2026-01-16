@@ -3,17 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-// Import Componenti
-import { SidebarComponent } from './sidebar/sidebar'; // Controlla percorso
-import { SidebarMarketComponent } from './shared/sidebarmarket/sidebarMarket'; // Controlla percorso
-import { HeaderComponent } from './shared/header/header'; // Controlla percorso
+import { SidebarComponent } from './sidebar/sidebar';
+import { SidebarMarketComponent } from './shared/sidebarmarket/sidebarMarket';
+import { HeaderComponent } from './shared/header/header';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, SidebarComponent, SidebarMarketComponent, HeaderComponent],
-  templateUrl: './app.html', // NOTA: A volte è app.component.html
-  styleUrls: ['./app.css']     // NOTA: A volte è app.component.css
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
 })
 export class AppComponent {
   isLoginPage = false;
@@ -21,26 +20,23 @@ export class AppComponent {
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
+  // Monitora la navigazione per impostare la visualizzazione delle sidebar e resettare lo scroll
   constructor(private router: Router) {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       const url = event.urlAfterRedirects;
 
-      // 1. GESTIONE PAGINE
       this.isLoginPage = url.includes('/login');
-
-      // ✅ FIX: Consideriamo "Market" sia il market che il portfolio
-      // Così carica la sidebar giusta e nasconde quella principale
       this.isMarketSection = url.includes('/market') || url.includes('/portfolio');
 
-      // 2. RESET SCROLL
       setTimeout(() => {
         this.scrollToTop();
       }, 10);
     });
   }
 
+  // Riporta la posizione dello scroll del contenitore principale all'inizio (top)
   scrollToTop() {
     if (this.scrollContainer && this.scrollContainer.nativeElement) {
       this.scrollContainer.nativeElement.scrollTop = 0;
