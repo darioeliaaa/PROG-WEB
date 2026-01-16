@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { finalize } from 'rxjs/operators'; // <--- FONDAMENTALE
+import { finalize } from 'rxjs/operators'; // <--- FONDAMENTALE per gestire la fine dei caricamenti
 
 @Component({
   selector: 'app-profilo',
@@ -14,16 +14,21 @@ import { finalize } from 'rxjs/operators'; // <--- FONDAMENTALE
 })
 export class Profilo implements OnInit {
 
+  // ID dell'utente loggato, recuperato dal servizio di sessione
   userId: number | null = null;
 
-  // Stati dell'interfaccia
-  isLoadingData = true; // Caricamento iniziale
-  isSaving = false;     // Salvataggio in corso
+  // Stati dell'interfaccia per gestire i caricamenti e disabilitare i pulsanti
+  isLoadingData = true; // Attivo durante il primo recupero dati dal server
+  isSaving = false;     // Attivo durante l'invio delle modifiche (mostra spinner/disabilita bottoni)
 
-  // Messaggistica
+  // Gestione dei messaggi di feedback per l'utente (successo o errore)
   message: string = '';
   isError: boolean = false;
 
+  /**
+   * Modello dati del profilo utente.
+   * I nomi dei campi devono corrispondere esattamente a quelli attesi dal backend Java.
+   */
   userData: any = {
     nome: '',
     cognome: '',
@@ -36,9 +41,13 @@ export class Profilo implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef // Utilizzato per forzare il refresh della UI in operazioni asincrone
   ) {}
 
+  /**
+   * All'avvio del componente, recupera l'ID dell'utente loggato.
+   * Se presente, avvia il caricamento dei dati dal server.
+   */
   ngOnInit(): void {
     this.userId = this.userService.getCurrentUserId();
     if (this.userId) {
@@ -48,12 +57,16 @@ export class Profilo implements OnInit {
     }
   }
 
-  // Scarica i dati all'avvio
+  /**
+   * Scarica i dati del profilo dal backend.
+   * Utilizza l'operatore 'finalize' per spegnere lo stato di caricamento indipendentemente dall'esito.
+   */
   loadUserData() {
     if (!this.userId) return;
 
     this.userService.getUserProfile(this.userId)
       .pipe(finalize(() => {
+        // Nasconde il loader globale della pagina
         this.isLoadingData = false;
         this.cd.detectChanges();
       }))
@@ -61,7 +74,10 @@ export class Profilo implements OnInit {
         next: (data) => {
           this.userData = data;
 
-          // FIX DATA: Java manda "yyyy-MM-ddTHH:mm:ss", HTML vuole solo "yyyy-MM-dd"
+          /**
+           * FIX DATA: Formatta la data ricevuta dal database (LocalDateTime/Timestamp)
+           * per renderla compatibile con l'input HTML di tipo 'date' (formato yyyy-MM-dd).
+           */
           if (this.userData.dataDiNascita && this.userData.dataDiNascita.includes('T')) {
             this.userData.dataDiNascita = this.userData.dataDiNascita.split('T')[0];
           }
@@ -73,17 +89,20 @@ export class Profilo implements OnInit {
       });
   }
 
-  // Salva le modifiche
+  /**
+   * Gestisce l'invio del modulo (form).
+   * Include controlli per prevenire invii multipli accidentali.
+   */
   onSubmit() {
     if (!this.userId || this.isSaving) return;
 
-    this.isSaving = true;
-    this.message = ''; // Resetta messaggi precedenti
-    this.cd.detectChanges(); // Blocca visivamente il bottone
+    this.isSaving = true; // Attiva lo stato di salvataggio (spinner sul bottone)
+    this.message = '';    // Pulisce eventuali messaggi di errore precedenti
+    this.cd.detectChanges();
 
     this.userService.updateProfile(this.userId, this.userData)
       .pipe(
-        // Questo blocco viene eseguito SEMPRE, sia successo che errore
+        // finalize assicura che il bottone venga riabilitato anche in caso di errore
         finalize(() => {
           this.isSaving = false;
           this.cd.detectChanges();
@@ -92,7 +111,7 @@ export class Profilo implements OnInit {
       .subscribe({
         next: () => {
           this.showFeedback('Profilo aggiornato con successo!', false);
-          // Redirect dopo 1.5 secondi
+          // Naviga verso la dashboard dopo un breve lasso di tempo per permettere la lettura del messaggio
           setTimeout(() => this.router.navigate(['/dashboard']), 1500);
         },
         error: (err) => {
@@ -102,20 +121,30 @@ export class Profilo implements OnInit {
       });
   }
 
-  // Helper per mostrare messaggi
+  /**
+   * Helper centralizzato per gestire la comparsa dei messaggi a video.
+   * @param msg Il testo del messaggio
+   * @param isErr Booleano per determinare la classe CSS (successo o errore)
+   */
   showFeedback(msg: string, isErr: boolean) {
     this.message = msg;
     this.isError = isErr;
     this.cd.detectChanges();
   }
 
-  // Helper per le iniziali dell'avatar (Es. Mario Rossi -> MR)
+  /**
+   * Genera le iniziali del nome e cognome per l'avatar circolare.
+   * Es. "Mario Rossi" -> "MR"
+   */
   getInitials(): string {
     const n = this.userData.nome ? this.userData.nome.charAt(0) : '';
     const c = this.userData.cognome ? this.userData.cognome.charAt(0) : '';
     return (n + c).toUpperCase() || 'U';
   }
 
+  /**
+   * Ritorna alla dashboard principale tramite navigazione programmatica.
+   */
   backToDashboard() {
     this.router.navigate(['/dashboard']);
   }

@@ -1,9 +1,10 @@
-/* Container relativo per posizionare l'overlay */
+/* Container relativo necessario per posizionare l'overlay di successo in modo assoluto sopra il form */
 .movimenti-container {
   position: relative;
   font-family: 'Inter', sans-serif;
 }
 
+/* Layout del form con spaziatura verticale tra i campi */
 form {
   display: flex;
   flex-direction: column;
@@ -11,9 +12,10 @@ form {
 }
 
 /* --- OVERLAY SUCCESSO (Stile Elite) --- */
+/* Pannello a tutto schermo che appare una volta confermata la transazione */
 .success-overlay {
   position: absolute;
-  top: -20px; left: -20px; right: -20px; bottom: -20px; /* Copre tutto il modale */
+  top: -20px; left: -20px; right: -20px; bottom: -20px; /* Margini negativi per coprire i padding del modale */
   background: rgba(255, 255, 255, 0.98);
   display: flex;
   flex-direction: column;
@@ -24,6 +26,7 @@ form {
   animation: fadeIn 0.3s ease;
 }
 
+/* Icona circolare con segno di spunta (check) e animazione a rimbalzo (popIn) */
 .success-icon {
   width: 60px; height: 60px;
   background: #d1fae5; color: #10b981;
@@ -42,6 +45,7 @@ form {
 }
 
 /* --- ERROR BOX --- */
+/* Box per i messaggi di errore (es. saldo insufficiente o campi mancanti) */
 .error-box {
   background: #fef2f2;
   color: #ef4444;
@@ -56,6 +60,7 @@ form {
 }
 
 /* --- TOGGLE --- */
+/* Selettore per switchare tra 'Entrata' e 'Uscita' */
 .toggle-buttons {
   display: flex;
   background: #f1f5f9;
@@ -67,11 +72,13 @@ form {
   border-radius: 10px; font-weight: 600; color: #64748b; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
 }
+/* Stili per lo stato attivo: verde per entrate, rosso per uscite */
 .btn-toggle.income.active { background: white; color: #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .btn-toggle.expense.active { background: white; color: #ef4444; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
 
 /* --- IMPORTO GIGANTE --- */
+/* Sezione centrale dedicata all'inserimento dell'importo numerico */
 .center-input-section {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   margin: 5px 0 15px 0;
@@ -80,6 +87,8 @@ form {
   font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; margin-bottom: 5px;
 }
 .amount-wrapper { position: relative; display: inline-block; }
+
+/* Input di grandi dimensioni per dare risalto alla cifra della transazione */
 .big-input {
   font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 700;
   border: none; background: transparent; text-align: center; width: 280px;
@@ -89,10 +98,15 @@ form {
   padding-bottom: 5px;
   transition: border-color 0.3s ease;
 }
+/* Colore del bordo inferiore dinamico in base al tipo di movimento */
 .big-input.text-green { border-bottom-color: #10b981; }
 .big-input.text-red { border-bottom-color: #ef4444; }
+
+/* Rimuove le frecce standard degli input numerici per un design pulito */
 .big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .big-input::placeholder { color: #e2e8f0; }
+
+/* Simbolo dell'euro posizionato a lato dell'input dell'importo */
 .currency-symbol {
   position: absolute; right: -20px; top: 10px; font-size: 2rem; font-weight: 600;
 }
@@ -104,6 +118,7 @@ form {
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; }
 
+/* Input secondari (Descrizione, Categoria, Data) in stile 'Glass' */
 .glass-input {
   width: 100%; height: 45px; padding: 0 15px;
   border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc;
@@ -114,6 +129,7 @@ label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; 
 
 
 /* --- NUOVA GRIGLIA A 2 COLONNE (Categoria + Data) --- */
+/* Organizza i campi Categoria e Data sulla stessa riga */
 .grid-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -126,12 +142,14 @@ label { font-size: 0.85rem; font-weight: 600; color: #64748b; margin-left: 2px; 
 .btn-primary, .btn-secondary {
   flex: 1; height: 50px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: 0.1s;
 }
+/* Bottone principale con ombra diffusa lilla */
 .btn-primary { background: #7D7DFA; color: white; box-shadow: 0 4px 15px rgba(125, 125, 250, 0.3); }
 .btn-primary:hover { background: #6464fa; transform: translateY(-1px); }
+/* Stato disabilitato durante il caricamento per prevenire click doppi */
 .btn-primary:disabled { background: #a5a5f5; cursor: not-allowed; transform: none; box-shadow: none; }
 .btn-secondary { background: white; border: 1px solid #e2e8f0; color: #64748b; }
 .btn-secondary:hover { background: #f1f5f9; }
 
-/* ANIMAZIONI */
+/* ANIMAZIONI: Fade in per i messaggi e Pop in per l'icona di successo */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { transform: scale(0.5); } to { transform: scale(1); } }

@@ -1,28 +1,31 @@
+/* IMPORT FONT: Utilizzo del font Plus Jakarta Sans per un'estetica moderna e leggibile */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
 
 :host {
   display: block;
-  /* CORREZIONE 1: Usa % invece di vw/vh per adattarsi al contenitore della dashboard */
+  /* CORREZIONE 1: Utilizzo di % al posto di vw/vh per garantire che il componente
+     si adatti perfettamente allo spazio rimanente della dashboard padre */
   width: 100%;
   height: 100%;
-  min-height: 100vh; /* Assicura che copra l'altezza se il contenuto è poco */
-  overflow: hidden;
+  min-height: 100vh; /* Assicura che lo sfondo copra l'altezza dello schermo anche con poco contenuto */
+  overflow: hidden; /* Impedisce scroll fluidi indesiderati (gestiti dalle colonne interne) */
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: #ffffff;
   color: #1e293b;
-  box-sizing: border-box; /* Importante per padding/bordi */
+  box-sizing: border-box; /* Include padding e bordi nel calcolo della larghezza/altezza */
 }
 
-/* ===== SFONDO & DECORAZIONI ===== */
+/* ===== SFONDO & DECORAZIONI (Effetto Glassmorphism) ===== */
 .light-container {
   width: 100%;
   height: 100%;
   position: relative;
   background: #ffffff;
   z-index: 1;
-  overflow: hidden; /* Assicura che i blob non creino scrollbar indesiderate */
+  overflow: hidden; /* Maschera i blob decorativi per evitare scrollbar laterali */
 }
 
+/* Blob decorativi sfocati per dare profondità allo sfondo */
 .blob {
   position: absolute;
   border-radius: 50%;
@@ -32,7 +35,8 @@
   animation: float 10s infinite alternate;
 }
 
-/* CORREZIONE 2: Usa % invece di vw per i blob così restano nel box */
+/* CORREZIONE 2: Uso di % invece di vw per i blob affinché rimangano confinati
+   nel loro contenitore senza "esplodere" su schermi molto larghi */
 .blob-1 {
   top: -10%;
   left: -5%;
@@ -50,33 +54,32 @@
   animation-delay: -5s;
 }
 
+/* Animazione di galleggiamento dei blob di sfondo */
 @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 20px); } }
 
-/* ===== GRID LAYOUT ===== */
+/* ===== GRID LAYOUT (Asimmetrico) ===== */
 .layout-grid {
   display: grid;
-  /* La griglia si adatterà automaticamente al 100% della larghezza disponibile */
+  /* Griglia fissa: 38% per la presentazione (Hero) e 62% per il modulo dati */
   grid-template-columns: 38% 62%;
   height: 100%;
   width: 100%;
 }
 
-/* ===== SINISTRA: HERO ===== */
+/* ===== SINISTRA: SEZIONE HERO (Presentazione Profilo) ===== */
 .hero-side {
-  padding: 40px; /* Ridotto leggermente per schermi medi */
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-right: 1px solid rgba(0,0,0,0.03);
+  border-right: 1px solid rgba(0,0,0,0.03); /* Separatore sottile quasi invisibile */
   background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(20px);
-  /* Gestione overflow se lo schermo è basso */
-  overflow-y: auto;
+  backdrop-filter: blur(20px); /* Effetto vetro satinato */
+  overflow-y: auto; /* Permette lo scroll interno se l'altezza del browser è ridotta */
 }
 
+/* Pulsante di ritorno con transizione fluida e spostamento sull'asse X */
 .back-link {
-  /* Meglio relative o static in un flex container, ma absolute va bene se il padre ha position relative */
-  /* Assicurati che non si sovrapponga su schermi piccoli */
   margin-bottom: 20px;
   background: none;
   border: none;
@@ -86,9 +89,11 @@
   cursor: pointer;
   display: flex; align-items: center; gap: 8px;
   transition: 0.2s;
-  align-self: flex-start; /* Se togliamo position absolute */
+  align-self: flex-start;
 }
+.back-link:hover { color: #7D7DFA; transform: translateX(-3px); }
 
+/* Avatar circolare generato con le iniziali dell'utente */
 .avatar-container {
   width: 80px;
   height: 80px;
@@ -100,11 +105,11 @@
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 30px;
   box-shadow: 0 15px 30px rgba(125, 125, 250, 0.25);
-  flex-shrink: 0; /* Evita che si schiacci */
+  flex-shrink: 0; /* Impedisce che l'avatar si deformi in contenitori stretti */
 }
 
 h1 {
-  /* Font size reattivo per evitare che vada a capo male se la sidebar stringe */
+  /* clamp: rende il titolo fluido tra 2rem (mobile) e 3.5rem (desktop) */
   font-size: clamp(2rem, 4vw, 3.5rem);
   line-height: 1.1;
   margin: 0 0 15px 0;
@@ -112,6 +117,7 @@ h1 {
   color: #0f172a;
 }
 
+/* Testo con gradiente colorato */
 .gradient-text {
   background: linear-gradient(135deg, #7D7DFA, #6a0dad);
   -webkit-background-clip: text;
@@ -125,6 +131,7 @@ h1 {
   max-width: 90%;
 }
 
+/* Badge dinamico per notifiche di successo o errore (usato dopo il salvataggio) */
 .status-badge {
   margin-top: 30px;
   display: inline-flex;
@@ -140,22 +147,22 @@ h1 {
 .status-badge.error { background: #fee2e2; color: #991b1b; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
-/* ===== DESTRA: FORM ===== */
+/* ===== DESTRA: SEZIONE FORM (Inserimento Dati) ===== */
 .form-side {
   padding: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Importante: se il form è lungo, deve scrollare SOLO questa parte */
-  overflow-y: auto;
+  overflow-y: auto; /* Permette lo scroll indipendente dei soli campi del modulo */
   height: 100%;
 }
 
 .clean-form {
   width: 100%;
-  max-width: 550px; /* Ridotto leggermente per stare meglio con la sidebar aperta */
+  max-width: 550px; /* Limita la larghezza del form per migliorare la leggibilità */
 }
 
+/* Griglia a due colonne per campi accoppiati (es. Nome e Cognome) */
 .row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -168,6 +175,7 @@ h1 {
   flex-direction: column;
 }
 
+/* Etichette degli input in stile minimalista e maiuscolo */
 .input-wrap label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -177,10 +185,11 @@ h1 {
   margin-bottom: 6px;
 }
 
+/* Stile degli input: bordi assenti tranne quello inferiore per un look "material" moderno */
 .input-wrap input,
 .input-wrap select {
   width: 100%;
-  padding: 12px 0; /* Leggermente ridotto */
+  padding: 12px 0;
   font-size: 1rem;
   color: #1e293b;
   font-weight: 500;
@@ -190,9 +199,9 @@ h1 {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Plus Jakarta Sans', sans-serif;
   border-radius: 0;
-  box-sizing: border-box; /* Evita sbordamenti input */
 }
 
+/* Effetto focus: cambia colore del bordo e aggiunge un leggero padding interno */
 .input-wrap input:focus,
 .input-wrap select:focus {
   outline: none;
@@ -207,14 +216,14 @@ h1 {
 .select-wrapper { position: relative; }
 select { -webkit-appearance: none; cursor: pointer; }
 
-/* Azioni */
+/* Azioni a fondo pagina (Annulla e Salva) */
 .footer-actions {
   margin-top: 30px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 15px;
-  flex-wrap: wrap; /* Importante se lo spazio si riduce molto */
+  flex-wrap: wrap;
 }
 
 .btn-cancel {
@@ -230,6 +239,7 @@ select { -webkit-appearance: none; cursor: pointer; }
 }
 .btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
 
+/* Pulsante primario con gradiente coordinato al brand */
 .btn-primary {
   background: linear-gradient(135deg, #7D7DFA, #6366f1);
   color: white;
@@ -251,23 +261,25 @@ select { -webkit-appearance: none; cursor: pointer; }
 }
 .btn-primary:disabled { opacity: 0.7; cursor: wait; }
 
+/* Spinner visibile durante il caricamento o il salvataggio */
 .loader { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+/* Animazioni chiave */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* RESPONSIVE */
-/* Punto di rottura leggermente alzato per gestire sidebar aperte su tablet */
+/* RESPONSIVE DESIGN: Ottimizzato per tablet e smartphone */
 @media (max-width: 1100px) {
   :host {
-    overflow-y: auto; /* Abilita scroll sulla pagina intera se serve */
+    overflow-y: auto; /* Abilita lo scroll della pagina intera sui dispositivi mobili */
     height: auto;
     min-height: 100%;
   }
   .layout-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Le colonne si impilano verticalmente */
     display: flex;
     flex-direction: column;
-    height: auto; /* Lascia crescere in altezza */
+    height: auto;
   }
   .hero-side {
     padding: 40px;
@@ -277,7 +289,6 @@ select { -webkit-appearance: none; cursor: pointer; }
     align-items: center;
   }
 
-  /* Sistema il pulsante back su mobile */
   .back-link {
     position: static;
     margin-bottom: 20px;
@@ -289,7 +300,9 @@ select { -webkit-appearance: none; cursor: pointer; }
     overflow-y: visible;
   }
 
+  /* I campi affiancati passano a singola colonna su mobile */
   .row-2 { grid-template-columns: 1fr; gap: 0; }
+  /* I bottoni occupano l'intera larghezza e si invertono di posizione */
   .footer-actions { flex-direction: column-reverse; width: 100%; }
   .btn-primary, .btn-cancel { width: 100%; justify-content: center; }
 }
