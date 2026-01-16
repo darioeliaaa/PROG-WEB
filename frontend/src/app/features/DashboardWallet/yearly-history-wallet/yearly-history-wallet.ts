@@ -43,7 +43,7 @@ export class YearlyHistoryWallet implements OnChanges {
 
   // Intercetta i cambiamenti alle transazioni per attivare il ricalcolo dei dati annuali
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['allTransactions']) {
+    if (changes['allTransactions']|| changes['currentDate']) {
       this.calcolaDatiLocali();
     }
   }

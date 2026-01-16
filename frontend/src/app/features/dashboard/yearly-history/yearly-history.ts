@@ -43,7 +43,6 @@ export class YearlyHistory implements OnChanges {
 
   // Intercetta l'aggiornamento dell'elenco transazioni per ricalcolare i dati annuali
   ngOnChanges(changes: SimpleChanges) {
-    // Aggiungi || changes['currentDate'] per aggiornare il grafico quando cambi anno
     if (changes['allTransactions'] || changes['currentDate']) {
       this.calcolaDatiLocali();
     }
