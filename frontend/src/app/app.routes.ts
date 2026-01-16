@@ -32,7 +32,7 @@ export const routes: Routes = [
     path: 'market',
     component: MarketHomeComponent
   },
-  
+
   {
     path: 'market/azioni',
     component: AssetListComponent,

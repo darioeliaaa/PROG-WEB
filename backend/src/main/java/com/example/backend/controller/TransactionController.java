@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,9 @@ public class TransactionController {
 
   @GetMapping("/wallet/{walletId}")
   public List<Transaction> getTransactionsByWallet(@PathVariable Long walletId) {
-    return transactionService.getTransactionsByWalletId(walletId);
+    List<Transaction> list = transactionRepository.findByWalletId(walletId);
+    Collections.reverse(list); // Inverte l'ordine della lista prima di mandarla ad Angular
+    return list;
   }
 
   // ✅ METODO DI SALVATAGGIO "BLINDATO"

@@ -99,6 +99,7 @@ export class Movimenti implements OnInit {
   calcolaSaldoDisponibile(wId: number) {
     this.transactionService.getTransactionsByWallet(wId).subscribe({
       next: (txs) => {
+        txs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         let entrate = 0;
         let uscite = 0;
         txs.forEach((t: any) => {

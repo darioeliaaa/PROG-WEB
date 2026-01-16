@@ -63,7 +63,7 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" *ngIf="!walletId">
         <label>Data</label>
         <input type="date" [(ngModel)]="nuovoMovimento.data" name="data" class="glass-input">
       </div>

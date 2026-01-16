@@ -25,6 +25,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
   // Trova transazioni dell'utente, ordinate per data decrescente (per la dashboard)
   List<Transaction> findByUserIdOrderByDateDesc(Long userId, Pageable pageable);
 
+
   // METODO DI PULIZIA
   @Modifying
   @Query("DELETE FROM Transaction t WHERE t.wallet.id = :walletId")
