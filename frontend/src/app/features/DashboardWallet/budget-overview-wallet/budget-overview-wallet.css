@@ -7,8 +7,8 @@
   display: flex;
   flex-direction: column;
 
-  /* --- FIX RIDIMENSIONAMENTO --- */
-  min-width: 0; /* Permette alla card di restringersi */
+  /* Fondamentale: permette alla card di restringersi senza rompere il flex */
+  min-width: 0;
   box-sizing: border-box;
 }
 
@@ -20,45 +20,40 @@
 h3 { margin: 0; color: #333; }
 .subtitle { margin: 5px 0 0; color: #777; font-size: 0.9rem; }
 
-/* Contenitore flessibile per i due grafici */
 .charts-row {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: 20px; /* Ridotto leggermente per sicurezza */
-  padding: 0 10px; /* Ridotto il padding laterale per dare più spazio ai grafici */
-  width: 100%; /* Occupa tutto lo spazio */
+  gap: 20px;
+  padding: 0 10px;
+  width: 100%;
 
-  /* --- FIX RIDIMENSIONAMENTO --- */
+  /* Gestione spazio interno per i grafici */
   min-width: 0;
-  flex: 1; /* Si adatta all'altezza */
+  flex: 1;
 }
 
 .chart-wrapper {
   flex: 1;
-  /* CAMBIAMENTO IMPORTANTE: */
-  /* min-width: 250px; <--- QUESTO BLOCCAVA IL RIDIMENSIONAMENTO */
-  min-width: 0; /* Ora può diventare piccolo quanto serve */
+  /* Reset cruciale per la responsività: previene lo sformamento dei canvas */
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden; /* Taglia se necessario */
+  overflow: hidden;
 }
 
-/* Titoli specifici */
 .income-title { color: #27ae60; margin-bottom: 10px; white-space: nowrap; }
 .expense-title { color: #c0392b; margin-bottom: 10px; white-space: nowrap; }
 
-/* Il contenitore del canvas */
 .canvas-container {
   position: relative;
-  /* Altezza fissa va bene, ma diamogli flessibilità */
   height: 250px;
   width: 100%;
-  max-width: 300px; /* Non diventano giganti */
+  max-width: 300px;
 
-  /* Centratura canvas */
+  /* Centratura perfetta del grafico */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,16 +66,16 @@ h3 { margin: 0; color: #333; }
   text-align: center;
 }
 
-/* Linea divisoria verticale */
+/* Divisore verticale: si adatta all'altezza massima del parent */
 .divider {
   width: 1px;
   background-color: #eee;
-  align-self: stretch; /* Si allunga per tutta l'altezza */
+  align-self: stretch;
   margin: 0 10px;
-  flex-shrink: 0; /* Non si schiaccia mai */
+  flex-shrink: 0;
 }
 
-/* Mobile: nascondi la linea e impila tutto */
+/* Logica Mobile: impila i grafici e nasconde il divisore */
 @media (max-width: 768px) {
   .charts-row {
     flex-direction: column;
@@ -89,6 +84,5 @@ h3 { margin: 0; color: #333; }
   .divider { display: none; }
   .canvas-container { height: 220px; }
 
-  /* Su mobile ripristiniamo una larghezza minima sensata */
   .chart-wrapper { min-width: auto; width: 100%; }
 }

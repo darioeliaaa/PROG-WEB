@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
-
-// ✅ AGGIUNTO 'forgot-success'
 type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-success';
 
 @Component({
@@ -20,23 +18,25 @@ export class Login {
 
   currentView: ViewState = 'login';
 
-  // Dati Form
   loginObj: any = { email: '', password: '' };
   registerObj: any = { username: '', email: '', password: '' };
   forgotObj: any = { email: '', code: '', newPassword: '' };
 
   generatedRecoveryCode: string = '';
 
-  // Gestione Errori
   fieldErrors: { username: boolean, email: boolean } = { username: false, email: false };
   registerMessage: string = '';
   suggestedUsernames: string[] = [];
+
+  // ✅ NUOVO: Messaggio errore password
+  passwordError: string = '';
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
 
   // --- NAVIGAZIONE ---
@@ -60,6 +60,44 @@ export class Login {
     this.registerMessage = '';
     this.fieldErrors = { username: false, email: false };
     this.suggestedUsernames = [];
+    this.passwordError = ''; // Reset errore password
+  }
+
+  // --- ✅ NUOVO: VALIDAZIONE PASSWORD FORTE ---
+  checkPasswordStrength(password: string) {
+    if (!password) {
+      this.passwordError = '';
+      return false;
+    }
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isValidLength = password.length >= 8;
+
+    if (!isValidLength) {
+      this.passwordError = "Almeno 8 caratteri.";
+      return false;
+    }
+    if (!hasUpperCase) {
+      this.passwordError = "Manca una maiuscola.";
+      return false;
+    }
+    if (!hasNumbers) {
+      this.passwordError = "Manca un numero.";
+      return false;
+    }
+    // Opzionale: se vuoi forzare anche il carattere speciale scommenta sotto
+    /*
+    if (!hasSpecial) {
+      this.passwordError = "Manca un carattere speciale (!@#$).";
+      return false;
+    }
+    */
+
+    this.passwordError = ''; // Tutto ok
+    return true;
   }
 
   // --- LOGIN ---
@@ -80,7 +118,13 @@ export class Login {
   onRegister() {
     this.resetErrors();
 
-    if (!this.registerObj.username || !this.registerObj.email || !this.registerObj.password) {
+    // 1. Validazione Password
+    if (!this.checkPasswordStrength(this.registerObj.password)) {
+      return;
+    }
+
+    // 2. Validazione Campi vuoti
+    if (!this.registerObj.username || !this.registerObj.email) {
       this.registerMessage = 'Compila tutti i campi.';
       return;
     }
@@ -93,28 +137,56 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/register', userToSend).subscribe({
       next: (res: any) => {
-        if (res.resetToken) {
-          this.generatedRecoveryCode = res.resetToken;
-          this.currentView = 'register-success';
-        } else {
-          this.currentView = 'login';
-        }
-        this.cdr.detectChanges();
+
+        // ✅ SOLUZIONE: Usiamo NgZone per forzare l'aggiornamento grafico IMMEDIATO
+        this.zone.run(() => {
+          if (res.resetToken) {
+            this.generatedRecoveryCode = res.resetToken;
+            this.currentView = 'register-success';
+          } else {
+            this.currentView = 'login';
+          }
+          // Per sicurezza, lasciamo anche il cdr, ma NgZone fa il lavoro grosso
+          this.cdr.detectChanges();
+        });
+
       },
-      error: (err) => this.handleRegisterError(err)
+      error: (err) => {
+        // Anche l'errore va gestito nella zone per mostrare subito il bordo rosso
+        this.zone.run(() => {
+          this.handleRegisterError(err);
+        });
+      }
     });
   }
 
   finishRegistration() {
+    // 1. Salviamo l'email PRIMA di resettare l'oggetto di registrazione
+    const emailToSave = this.registerObj.email;
+
+    // 2. Puliamo i dati sensibili della registrazione
     this.generatedRecoveryCode = '';
     this.registerObj = { username: '', email: '', password: '' };
-    this.loginObj.email = this.registerObj.email;
-    this.currentView = 'login';
+
+    // 3. Impostiamo l'email nel login
+    this.loginObj.email = emailToSave;
+    this.loginObj.password = ''; // La password ovviamente va lasciata vuota per sicurezza
+
+    // 4. Forziamo il cambio vista e l'aggiornamento UI
+    this.zone.run(() => {
+      this.currentView = 'login';
+      this.cdr.detectChanges(); // Forza Angular a leggere il nuovo valore di loginObj.email
+    });
   }
 
-  // --- RESET PASSWORD (MODIFICATO) ---
+  // --- RESET PASSWORD ---
   onResetPassword() {
-    if (!this.forgotObj.email || !this.forgotObj.code || !this.forgotObj.newPassword) {
+    // 1. Controllo validità nuova password
+    if (!this.checkPasswordStrength(this.forgotObj.newPassword)) {
+      return;
+    }
+
+    if (!this.forgotObj.email || !this.forgotObj.code) {
       alert("Compila tutti i campi.");
       return;
     }
@@ -127,15 +199,11 @@ export class Login {
 
     this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
       next: (res: any) => {
-        // ✅ NESSUN ALERT: Cambiamo vista e mostriamo il messaggio bello
         this.currentView = 'forgot-success';
-
-        // Pre-compiliamo l'email nel login per comodità
         this.loginObj.email = this.forgotObj.email;
-        this.loginObj.password = ''; // Reset password field
+        this.loginObj.password = '';
       },
       error: (err) => {
-        // Qui lasciamo l'alert o un messaggio di errore rosso nel form (come preferisci)
         alert(err.error?.message || "Codice errato o email non valida.");
       }
     });

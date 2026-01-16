@@ -7,10 +7,10 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './sidebarMarket.html',
-  styleUrl: './sidebarMarket.css' // Assicurati di usare lo stesso CSS o copiarlo
+  styleUrl: './sidebarMarket.css'
 })
 export class SidebarMarketComponent {
-  isMarketOpen: boolean = true; // Imposta su 'false' se lo vuoi chiuso all'avvio
+  isMarketOpen: boolean = true;
 
   toggleMarket() {
     this.isMarketOpen = !this.isMarketOpen;
