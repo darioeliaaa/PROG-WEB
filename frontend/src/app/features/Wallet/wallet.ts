@@ -16,22 +16,27 @@ import { Wallet } from '../../models/wallet.model';
 })
 export class WalletComponent implements OnInit {
 
+  // Stato della sessione e dati dei wallet
   isLoggedIn: boolean = false;
   wallets: Wallet[] = [];
-  loading = true;
+  loading = true; // Gestisce la visualizzazione dello spinner di caricamento
   userId: number | null = null;
 
+  // Variabili per il controllo della UI (modali/sezioni a comparsa)
   showCreate = false;
   showJoin = false;
-  inviteCodeInput: string = '';
+  inviteCodeInput: string = ''; // Input per il codice di invito al wallet
 
   constructor(
     private walletService: WalletService,
     private userService: UserService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef // Iniezione del rilevatore di modifiche per aggiornamenti manuali
   ) {}
 
+  /**
+   * Inizializzazione: verifica se l'utente è loggato e avvia il recupero dati.
+   */
   ngOnInit() {
     this.isLoggedIn = this.userService.isLoggedIn();
     if (this.isLoggedIn) {
@@ -41,10 +46,15 @@ export class WalletComponent implements OnInit {
     }
   }
 
+  // Navigazione verso la pagina di login se l'utente è ospite
   goToLogin() {
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Identifica l'utente corrente cercando l'ID nel service o nel localStorage.
+   * Include un meccanismo di retry per gestire il ritardo nel caricamento dei dati di sessione.
+   */
   initUser() {
     const serviceId = this.userService.getCurrentUserId();
     const storedId = serviceId ? serviceId : Number(localStorage.getItem('userId'));
@@ -53,6 +63,7 @@ export class WalletComponent implements OnInit {
       this.userId = storedId;
       this.loadWallets();
     } else {
+      // Se l'ID non è subito disponibile, riprova dopo 500ms
       setTimeout(() => {
         const retryId = localStorage.getItem('userId');
         if (retryId) {
@@ -65,26 +76,25 @@ export class WalletComponent implements OnInit {
     }
   }
 
+  /**
+   * Recupera i wallet dell'utente dal server.
+   * Filtra i wallet personali e applica un ordinamento deterministico per la UI.
+   */
   loadWallets() {
     if (!this.userId) return;
 
     this.loading = true;
     this.walletService.getUserWallets(this.userId).subscribe({
       next: (res) => {
-        // 1. Prima filtriamo quelli condivisi (togliamo i personali)
+        // 1. Filtra solo i wallet condivisi (esclude quelli personali/privati)
         const sharedWallets = res.filter(w => !w.personal);
 
-        // 2. FIX: ORDINAMENTO FORZATO
-        // Li ordiniamo per ID: dal più vecchio al più nuovo.
-        // In questo modo la posizione sarà SEMPRE la stessa, non importa come risponde il server.
+        // 2. FIX: ORDINAMENTO FORZATO per ID (dal più vecchio al più nuovo)
+        // Garantisce che le card rimangano sempre nella stessa posizione visiva.
         this.wallets = sharedWallets.sort((a, b) => a.id - b.id);
 
-        /* NOTA: Se invece li vuoi in ordine alfabetico, usa questa riga al posto di quella sopra:
-           this.wallets = sharedWallets.sort((a, b) => a.name.localeCompare(b.name));
-        */
-
         this.loading = false;
-        this.cdr.detectChanges(); // Aggiorna la grafica
+        this.cdr.detectChanges(); // Forza il refresh grafico per mostrare i wallet caricati
       },
       error: (err) => {
         console.error("Errore load:", err);
@@ -94,24 +104,29 @@ export class WalletComponent implements OnInit {
     });
   }
 
+  /**
+   * Determina se l'utente loggato è il proprietario/amministratore del wallet.
+   * Utilizza diversi controlli (ID diretto o oggetto admin) per massima compatibilità con il backend.
+   */
   isAdmin(wallet: any): boolean {
     if (!this.userId || !wallet) return false;
 
-    // 1. Controllo prioritario e sicuro: usa il campo adminId se presente
+    // Controllo tramite campo adminId diretto
     if (wallet.adminId) {
       return Number(wallet.adminId) === Number(this.userId);
     }
 
-    // 2. Se il backend manda l'oggetto admin
+    // Controllo tramite oggetto admin mappato
     if (wallet.admin && wallet.admin.id) {
       return Number(wallet.admin.id) === Number(this.userId);
     }
 
-    // 3. NON USARE wallet.members[0]! È instabile.
-    // Se non hai i campi sopra, il backend DEVE mandare chi è l'admin.
     return false;
   }
 
+  /**
+   * Crea un nuovo wallet nel database per l'utente corrente.
+   */
   createWallet(name: string): void {
     const trimmedName = name.trim();
     if (!trimmedName || !this.userId) return;
@@ -119,6 +134,7 @@ export class WalletComponent implements OnInit {
     this.walletService.createWallet(this.userId, trimmedName).subscribe({
       next: () => {
         this.showCreate = false;
+        // Piccolo delay prima del ricarico per permettere la propagazione dei dati sul server
         setTimeout(() => {
           this.loadWallets();
         }, 300);
@@ -127,13 +143,17 @@ export class WalletComponent implements OnInit {
     });
   }
 
+  // Gestore per l'invio del form di creazione tramite input testuale
   handleCreateWallet(nameInput: HTMLInputElement) {
     const name = nameInput.value.trim();
     if (!name) return;
     this.createWallet(name);
-    nameInput.value = '';
+    nameInput.value = ''; // Resetta il campo dopo l'invio
   }
 
+  /**
+   * Permette all'utente di unirsi a un wallet esistente tramite codice alfanumerico.
+   */
   handleJoinWallet() {
     if (!this.inviteCodeInput || this.inviteCodeInput.length < 6) {
       alert("Codice troppo corto");
@@ -154,6 +174,9 @@ export class WalletComponent implements OnInit {
     });
   }
 
+  /**
+   * Rimuove l'utente corrente dal wallet specificato (Abbandona gruppo).
+   */
   leaveWallet(walletId: number): void {
     if (!this.userId) {
       console.error("Errore: Utente non loggato");
@@ -164,6 +187,7 @@ export class WalletComponent implements OnInit {
       return;
     }
 
+    // Il metodo removeMember viene usato con l'ID dell'utente sia come target che come richiedente
     this.walletService.removeMember(walletId, this.userId, this.userId).subscribe({
       next: () => {
         setTimeout(() => {
@@ -178,19 +202,19 @@ export class WalletComponent implements OnInit {
     });
   }
 
-  // --- NUOVA FUNZIONE DELETE (PER ADMIN) ---
+  /**
+   * ELIMINAZIONE WALLET (Riservata agli admin):
+   * Cancella permanentemente l'intero wallet e tutte le transazioni associate.
+   */
   deleteWallet(walletId: number): void {
     if (!this.userId) return;
 
-    // Messaggio di conferma molto chiaro perché l'azione è distruttiva
     const confirmMsg = "ATTENZIONE: Sei sicuro di voler eliminare DEFINITIVAMENTE questo wallet?\n\nTutte le transazioni e i dati verranno persi per sempre. Questa azione non può essere annullata.";
 
     if (!confirm(confirmMsg)) {
       return;
     }
 
-    // Assumiamo che nel service tu abbia un metodo deleteWallet(walletId, adminId)
-    // Se nel backend hai deleteWallet(adminId, walletId), inverti i parametri qui sotto!
     this.walletService.deleteWallet(walletId, this.userId).subscribe({
       next: () => {
         setTimeout(() => {
@@ -204,8 +228,10 @@ export class WalletComponent implements OnInit {
       }
     });
   }
-  // ----------------------------------------
 
+  /**
+   * Naviga verso la dashboard specifica del wallet selezionato.
+   */
   openWallet(walletId: number): void {
     this.router.navigate([`/dashboardWallet`, walletId]);
   }
