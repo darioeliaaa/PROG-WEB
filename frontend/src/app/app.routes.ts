@@ -14,16 +14,30 @@ import { NotifichePage } from './shared/notifiche/notifiche';
 import { DashboardWallet } from './features/DashboardWallet/dashboard-wallet';
 import { ChiSiamoComponent } from './features/chi-siamo/chi-siamo';
 
-// Configura l'elenco dei percorsi dell'applicazione e associa ogni URL al relativo componente
+/**
+ * Configurazione principale delle rotte dell'applicazione.
+ * Associa ogni URL al componente corrispondente.
+ */
 export const routes: Routes = [
+  // Rotta di default: reindirizza alla pagina Market quando l'URL è vuoto
   { path: '', redirectTo: 'market', pathMatch: 'full' },
+
+  // Dashboard generale dell'utente
   { path: 'dashboard', component: Dashboard },
+
+  // Dashboard specifica per un singolo Wallet, identificato tramite ID dinamico
   { path: 'dashboardWallet/:id', component: DashboardWallet },
+
+  // Home page della sezione mercato/investimenti
   {
     path: 'market',
     component: MarketHomeComponent
   },
+
+  // Pagina dedicata alla visualizzazione delle notifiche utente
   { path: 'notifiche', component: NotifichePage },
+
+  // Rotte per il mercato, differenziate tramite il campo 'data' per filtrare gli asset
   {
     path: 'market/azioni',
     component: AssetListComponent,
@@ -39,7 +53,11 @@ export const routes: Routes = [
     component: AssetListComponent,
     data: { type: 'CRYPTO' }
   },
+
+  // Visualizzazione dei grafici per un titolo specifico (es. AAPL, BTC) tramite simbolo
   { path: 'market/chart/:symbol', component: StockChart },
+
+  // Altre rotte dell'applicazione
   { path: 'movimenti', component: Movimenti },
   { path: 'login' , component: Login },
   { path: 'profilo' , component: Profilo },
