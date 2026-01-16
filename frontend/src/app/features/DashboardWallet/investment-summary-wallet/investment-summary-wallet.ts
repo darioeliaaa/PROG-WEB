@@ -69,10 +69,6 @@ export class InvestmentSummaryWallet implements OnInit, OnChanges {
   }
 
   // Genera lo storico mensile degli ultimi 6 mesi calcolando le altezze relative per il mini-chart
-  // ... dentro investment-summary.ts
-
-  // ... dentro investment-summary-wallet.ts
-
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
     const trendTemp = [];

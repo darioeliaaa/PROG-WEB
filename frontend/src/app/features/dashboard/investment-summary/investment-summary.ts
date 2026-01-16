@@ -69,8 +69,6 @@ export class InvestmentSummary implements OnInit, OnChanges {
     });
   }
 
-  // Elabora i saldi mensili dell'ultimo semestre per generare le altezze proporzionali delle barre nel mini-chart
-  // ... dentro investment-summary.ts
 
   calcoloTrendUltimi6Mesi(): void {
     const mesi = 6;
@@ -84,15 +82,11 @@ export class InvestmentSummary implements OnInit, OnChanges {
     let maxValoreAssoluto = 0;
 
     for (let i = mesi - 1; i >= 0; i--) {
-      // 1. Calcoliamo la data "limite" (L'ultimo giorno del mese che stiamo analizzando)
-      // Esempio: se siamo a Maggio e i=1 (Aprile), prendiamo il 30 Aprile alle 23:59:59
+
       const dataLimite = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i + 1, 0, 23, 59, 59);
 
-      // Per l'etichetta del grafico (es. "Apr")
       const dataEtichetta = new Date(dataRiferimento.getFullYear(), dataRiferimento.getMonth() - i, 1);
 
-      // 2. CALCOLO SALDO PROGRESSIVO (CUMULATIVO)
-      // Sommiamo TUTTE le transazioni avvenute PRIMA o DURANTE quella data limite
       let saldoAlMomento = 0;
 
       this.tutteLeTransazioni.forEach(t => {

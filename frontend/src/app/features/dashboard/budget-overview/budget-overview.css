@@ -7,7 +7,6 @@
   display: flex;
   flex-direction: column;
 
-  /* Fondamentale: permette alla card di rimpicciolirsi senza rompere il layout flex */
   min-width: 0;
   box-sizing: border-box;
 }
@@ -20,7 +19,6 @@
 h3 { margin: 0; color: #333; }
 .subtitle { margin: 5px 0 0; color: #777; font-size: 0.9rem; }
 
-/* Contenitore orizzontale per i due grafici (Income vs Expense) */
 .charts-row {
   display: flex;
   justify-content: space-around;
@@ -35,7 +33,6 @@ h3 { margin: 0; color: #333; }
 
 .chart-wrapper {
   flex: 1;
-  /* Reset del min-width per rendere il grafico realmente responsive */
   min-width: 0;
 
   display: flex;
@@ -47,7 +44,6 @@ h3 { margin: 0; color: #333; }
 .income-title { color: #27ae60; margin-bottom: 10px; white-space: nowrap; }
 .expense-title { color: #c0392b; margin-bottom: 10px; white-space: nowrap; }
 
-/* Box che ospita il canvas di Chart.js */
 .canvas-container {
   position: relative;
   height: 250px;
@@ -75,7 +71,6 @@ h3 { margin: 0; color: #333; }
   flex-shrink: 0;
 }
 
-/* Gestione mobile: i grafici si impilano verticalmente */
 @media (max-width: 768px) {
   .charts-row {
     flex-direction: column;

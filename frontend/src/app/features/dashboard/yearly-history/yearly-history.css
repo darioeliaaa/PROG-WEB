@@ -1,5 +1,4 @@
 .glass-card {
-  /* Effetto glass leggero: lo 0.95 di opacità garantisce massima leggibilità del testo */
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   padding: 24px;
@@ -28,7 +27,6 @@ h3 {
   font-size: 0.9rem;
 }
 
-/* Contenitore grafico: l'altezza fissa previene il collasso del canvas di Chart.js */
 .chart-container {
   position: relative;
   flex-grow: 1;
