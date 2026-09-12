@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -8,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UserService {
 
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = `${environment.apiUrl}/api/users`;
 
 
   private loggedIn = new BehaviorSubject<boolean>(!!localStorage.getItem('email'));
@@ -56,7 +57,7 @@ export class UserService {
    * Recupera le impostazioni dell'utente dal database e aggiorna sia il BehaviorSubject che il cache locale.
    */
   loadUserSettings(userId: number): void {
-    this.http.get(`http://localhost:8080/api/settings/${userId}`).subscribe({
+    this.http.get(`${environment.apiUrl}/api/settings/${userId}`).subscribe({
       next: (settings) => {
         this.userSettings.next(settings);
         // Persistenza locale per avere i dati pronti al refresh della pagina

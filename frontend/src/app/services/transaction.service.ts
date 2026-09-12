@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Transaction } from '../models/transaction.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
@@ -9,7 +10,7 @@ import { Transaction } from '../models/transaction.model';
 })
 export class TransactionService {
 
-  private apiUrl = 'http://localhost:8080/api/transactions';
+  private apiUrl = `${environment.apiUrl}/api/transactions`;
 
   private http = inject(HttpClient);
 

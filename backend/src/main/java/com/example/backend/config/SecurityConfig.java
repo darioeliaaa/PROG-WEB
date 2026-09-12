@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,13 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  // Origini ammesse in CORS: di default solo il dev server Angular locale.
+  // Su Render, imposta la variabile d'ambiente CORS_ALLOWED_ORIGINS con
+  // l'URL Vercel del frontend (più origini separate da virgola se servono,
+  // es. "http://localhost:4200,https://moneymind.vercel.app").
+  @Value("${cors.allowed-origins:http://localhost:4200}")
+  private String allowedOrigins;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -44,8 +52,13 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
 
-    // Consenti solo il tuo Frontend Angular
-    configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+    // Consenti solo il/i frontend elencati in CORS_ALLOWED_ORIGINS
+    configuration.setAllowedOrigins(
+        Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isEmpty())
+            .toList()
+    );
 
     // Consenti tutti i metodi HTTP
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
