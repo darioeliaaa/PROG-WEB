@@ -5,6 +5,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
+import { environment } from '../../../../environments/environment';
 type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-success';
 
 @Component({
@@ -95,7 +96,7 @@ export class Login {
 
   // --- LOGIN ---
   onLogin() {
-    this.http.post('http://localhost:8080/api/users/login', this.loginObj).subscribe({
+    this.http.post(`${environment.apiUrl}/api/users/login`, this.loginObj).subscribe({
       next: (res: any) => {
         if (res && res.id) {
           localStorage.setItem('user', JSON.stringify({ id: res.id, email: res.email }));
@@ -128,7 +129,7 @@ export class Login {
       password: this.registerObj.password,
     };
 
-    this.http.post('http://localhost:8080/api/users/register', userToSend).subscribe({
+    this.http.post(`${environment.apiUrl}/api/users/register`, userToSend).subscribe({
       next: (res: any) => {
 
         this.zone.run(() => {
@@ -188,7 +189,7 @@ export class Login {
       newPassword: this.forgotObj.newPassword
     };
 
-    this.http.post('http://localhost:8080/api/users/reset-password', body).subscribe({
+    this.http.post(`${environment.apiUrl}/api/users/reset-password`, body).subscribe({
       next: (res: any) => {
 
         this.zone.run(() => {

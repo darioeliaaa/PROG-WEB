@@ -2,11 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Wallet } from '../models/wallet.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class WalletService {
-  private apiUrl = 'http://localhost:8080/api/wallets';
+  private apiUrl = `${environment.apiUrl}/api/wallets`;
 
   private http = inject(HttpClient);
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface MarketAsset {
   symbol: string;
@@ -24,7 +25,7 @@ export interface MarketAsset {
 })
 export class MarketService {
 
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = `${environment.apiUrl}/api`;
 
   private http = inject(HttpClient);
 
