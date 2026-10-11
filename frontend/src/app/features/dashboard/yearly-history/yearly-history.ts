@@ -21,18 +21,18 @@ export class YearlyHistory implements OnChanges {
   public barChartData: ChartData<'bar'> = {
     labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
     datasets: [
-      { data: [], label: 'Entrate', backgroundColor: '#2ecc71', borderRadius: 4 },
-      { data: [], label: 'Uscite', backgroundColor: '#ef4444', borderRadius: 4 }
+      { data: [], label: 'Entrate', backgroundColor: '#0C8458', hoverBackgroundColor: '#0A6E49', borderRadius: 6, borderSkipped: false, maxBarThickness: 18 },
+      { data: [], label: 'Uscite', backgroundColor: '#D9695F', hoverBackgroundColor: '#C23A3A', borderRadius: 6, borderSkipped: false, maxBarThickness: 18 }
     ]
   };
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: true }, tooltip: { enabled: true } },
+    plugins: { legend: { display: true, position: 'top', align: 'end' }, tooltip: { enabled: true } },
     scales: {
-      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } },
-      x: { grid: { display: false } }
+      y: { beginAtZero: true, border: { display: false }, grid: { color: '#E3E8E2' }, ticks: { maxTicksLimit: 5 } },
+      x: { border: { display: false }, grid: { display: false } }
     }
   };
 

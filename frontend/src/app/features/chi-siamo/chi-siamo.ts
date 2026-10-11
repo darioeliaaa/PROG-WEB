@@ -1,15 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-chi-siamo',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ...UI],
   templateUrl: './chi-siamo.html',
   styleUrls: ['./chi-siamo.css']
 })
 export class ChiSiamoComponent {
+
+  // Icone dell'interfaccia al posto delle emoji, nello stesso ordine dei dati (solo visualizzazione)
+  readonly widgetIcons = ['eye', 'trend-up', 'shield'] as const;
+  readonly featureIcons = ['sparkle', 'bolt', 'globe', 'users'] as const;
 
   // Definisce i dati per i widget informativi visualizzati nella sezione Hero
   heroWidgets = [

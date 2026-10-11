@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { WalletService } from '../../services/wallet.service';
 import { UserService } from '../../services/user.service';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-gestione-wallet',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ...UI],
   templateUrl: './GestioneWallet.html',
   styleUrls: ['./GestioneWallet.css']
 })

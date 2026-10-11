@@ -1,304 +1,174 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+/* Profilo: a sinistra la "carta d'identità" (base .bill in styles.css), a destra il modulo */
+:host { display: block; }
 
-:host {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
-  overflow: hidden;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: #ffffff;
-  color: #1e293b;
-  box-sizing: border-box;
-}
+.profile-page { position: relative; }
 
-/* ===== SFONDO & DECORAZIONI (Effetto Glassmorphism) ===== */
-.light-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background: #ffffff;
-  z-index: 1;
-  overflow: hidden; /* Maschera i blob decorativi per evitare scrollbar laterali */
-}
+.profile-top { display: flex; align-items: center; min-height: 24px; padding: 6px 2px 0; }
 
-/* Blob decorativi sfocati per dare profondità allo sfondo */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  z-index: -1;
-  opacity: 0.4;
-  animation: float 10s infinite alternate;
-}
-
-
-.blob-1 {
-  top: -10%;
-  left: -5%;
-  width: 50%;
-  height: 50%;
-  background: #e0e7ff;
-}
-
-.blob-2 {
-  bottom: -10%;
-  right: -5%;
-  width: 40%;
-  height: 40%;
-  background: #f3e8ff;
-  animation-delay: -5s;
-}
-
-/* Animazione di galleggiamento dei blob di sfondo */
-@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 20px); } }
-
-/* ===== GRID LAYOUT (Asimmetrico) ===== */
-.layout-grid {
+.profile-grid {
   display: grid;
-  /* Griglia fissa: 38% per la presentazione (Hero) e 62% per il modulo dati */
-  grid-template-columns: 38% 62%;
-  height: 100%;
-  width: 100%;
-}
-
-/* ===== SINISTRA: SEZIONE HERO (Presentazione Profilo) ===== */
-.hero-side {
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid rgba(0,0,0,0.03); /* Separatore sottile quasi invisibile */
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(20px); /* Effetto vetro satinato */
-  overflow-y: auto; /* Permette lo scroll interno se l'altezza del browser è ridotta */
-}
-
-/* Pulsante di ritorno con transizione fluida e spostamento sull'asse X */
-.back-link {
-  margin-bottom: 20px;
-  background: none;
-  border: none;
-  color: #64748b;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
-  transition: 0.2s;
-  align-self: flex-start;
-}
-.back-link:hover { color: #7D7DFA; transform: translateX(-3px); }
-
-/* Avatar circolare generato con le iniziali dell'utente */
-.avatar-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #7D7DFA, #6a0dad);
-  color: white;
-  font-size: 2rem;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 30px;
-  box-shadow: 0 15px 30px rgba(125, 125, 250, 0.25);
-  flex-shrink: 0; /* Impedisce che l'avatar si deformi in contenitori stretti */
-}
-
-h1 {
-  /* clamp: rende il titolo fluido tra 2rem (mobile) e 3.5rem (desktop) */
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  line-height: 1.1;
-  margin: 0 0 15px 0;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-/* Testo con gradiente colorato */
-.gradient-text {
-  background: linear-gradient(135deg, #7D7DFA, #6a0dad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.subtitle {
-  font-size: 1.1rem;
-  color: #64748b;
-  line-height: 1.6;
-  max-width: 90%;
-}
-
-/* Badge dinamico per notifiche di successo o errore (usato dopo il salvataggio) */
-.status-badge {
-  margin-top: 30px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  animation: slideUp 0.3s ease-out;
-}
-.status-badge.success { background: #dcfce7; color: #166534; }
-.status-badge.error { background: #fee2e2; color: #991b1b; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-
-/* ===== DESTRA: SEZIONE FORM (Inserimento Dati) ===== */
-.form-side {
-  padding: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto; /* Permette lo scroll indipendente dei soli campi del modulo */
-  height: 100%;
-}
-
-.clean-form {
-  width: 100%;
-  max-width: 550px;
-}
-
-/* Griglia a due colonne per campi accoppiati (es. Nome e Cognome) */
-.row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: 20px;
+  align-items: stretch;
 }
 
-.input-wrap {
-  margin-bottom: 20px;
+/* ---------- carta d'identità ---------- */
+
+.id-card {
   display: flex;
   flex-direction: column;
+  gap: 22px;
+  padding: 26px 52px 38px 28px;
+}
+.id-card .bill-band { height: 52%; opacity: .42; }
+.id-card .bill-thread { right: 22px; }
+.id-card .bill-rosette { width: 300px; height: 300px; right: -96px; top: -70px; opacity: .3; }
+
+.id-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.id-top .serial { color: var(--on-ink-2); }
+
+.id-hero { display: flex; flex-direction: column; gap: 18px; }
+
+.id-seal {
+  position: relative;
+  display: grid; place-items: center;
+  width: 176px; height: 176px;
+  margin: -6px 0 -10px -18px;
+}
+.id-seal mm-rosette { position: absolute; inset: 0; opacity: .85; }
+.id-initials {
+  position: relative;
+  display: grid; place-items: center;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, var(--ink-line), var(--ink) 72%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--on-ink) 18%, transparent),
+    0 0 0 8px color-mix(in srgb, var(--ink) 78%, transparent),
+    0 20px 34px -14px rgb(0 0 0 / .7);
+  font-family: var(--f-display); font-stretch: 125%; font-weight: 700;
+  font-size: 2.2rem; letter-spacing: .02em; line-height: 1;
+  color: var(--surface);
 }
 
-/* Etichette degli input in stile minimalista e maiuscolo */
-.input-wrap label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
+.id-text { display: grid; gap: 12px; }
+.id-hello {
+  font-family: var(--f-display); font-stretch: 125%; font-weight: 700;
+  font-size: clamp(2.2rem, 3.3vw, 3rem);
+  line-height: 1; letter-spacing: -.02em;
+  color: var(--surface);
+  overflow-wrap: anywhere;
+}
+.id-name {
+  background: linear-gradient(100deg,
+    color-mix(in srgb, var(--iris-1) 72%, white),
+    color-mix(in srgb, var(--iris-2) 55%, white) 40%,
+    color-mix(in srgb, var(--iris-3) 70%, white) 72%,
+    color-mix(in srgb, var(--iris-4) 80%, white));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.id-sub { color: var(--on-ink-2); font-size: 1rem; line-height: 1.55; max-width: 32ch; }
+
+/* esito del salvataggio */
+.id-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  width: fit-content;
+  padding: 8px 14px 8px 10px;
+  border-radius: 999px;
+  font-size: .86rem; font-weight: 600;
+}
+.id-status mm-icon { width: 16px; height: 16px; }
+.id-status.success {
+  background: color-mix(in srgb, var(--up) 22%, var(--ink));
+  color: color-mix(in srgb, var(--up-soft) 82%, var(--up));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--up) 50%, transparent);
+}
+.id-status.error {
+  background: color-mix(in srgb, var(--down) 22%, var(--ink));
+  color: color-mix(in srgb, var(--down-soft) 88%, var(--down));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--down) 55%, transparent);
 }
 
-/* Stile degli input: */
-.input-wrap input,
-.input-wrap select {
-  width: 100%;
-  padding: 12px 0;
-  font-size: 1rem;
-  color: #1e293b;
-  font-weight: 500;
-  border: none;
-  border-bottom: 2px solid #e2e8f0;
-  background: transparent;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  border-radius: 0;
+.id-foot {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 12px 28px;
+  margin: auto 0 0;
+  padding-top: 16px;
+  border-top: 1px dashed color-mix(in srgb, var(--on-ink-2) 32%, transparent);
+}
+.id-foot div { display: grid; gap: 4px; min-width: 0; }
+.id-foot dd { margin: 0; font-size: 1.02rem; font-weight: 600; color: var(--on-ink); overflow-wrap: anywhere; }
+
+.bill-micro { position: absolute; left: 0; right: 0; bottom: 10px; }
+
+/* ---------- modulo ---------- */
+
+.form-card { display: flex; flex-direction: column; padding: 26px 28px 24px; }
+.form-card .card-head { margin-bottom: 22px; }
+.head-icon {
+  display: grid; place-items: center;
+  width: 42px; height: 42px; flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--paper-2); color: var(--ink-2);
 }
 
-/* Effetto focus: cambia colore del bordo e aggiunge un leggero padding interno */
-.input-wrap input:focus,
-.input-wrap select:focus {
-  outline: none;
-  border-bottom-color: #7D7DFA;
-  background: linear-gradient(to bottom, rgba(125, 125, 250, 0.02), transparent);
-  padding-left: 10px;
+.profile-form { display: flex; flex-direction: column; gap: 18px; flex: 1; }
+.row-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+
+.form-status { display: none; }
+
+.form-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px dashed var(--line);
+}
+.btn-save { min-width: 190px; }
+.btn-save:disabled { opacity: .8; cursor: progress; }
+.btn-save .spinner {
+  width: 16px; height: 16px;
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--on-ink) 28%, transparent);
+  border-top-color: var(--on-ink);
 }
 
-.input-wrap input::placeholder { color: #cbd5e1; }
-.input-wrap input:disabled { opacity: 0.6; cursor: not-allowed; }
+/* ---------- caricamento ---------- */
 
-.select-wrapper { position: relative; }
-select { -webkit-appearance: none; cursor: pointer; }
-
-/* Azioni a fondo pagina (Annulla e Salva) */
-.footer-actions {
-  margin-top: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 15px;
-  flex-wrap: wrap;
+.loading-overlay {
+  position: absolute; inset: -6px -10px 0; z-index: 20;
+  display: grid; place-content: center; justify-items: center; gap: 12px;
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: var(--ink-2); font-weight: 600; font-size: .92rem;
 }
 
-.btn-cancel {
-  background: none;
-  border: none;
-  color: #64748b;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  padding: 10px 18px;
-  border-radius: 8px;
-  transition: 0.2s;
-}
-.btn-cancel:hover { background: #f1f5f9; color: #0f172a; }
+/* ---------- responsive ---------- */
 
-/* Pulsante primario con gradiente coordinato al brand */
-.btn-primary {
-  background: linear-gradient(135deg, #7D7DFA, #6366f1);
-  color: white;
-  border: none;
-  padding: 14px 30px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  box-shadow: 0 10px 20px -5px rgba(125, 125, 250, 0.4);
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex; align-items: center; gap: 10px;
-  white-space: nowrap;
+@media (max-width: 980px) {
+  .profile-grid { grid-template-columns: minmax(0, 1fr); }
+  .id-hero { flex-direction: row; align-items: center; gap: 22px; }
+  .id-seal { flex-shrink: 0; margin: -10px -6px -10px -18px; }
 }
 
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px -5px rgba(125, 125, 250, 0.5);
+@media (max-width: 760px) {
+  .id-status { display: none; }
+  .form-status { display: flex; }
 }
-.btn-primary:disabled { opacity: 0.7; cursor: wait; }
 
-/* Spinner visibile durante il caricamento o il salvataggio */
-.loader { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@media (max-width: 560px) {
+  .id-card { gap: 18px; padding: 22px 44px 34px 20px; }
+  .id-hero { gap: 14px; }
+  .id-seal { width: 124px; height: 124px; margin: -8px -6px -8px -14px; }
+  .id-initials { width: 68px; height: 68px; font-size: 1.55rem; box-shadow: 0 0 0 1px color-mix(in srgb, var(--on-ink) 18%, transparent), 0 0 0 6px color-mix(in srgb, var(--ink) 78%, transparent); }
+  .id-hello { font-size: 1.85rem; }
+  .id-sub { font-size: .92rem; }
 
-/* Animazioni chiave */
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* RESPONSIVE DESIGN: Ottimizzato per tablet e smartphone */
-@media (max-width: 1100px) {
-  :host {
-    overflow-y: auto; /* Abilita lo scroll della pagina intera sui dispositivi mobili */
-    height: auto;
-    min-height: 100%;
-  }
-  .layout-grid {
-    grid-template-columns: 1fr; /* Le colonne si impilano verticalmente */
-    display: flex;
-    flex-direction: column;
-    height: auto;
-  }
-  .hero-side {
-    padding: 40px;
-    border-right: none;
-    border-bottom: 1px solid #f1f5f9;
-    text-align: center;
-    align-items: center;
-  }
-
-  .back-link {
-    position: static;
-    margin-bottom: 20px;
-  }
-
-  .form-side {
-    padding: 40px 20px 80px 20px;
-    height: auto;
-    overflow-y: visible;
-  }
-
-  /* I campi affiancati passano a singola colonna su mobile */
-  .row-2 { grid-template-columns: 1fr; gap: 0; }
-  /* I bottoni occupano l'intera larghezza e si invertono di posizione */
-  .footer-actions { flex-direction: column-reverse; width: 100%; }
-  .btn-primary, .btn-cancel { width: 100%; justify-content: center; }
+  .form-card { padding: 20px 18px 18px; }
+  .row-2.stack-m { grid-template-columns: minmax(0, 1fr); }
+  .form-foot { flex-direction: column-reverse; align-items: stretch; }
+  .form-foot .btn { width: 100%; min-height: 48px; }
 }

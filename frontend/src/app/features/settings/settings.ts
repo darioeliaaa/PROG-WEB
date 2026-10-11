@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService } from './settings.service';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ...UI],
   templateUrl: './settings.html',
   styleUrl: './settings.css'
 })

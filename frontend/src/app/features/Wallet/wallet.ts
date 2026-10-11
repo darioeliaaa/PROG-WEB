@@ -6,12 +6,13 @@ import { Router } from '@angular/router';
 import { WalletService } from '../../services/wallet.service';
 import { UserService } from '../../services/user.service';
 import { Wallet } from '../../models/wallet.model';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-wallet',
   templateUrl: './wallet.html',
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule, CommonModule],
+  imports: [NgIf, NgFor, FormsModule, CommonModule, ...UI],
   styleUrls: ['./wallet.css']
 })
 export class WalletComponent implements OnInit {
@@ -26,6 +27,9 @@ export class WalletComponent implements OnInit {
   showCreate = false;
   showJoin = false;
   inviteCodeInput: string = ''; // Input per il codice di invito al wallet
+
+  // Ogni wallet ha il colore di un taglio di banconota in euro (solo aspetto grafico)
+  readonly coloriBanconote = ['#2F6DB5', '#C4524C', '#D9822F', '#3B9563', '#7B5BC2', '#B8911F'];
 
   constructor(
     private walletService: WalletService,

@@ -1,273 +1,165 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+:host { display: block; }
 
-/* ===== STRUTTURA FLAT & PULITA ===== */
-:host {
-  display: block;
-}
-
-.dashboard-container {
-  width: 100%;
-  min-height: 100vh;
-  background-color: #f8fafc; /* Grigio chiarissimo per defaticare la vista */
-  font-family: 'Jost', sans-serif;
-  padding: 40px 10%; /* Padding generoso per creare respiro nel layout */
-  box-sizing: border-box;
-}
-
-/* ===== HEADER CON AVATAR ===== */
-/* Layout della testata che separa le informazioni utente dai pulsanti di navigazione */
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  padding-bottom: 25px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Cerchio avatar con gradiente lilla, coordinato con il brand dell'app */
-.avatar-circle {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #7D7DFA, #a0a0ff);
-  color: white;
+/* ---------- testata: sigillo con l'iniziale dell'admin ---------- */
+.head-id { display: flex; align-items: center; gap: 14px; }
+.head-text { display: grid; gap: 8px; min-width: 0; }
+.admin-seal { position: relative; display: grid; place-items: center; width: 68px; height: 68px; flex-shrink: 0; }
+.admin-seal mm-rosette { position: absolute; inset: 0; }
+.seal-letter {
+  position: relative;
+  display: grid; place-items: center;
+  width: 42px; height: 42px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(125, 125, 250, 0.3);
+  background: var(--ink); color: var(--on-ink);
+  box-shadow: 0 0 0 3px var(--paper);
+  font-family: var(--f-display); font-stretch: 125%; font-weight: 700; font-size: 1.15rem;
+}
+.head-badge { height: 30px; padding: 0 12px; font-size: .78rem; }
+
+/* l'esito resta visibile anche dopo aver salvato in fondo alla pagina */
+.feedback {
+  position: sticky; top: 8px; z-index: 20;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  box-shadow: 0 14px 30px -22px rgb(16 35 31 / .55);
 }
 
-.header-texts h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.5px;
+/* ---------- nessun wallet amministrato ---------- */
+.empty-admin { display: grid; justify-items: center; gap: 10px; padding: 48px 24px; text-align: center; }
+.empty-seal { position: relative; display: grid; place-items: center; width: 140px; height: 140px; margin-bottom: 8px; }
+.empty-seal mm-rosette { position: absolute; inset: 0; }
+.empty-ico {
+  position: relative; display: grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 16px;
+  background: var(--ink); color: var(--on-ink);
+  box-shadow: 0 0 0 4px var(--surface);
 }
+.empty-ico mm-icon { width: 22px; height: 22px; }
+.empty-admin strong { font-family: var(--f-display); font-stretch: 120%; font-size: 1.35rem; }
+.empty-admin p { color: var(--ink-2); max-width: 48ch; text-wrap: pretty; }
 
-.header-texts p {
-  margin: 5px 0 0 0;
-  color: #64748b;
-  font-size: 0.95rem;
-}
-
-/* Bottone di ritorno con stile "Outline" minimalista */
-.back-btn {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.back-btn:hover {
-  border-color: #7D7DFA;
-  color: #7D7DFA;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-/* ===== GRIGLIA FORM ===== */
-.form-section {
-  max-width: 900px;
-  /* Animazione di entrata fluida verso l'alto */
-  animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Utilizzo di CSS Grid per allineare i campi del modulo in due colonne */
-.form-grid {
+/* ---------- impaginazione a due colonne ---------- */
+.admin-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 30px;
-  row-gap: 30px;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 20px;
+  align-items: start;
 }
+.admin-side { position: sticky; top: 8px; display: grid; gap: 16px; }
+.feedback ~ .admin-grid .admin-side { top: 74px; }
+.admin-main { display: grid; gap: 20px; }
 
-/* Classe per estendere un input su entrambe le colonne (es. nome wallet o azioni globali) */
-.full-width {
-  grid-column: span 2;
+.pick-card { padding: 18px 20px; }
+
+/* ---------- la banconota del wallet ---------- */
+.wallet-bill { display: grid; gap: 18px; min-height: 330px; padding: 24px 26px 34px; }
+.bill-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.bill-top .serial { color: var(--on-ink-2); margin-right: 18px; }
+.bill-badge { background: rgb(255 255 255 / .08); color: var(--on-ink); box-shadow: inset 0 0 0 1px var(--ink-line); }
+.bill-name {
+  font-family: var(--f-display); font-stretch: 118%; font-weight: 700;
+  font-size: 1.7rem; line-height: 1.05;
+  color: #fff;
+  max-width: 82%;
+  overflow-wrap: anywhere;
 }
-
-/* ===== INPUT STILE "PREMIUM" ===== */
-.form-group {
-  display: flex;
-  flex-direction: column;
+.bill-denom { display: grid; gap: 6px; }
+.denom {
+  font-family: var(--f-display); font-stretch: 140%; font-weight: 800;
+  font-size: clamp(2.8rem, 4.6vw, 4rem); line-height: .9; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 2px 24px rgb(0 0 0 / .25);
 }
+.denom small { font-size: .42em; margin-left: 6px; font-stretch: 110%; color: var(--on-ink-2); }
 
-/* Etichette degli input: piccole, in maiuscolo e distanziate */
-.form-group label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  color: #64748b;
-  margin-bottom: 8px;
+.bill-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px; margin-top: auto; padding-right: 22px; }
+.bill-stat { display: grid; gap: 3px; }
+.bill-stat strong { font-size: 1.02rem; color: var(--on-ink); }
+.bill-members { display: grid; justify-items: end; gap: 6px; }
+.members-count { font-size: .78rem; font-weight: 600; color: var(--on-ink-2); }
+.avatars { display: flex; }
+.avatars .av { width: 30px; height: 30px; margin-left: -8px; background: var(--ink-soft); color: var(--on-ink); border: 1px solid var(--ink-line); box-shadow: 0 0 0 2px var(--ink); font-size: .74rem; }
+.avatars .av:first-child { margin-left: 0; }
+.avatars .av.more { background: var(--on-ink); color: var(--ink); border-color: var(--on-ink); font-size: .66rem; }
+.bill-micro { position: absolute; left: 0; right: 0; bottom: 9px; }
+
+/* banconota "in bianco" prima della scelta */
+.bill-ghost {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; justify-items: start; align-content: end; gap: 4px;
+  min-height: 300px; padding: 24px 26px;
+  border: 1.5px dashed var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+  color: var(--ink-3); font-size: .9rem;
 }
+.ghost-band { position: absolute; inset: auto -2% -4% -2%; height: 62%; z-index: -1; color: var(--line-2); opacity: .8; }
+.ghost-rosette { position: absolute; z-index: -1; width: 230px; height: 230px; right: -64px; top: -70px; color: var(--line-2); }
+.ghost-ico { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 8px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+.bill-ghost strong { color: var(--ink); font-size: 1.05rem; }
+.bill-ghost span:last-child { max-width: 32ch; }
 
-/* Testo di aiuto sotto i campi per guidare l'utente */
-.form-group small {
-  margin-top: 6px;
-  color: #94a3b8;
-  font-size: 0.8rem;
-  font-weight: 400;
+/* ---------- card delle impostazioni ---------- */
+.head-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--paper-2); color: var(--ink-2); }
+.head-ico mm-icon { width: 18px; height: 18px; }
+
+.rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px 18px; align-items: start; }
+.rules-grid .input { font-variant-numeric: tabular-nums; }
+.rules-foot { display: flex; justify-content: flex-end; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+/* cosa si può fare (nessun wallet scelto) */
+.idle-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.idle-list li { display: flex; align-items: flex-start; gap: 14px; padding: 14px 2px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: .88rem; }
+.idle-list li:first-child { border-top: 0; padding-top: 2px; }
+.idle-list strong { display: block; color: var(--ink); font-size: .95rem; margin-bottom: 1px; }
+.idle-ico { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 12px; background: var(--paper-2); color: var(--ink-2); }
+.idle-ico mm-icon { width: 18px; height: 18px; }
+.idle-ico.danger { background: var(--down-soft); color: var(--down); }
+
+/* membri */
+.member-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.member { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 2px; border-top: 1px solid var(--line); }
+.member:first-child { border-top: 0; }
+.av {
+  display: grid; place-items: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ink); color: var(--on-ink);
+  font-size: .84rem; font-weight: 700;
 }
+.member.is-me .av { border: 2px solid transparent; background: linear-gradient(var(--ink), var(--ink)) padding-box, var(--iris) border-box; }
+.member-name { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.remove-btn mm-icon { width: 15px; height: 15px; }
+.remove-btn:hover:not(:disabled) { color: var(--down); border-color: var(--down); background: var(--down-soft); }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #1e293b;
-  font-family: 'Jost', sans-serif;
-  transition: all 0.2s ease-in-out;
-  box-sizing: border-box;
-}
-
-/* Effetto Focus: aggiunge un alone lilla (ring) per evidenziare il campo attivo */
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #7D7DFA;
-  box-shadow: 0 0 0 4px rgba(125, 125, 250, 0.15);
-  background-color: #ffffff;
-}
-
-/* ===== LISTA MEMBRI (Layout orizzontale per ogni riga) ===== */
-.members-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.members-list li {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 12px 15px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.members-list li:hover {
-  border-color: #cbd5e1;
-  transform: translateX(2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-}
-
-.member-name {
-  font-weight: 500;
-  color: #334155;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Bottone per rimuovere un utente dal wallet condiviso */
-.btn-remove-small {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-remove-small:hover {
-  background-color: #fecaca;
-}
-
-/* ===== BOTTONE SALVA PRINCIPALE ===== */
-.btn-save {
-  background-color: #7D7DFA;
-  color: white;
-  border: none;
-  padding: 14px 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(125, 125, 250, 0.3);
-  width: 100%;
-  margin-top: 10px;
-}
-
-.btn-save:hover {
-  background-color: #6363e0;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(125, 125, 250, 0.4);
-}
-
-/* ===== DANGER ZONE (Sezione critica per eliminazione) ===== */
-/* Stile visivo che comunica cautela attraverso l'uso del colore rosso e del bordo tratteggiato */
+/* zona pericolosa */
 .danger-zone {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px dashed #fca5a5;
-  background-color: #fef2f2;
-  border-radius: 12px;
-  text-align: center;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px;
+  padding: 20px 24px;
+  border: 1.5px dashed color-mix(in srgb, var(--down) 45%, var(--line));
+  border-radius: var(--r);
+  background: color-mix(in srgb, var(--down-soft) 45%, var(--surface));
+}
+.danger-text { display: grid; gap: 3px; flex: 1; min-width: min(260px, 100%); }
+.danger-text .eyebrow { color: var(--down); }
+.danger-text strong { font-size: 1.02rem; }
+.danger-text p { color: var(--ink-2); font-size: .88rem; max-width: 52ch; text-wrap: pretty; }
+.danger-zone .btn-danger { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--down) 30%, transparent); }
+
+@media (max-width: 980px) {
+  .admin-grid { grid-template-columns: minmax(0, 1fr); }
+  .admin-side { position: static; }
 }
 
-.btn-danger {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%;
-}
-
-/* ===== FEEDBACK MESSAGES ===== */
-/* Box per comunicare l'esito delle operazioni (Successo/Errore) */
-.feedback-box {
-  padding: 15px;
-  margin-bottom: 30px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.success { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
-.error { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
-
-/* RESPONSIVE: Ottimizzazione per dispositivi mobili (Stacking dei campi) */
-@media (max-width: 768px) {
-  .dashboard-container { padding: 20px; }
-  .form-grid { grid-template-columns: 1fr; } /* I campi passano da due colonne a una riga singola */
-  .full-width { grid-column: span 1; }
-  .header-left { width: 100%; }
+@media (max-width: 560px) {
+  .head-id { gap: 10px; }
+  .admin-seal { width: 52px; height: 52px; }
+  .seal-letter { width: 34px; height: 34px; font-size: .95rem; box-shadow: 0 0 0 2px var(--paper); }
+  .gestione .page-head h1 { font-size: 1.5rem; }
+  .wallet-bill { min-height: 290px; padding: 22px 20px 32px; }
+  .bill-name { font-size: 1.45rem; }
+  .bill-ghost { min-height: 220px; }
+  .danger-zone { padding: 18px; }
+  .danger-zone .btn { width: 100%; }
+  .rules-foot .btn { width: 100%; }
 }

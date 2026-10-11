@@ -1,84 +1,127 @@
-<div class="light-container">
+<div class="page profile-page">
 
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
-  <div *ngIf="isLoadingData" class="loading-overlay">
-    <div class="spinner"></div>
+  <div *ngIf="isLoadingData" class="loading-overlay" role="status">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Carico il tuo profilo…</span>
   </div>
 
-  <div class="layout-grid">
+  <div class="profile-top rise">
+    <button type="button" class="back-link" (click)="backToDashboard()">
+      <mm-icon name="arrow-left" /> Torna alla dashboard
+    </button>
+  </div>
 
-    <aside class="hero-side">
-      <button class="back-link" (click)="backToDashboard()">
-        <span class="icon">←</span> Torna alla Dashboard
-      </button>
+  <div class="profile-grid">
 
-      <div class="hero-content">
-        <div class="avatar-container">
-          {{ getInitials() }}
+    <!-- la "carta d'identità" in stampa di sicurezza -->
+    <aside class="bill id-card rise rise-1" aria-labelledby="pf-hello">
+      <mm-guilloche class="bill-band" tone="iris" [count]="22" [seed]="3" />
+      <mm-rosette class="bill-rosette" preset="small" tone="iris" />
+      <span class="bill-thread" aria-hidden="true"></span>
+
+      <div class="id-top">
+        <span class="eyebrow">Profilo personale</span>
+        <span class="serial">N° MM · {{ getInitials() }}</span>
+      </div>
+
+      <div class="id-hero">
+        <div class="id-seal" aria-hidden="true">
+          <mm-rosette preset="full" tone="iris" [spin]="true" />
+          <span class="id-initials">{{ getInitials() }}</span>
         </div>
-        <h1>Ciao, <span class="gradient-text">{{ userData.nome }}</span>.</h1>
-        <p class="subtitle">Gestisci la tua identità finanziaria.<br>Tutto in un unico posto.</p>
 
-        <div class="status-badge" [ngClass]="isError ? 'error' : 'success'" *ngIf="message">
-          <span class="dot"></span> {{ message }}
+        <div class="id-text">
+          <h1 id="pf-hello" class="id-hello">Ciao<ng-container *ngIf="userData.nome">, <span class="id-name">{{ userData.nome }}</span></ng-container>.</h1>
+          <p class="id-sub">Gestisci la tua identità finanziaria.<br>Tutto in un unico posto.</p>
         </div>
       </div>
+
+      <div class="id-status rise" [ngClass]="isError ? 'error' : 'success'" *ngIf="message" role="status">
+        <mm-icon [name]="isError ? 'close' : 'check'" /> {{ message }}
+      </div>
+
+      <dl class="id-foot">
+        <div>
+          <dt class="eyebrow">Intestatario</dt>
+          <dd>{{ (userData.nome || userData.cognome) ? (userData.nome + ' ' + userData.cognome) : '—' }}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow">Telefono</dt>
+          <dd class="num">{{ userData.telefono || '—' }}</dd>
+        </div>
+      </dl>
+
+      <mm-microtext class="bill-micro" text="MONEYMIND · IDENTITÀ FINANZIARIA · SERIE MM" />
     </aside>
 
-    <main class="form-side">
-      <form (ngSubmit)="onSubmit()" class="clean-form">
+    <!-- dati del profilo -->
+    <section class="card form-card rise rise-2" aria-labelledby="pf-form-title">
+      <div class="card-head">
+        <div>
+          <h2 id="pf-form-title">Dati personali</h2>
+          <p class="sub">Aggiorna anagrafica, contatti e residenza del tuo account.</p>
+        </div>
+        <span class="head-icon" aria-hidden="true"><mm-icon name="user" /></span>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="profile-form">
 
         <div class="row-2">
-          <div class="input-wrap">
-            <label>Nome</label>
-            <input type="text" name="nome" [(ngModel)]="userData.nome" [disabled]="isSaving">
+          <div class="field">
+            <label for="pf-nome">Nome</label>
+            <input id="pf-nome" class="input" type="text" autocomplete="given-name"
+                   name="nome" [(ngModel)]="userData.nome" [disabled]="isSaving">
           </div>
-          <div class="input-wrap">
-            <label>Cognome</label>
-            <input type="text" name="cognome" [(ngModel)]="userData.cognome" [disabled]="isSaving">
-          </div>
-        </div>
-
-        <div class="input-wrap">
-          <label>Genere</label>
-          <div class="select-wrapper">
-            <select name="sesso" [(ngModel)]="userData.sesso" [disabled]="isSaving">
-              <option value="" disabled>Seleziona</option>
-              <option value="M">Uomo</option>
-              <option value="F">Donna</option>
-              <option value="Altro">Altro</option>
-            </select>
+          <div class="field">
+            <label for="pf-cognome">Cognome</label>
+            <input id="pf-cognome" class="input" type="text" autocomplete="family-name"
+                   name="cognome" [(ngModel)]="userData.cognome" [disabled]="isSaving">
           </div>
         </div>
 
-        <div class="row-2">
-          <div class="input-wrap">
-            <label>Data di Nascita</label>
-            <input type="date" name="dataDiNascita" [(ngModel)]="userData.dataDiNascita" [disabled]="isSaving">
+        <div class="field">
+          <label for="pf-sesso">Genere</label>
+          <select id="pf-sesso" class="select" name="sesso" [(ngModel)]="userData.sesso" [disabled]="isSaving">
+            <option value="" disabled>Seleziona</option>
+            <option value="M">Uomo</option>
+            <option value="F">Donna</option>
+            <option value="Altro">Altro</option>
+          </select>
+        </div>
+
+        <div class="row-2 stack-m">
+          <div class="field">
+            <label for="pf-nascita">Data di nascita</label>
+            <input id="pf-nascita" class="input" type="date" autocomplete="bday"
+                   name="dataDiNascita" [(ngModel)]="userData.dataDiNascita" [disabled]="isSaving">
           </div>
-          <div class="input-wrap">
-            <label>Telefono</label>
-            <input type="tel" name="telefono" [(ngModel)]="userData.telefono" [disabled]="isSaving">
+          <div class="field">
+            <label for="pf-telefono">Telefono</label>
+            <input id="pf-telefono" class="input" type="tel" autocomplete="tel"
+                   name="telefono" [(ngModel)]="userData.telefono" [disabled]="isSaving">
           </div>
         </div>
 
-        <div class="input-wrap">
-          <label>Indirizzo di Residenza</label>
-          <input type="text" name="indirizzo" [(ngModel)]="userData.indirizzo" [disabled]="isSaving" placeholder="Via Roma 1, Milano">
+        <div class="field">
+          <label for="pf-indirizzo">Indirizzo di residenza</label>
+          <input id="pf-indirizzo" class="input" type="text" autocomplete="street-address"
+                 name="indirizzo" [(ngModel)]="userData.indirizzo" [disabled]="isSaving" placeholder="Via Roma 1, Milano">
         </div>
 
-        <div class="footer-actions">
-          <button type="button" class="btn-cancel" (click)="backToDashboard()">Annulla</button>
-          <button type="submit" class="btn-primary" [disabled]="isSaving">
-            <span *ngIf="!isSaving">Salva Modifiche</span>
-            <span *ngIf="isSaving" class="loader"></span>
+        <div class="note form-status" [ngClass]="isError ? 'err' : 'ok'" *ngIf="message" role="status">
+          <mm-icon [name]="isError ? 'close' : 'check'" /> {{ message }}
+        </div>
+
+        <div class="form-foot">
+          <button type="button" class="btn btn-ghost" (click)="backToDashboard()">Annulla</button>
+          <button type="submit" class="btn btn-primary btn-save" [disabled]="isSaving">
+            <ng-container *ngIf="!isSaving"><mm-icon name="check" /> Salva modifiche</ng-container>
+            <ng-container *ngIf="isSaving"><span class="spinner" aria-hidden="true"></span> Salvataggio…</ng-container>
           </button>
         </div>
 
       </form>
-    </main>
+    </section>
 
   </div>
 </div>

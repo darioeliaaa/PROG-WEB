@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UI, coloreCategoria } from '../../../shared/ui';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType, Chart, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-budget-overview-wallet',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, ...UI],
   templateUrl: './budget-overview-wallet.html',
   styleUrl: './budget-overview-wallet.css'
 })
@@ -19,7 +20,7 @@ export class BudgetOverviewWallet implements OnChanges {
 
   public totaleEntrate: number = 0;
   public totaleUscite: number = 0;
-  public chartType: ChartType = 'doughnut';
+  public chartType = 'doughnut' as const;
 
   public incomeData: ChartData<'doughnut'> = {
     labels: [],
@@ -31,25 +32,15 @@ export class BudgetOverviewWallet implements OnChanges {
     datasets: [{ data: [], backgroundColor: [], borderWidth: 0 }]
   };
 
-  public chartOptions: ChartConfiguration['options'] = {
+  public chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
+    cutout: '72%',
     maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } }
-    }
+    layout: { padding: 6 },
+    // la legenda è disegnata nel template, con gli importi accanto a ogni categoria
+    plugins: { legend: { display: false } }
   };
 
-  private coloriCategorie: { [key: string]: string } = {
-    'stipendio': '#2ecc71',
-    'investimenti': '#3498db',
-    'altro': '#95a5a6',
-    'casa': '#e74c3c',
-    'spesa': '#f1c40f',
-    'svago': '#9b59b6',
-    'salute': '#e67e22',
-    'trasporti': '#1abc9c',
-    'default': '#bdc3c7'
-  };
 
   // Registra i plugin di Chart.js necessari per renderizzare i grafici a ciambella
   constructor() {
@@ -91,9 +82,11 @@ export class BudgetOverviewWallet implements OnChanges {
       labels: Array.from(entrateMap.keys()).map(k => k.toUpperCase()),
       datasets: [{
         data: Array.from(entrateMap.values()),
-        backgroundColor: Array.from(entrateMap.keys()).map(k => this.coloriCategorie[k.toLowerCase()] || this.coloriCategorie['default']),
-        borderColor: '#ffffff',
-        borderWidth: 2
+        backgroundColor: Array.from(entrateMap.keys()).map(k => coloreCategoria(k)),
+        borderColor: '#FBFCFA',
+        borderWidth: 3,
+        borderRadius: 6,
+        hoverOffset: 6
       }]
     };
 
@@ -101,9 +94,11 @@ export class BudgetOverviewWallet implements OnChanges {
       labels: Array.from(usciteMap.keys()).map(k => k.toUpperCase()),
       datasets: [{
         data: Array.from(usciteMap.values()),
-        backgroundColor: Array.from(usciteMap.keys()).map(k => this.coloriCategorie[k.toLowerCase()] || this.coloriCategorie['default']),
-        borderColor: '#ffffff',
-        borderWidth: 2
+        backgroundColor: Array.from(usciteMap.keys()).map(k => coloreCategoria(k)),
+        borderColor: '#FBFCFA',
+        borderWidth: 3,
+        borderRadius: 6,
+        hoverOffset: 6
       }]
     };
 

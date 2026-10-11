@@ -13,11 +13,12 @@ import { WalletService } from '../../services/wallet.service';
 import { UserService } from '../../services/user.service';
 import { Transaction } from '../../models/transaction.model';
 import { Wallet } from '../../models/wallet.model';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-dashboard-wallet',
   standalone: true,
-  imports: [CommonModule, FormsModule, InvestmentSummaryWallet, BudgetOverviewWallet, YearlyHistoryWallet, Movimenti],
+  imports: [CommonModule, FormsModule, InvestmentSummaryWallet, BudgetOverviewWallet, YearlyHistoryWallet, Movimenti, ...UI],
   templateUrl: './dashboardWallet.html',
   styleUrl: './dashboardWallet.css'
 })

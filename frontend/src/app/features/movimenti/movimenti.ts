@@ -5,11 +5,12 @@ import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { WalletService } from '../../services/wallet.service';
 import { Transaction } from '../../models/transaction.model';
+import { UI, categoria } from '../../shared/ui';
 
 @Component({
   selector: 'app-movimenti',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ...UI],
   templateUrl: './movimenti.html',
   styleUrl: './movimenti.css'
 })
@@ -21,6 +22,10 @@ export class Movimenti implements OnInit {
   @Output() close = new EventEmitter<void>();
   // Evento emesso dopo un salvataggio riuscito per aggiornare i dati nel parent
   @Output() saved = new EventEmitter<void>();
+
+  // Categorie proposte nel modulo (stessi valori della vecchia tendina) e loro nome da mostrare
+  readonly categorie = ['casa', 'spesa', 'svago', 'salute', 'stipendio', 'investimenti', 'altro'];
+  readonly nomeCategoria = (c: string) => categoria(c).label;
 
   // Oggetto reattivo per il form del nuovo movimento finanziario
   nuovoMovimento = {

@@ -1,8 +1,10 @@
 <header class="top-bar">
-  <div class="spacer"></div>
 
-  <nav class="toggle-container">
+  <a routerLink="/dashboard" class="mobile-brand" aria-label="MoneyMind">
+    <mm-rosette preset="mark" tone="iris" />
+  </a>
 
+  <nav class="section-switch" aria-label="Sezioni dell'app">
     <a routerLink="/dashboard"
        [class.active]="router.url.includes('/dashboard')
                      || router.url.includes('/movimenti')
@@ -13,37 +15,45 @@
                      || router.url.includes('/gestioneWallet')
                      || router.url.includes('/chi-siamo')"
        class="toggle-btn">
-      Gestione Finanze
+      <mm-icon name="wallet" />
+      <span>Gestione Finanze</span>
     </a>
 
     <a routerLink="/market"
        [class.active]="router.url.includes('/market') || router.url.includes('/portfolio')"
        class="toggle-btn">
-      Investimenti
+      <mm-icon name="trend-up" />
+      <span>Investimenti</span>
     </a>
   </nav>
 
   <div class="user-profile">
     <ng-container *ngIf="!isLoggedIn">
-      <a routerLink="/login" class="login-btn">Accedi</a>
+      <a routerLink="/login" class="btn btn-primary btn-sm login-btn">
+        <mm-icon name="login" /> Accedi
+      </a>
     </ng-container>
 
     <div class="logged-user-container" *ngIf="isLoggedIn">
-      <div class="avatar-circle-btn" (click)="toggleMenu()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </div>
+      <button type="button" class="avatar-btn" (click)="toggleMenu()"
+              [attr.aria-expanded]="showMenu" aria-label="Menu account">
+        <span class="avatar-initial">{{ (userService.getCurrentUserEmail() || 'U').charAt(0).toUpperCase() }}</span>
+        <mm-icon name="chevron-down" class="avatar-chevron" [class.open]="showMenu" />
+      </button>
+
+      <div class="menu-veil" *ngIf="showMenu" (click)="closeMenu()"></div>
 
       <div class="dropdown-menu" *ngIf="showMenu">
-        <div class="menu-header">Account</div>
-        <a routerLink="/profilo" (click)="showMenu = false">profilo</a>
+        <div class="menu-header">
+          <span class="eyebrow">Account</span>
+          <strong>{{ userService.getCurrentUserEmail() }}</strong>
+        </div>
+        <a routerLink="/profilo" (click)="showMenu = false"><mm-icon name="user" /> Profilo</a>
+        <a routerLink="/settings" (click)="showMenu = false"><mm-icon name="settings" /> Impostazioni</a>
         <div class="menu-divider"></div>
-        <a routerLink="/settings" (click)="showMenu = false">impostazioni</a>
-        <div class="menu-divider"></div>
-        <a (click)="logout()" class="logout-text">Logout</a>
+        <a (click)="logout()" class="logout-text"><mm-icon name="logout" /> Esci</a>
       </div>
     </div>
   </div>
+
 </header>

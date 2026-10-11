@@ -1,86 +1,195 @@
-<div class="dashboard-container">
+<div class="page gestione">
 
-  <header class="page-header">
-    <div class="header-left">
-      <div class="avatar-circle">
-        {{ currentUserName ? currentUserName.charAt(0).toUpperCase() : 'U' }}
-      </div>
+  <header class="page-head rise">
+    <div class="titles">
+      <button type="button" class="back-link" (click)="backToDashboard()"><mm-icon name="arrow-left" /> Torna alla dashboard</button>
 
-      <div class="header-texts">
-        <h1>Gestione Wallet</h1>
-        <p>Amministra i tuoi wallet come Admin</p>
-      </div>
-    </div>
-
-    <button class="back-btn" (click)="backToDashboard()">Torna alla Dashboard</button>
-  </header>
-
-  <div *ngIf="message" class="feedback-box" [ngClass]="isError ? 'error' : 'success'">
-    <span>{{isError ? '⚠️' : '✅'}}</span>
-    {{message}}
-  </div>
-
-  <div *ngIf="!loading && adminWallets.length === 0" class="form-section">
-    <p class="warning-text">Non sei admin di nessun wallet</p>
-  </div>
-
-  <form *ngIf="adminWallets.length > 0" class="form-section">
-    <div class="form-grid">
-      <div class="form-group full-width">
-        <label for="wallateSelect">Seleziona wallet</label>
-        <select id="walletSelect" (change)="selectWallet($event)">
-          <option value="">-- seleziona --</option>
-          <option *ngFor="let w of adminWallets; let i = index" [value]="i">{{ w.name }}</option>
-        </select>
-
-      </div>
-
-      <div class="form-group" *ngIf="selectedWallet">
-        <label for="monthlyBudget">Budget mensile (per membro)</label>
-        <input type="number" id="monthlyBudget" [(ngModel)]="selectedWallet.monthlyBudget" name="monthlyBudget" placeholder="Inserisci budget">
-      </div>
-
-      <div class="form-group" *ngIf="selectedWallet">
-        <label for="maxTransfer">Limite massimo prelievo (per operazione)</label>
-        <input
-          type="number"
-          id="maxTransfer"
-          name="maxTransferLimit"
-          [(ngModel)]="selectedWallet.maxTransferLimit"
-          placeholder="Es: 50">
-        <small style="color: #64748b; font-size: 0.8rem;">Lascia vuoto o 0 per nessun limite.</small>
-      </div>
-
-      <div class="form-group full-width" *ngIf="selectedWallet">
-        <button type="button" (click)="saveSettings()" class="btn-save">Salva Impostazioni</button>
-      </div>
-
-      <!-- MEMBRI -->
-      <div class="form-group full-width" *ngIf="selectedWallet">
-        <label>Membri del wallet</label>
-        <ul class="members-list">
-          <li *ngFor="let m of selectedWallet.members">
-            <span class="member-name">{{ m.username }}</span>
-            <button
-              *ngIf="m.id !== currentUserId"
-              type="button"
-              class="btn-remove-small"
-              (click)="removeMember(m.id)">
-              Rimuovi
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <!-- ELIMINA WALLET -->
-      <div class="form-group full-width" *ngIf="selectedWallet">
-        <div class="danger-zone">
-          <button type="button" class="btn-danger" (click)="deleteWallet()">
-            🗑️ Elimina Wallet Definitivamente
-          </button>
+      <div class="head-id">
+        <span class="admin-seal" role="img" [attr.aria-label]="'Amministratore ' + (currentUserName || '')">
+          <mm-rosette preset="small" tone="iris" />
+          <span class="seal-letter">{{ currentUserName ? currentUserName.charAt(0).toUpperCase() : 'U' }}</span>
+        </span>
+        <div class="head-text">
+          <h1>Gestione wallet</h1>
+          <p class="sub">Amministra i wallet di cui sei admin.</p>
         </div>
       </div>
     </div>
+
+    <div class="actions" *ngIf="adminWallets.length > 0">
+      <span class="badge ink head-badge"><mm-icon name="crown" /> {{ adminWallets.length }} {{ adminWallets.length === 1 ? 'wallet amministrato' : 'wallet amministrati' }}</span>
+    </div>
+  </header>
+
+  <div *ngIf="message" class="note feedback rise" [ngClass]="isError ? 'err' : 'ok'" [attr.role]="isError ? 'alert' : 'status'">
+    <mm-icon [name]="isError ? 'close' : 'check'" />
+    <span>{{ message }}</span>
+  </div>
+
+  <div *ngIf="loading && adminWallets.length === 0" class="loading-row"><span class="spinner"></span> Carico i tuoi wallet…</div>
+
+  <section *ngIf="!loading && adminWallets.length === 0" class="card empty-admin rise rise-1">
+    <div class="empty-seal">
+      <mm-rosette preset="full" tone="iris" [spin]="true" />
+      <span class="empty-ico"><mm-icon name="crown" /></span>
+    </div>
+    <strong>Non sei admin di nessun wallet</strong>
+    <p>Quando crei un wallet condiviso ne diventi l'amministratore: da qui potrai fissarne il budget, i limiti di prelievo e gestire i membri.</p>
+  </section>
+
+  <form *ngIf="adminWallets.length > 0" class="admin-grid">
+
+    <!-- colonna sinistra: scelta del wallet e banconota di riepilogo -->
+    <aside class="admin-side">
+      <div class="card pick-card rise rise-1">
+        <div class="field">
+          <label for="walletSelect">Wallet da amministrare</label>
+          <select id="walletSelect" class="select" (change)="selectWallet($event)">
+            <option value="">Seleziona un wallet</option>
+            <option *ngFor="let w of adminWallets; let i = index" [value]="i">{{ w.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="bill wallet-bill rise rise-2" *ngIf="selectedWallet" aria-label="Riepilogo del wallet selezionato">
+        <mm-guilloche class="bill-band" tone="iris" [count]="22" [seed]="selectedWallet.id" />
+        <mm-rosette class="bill-rosette" preset="full" tone="iris" [spin]="true" />
+        <span class="bill-thread" aria-hidden="true"></span>
+
+        <div class="bill-top">
+          <span class="badge bill-badge"><mm-icon name="crown" /> Amministratore</span>
+          <span class="serial">N° MM-{{ ('000' + selectedWallet.id).slice(-4) }}</span>
+        </div>
+
+        <h2 class="bill-name">{{ selectedWallet.name }}</h2>
+
+        <div class="bill-denom">
+          <span class="eyebrow">Budget mensile per membro</span>
+          <span class="denom">{{ selectedWallet.monthlyBudget ? (selectedWallet.monthlyBudget | number:'1.0-0') : '∞' }}<small *ngIf="selectedWallet.monthlyBudget">€</small></span>
+        </div>
+
+        <div class="bill-foot">
+          <div class="bill-stat">
+            <span class="eyebrow">Limite per prelievo</span>
+            <strong class="num">{{ selectedWallet.maxTransferLimit ? (selectedWallet.maxTransferLimit | number:'1.0-2') + ' €' : 'Nessun limite' }}</strong>
+          </div>
+          <div class="bill-members">
+            <div class="avatars" aria-hidden="true">
+              <span class="av" *ngFor="let m of (selectedWallet.members || []).slice(0, 4)">{{ m.username ? m.username.charAt(0).toUpperCase() : '?' }}</span>
+              <span class="av more" *ngIf="selectedWallet.members?.length > 4">+{{ selectedWallet.members.length - 4 }}</span>
+            </div>
+            <span class="members-count">{{ selectedWallet.members?.length || 0 }} {{ selectedWallet.members?.length === 1 ? 'membro' : 'membri' }}</span>
+          </div>
+        </div>
+
+        <mm-microtext class="bill-micro" text="MONEYMIND · WALLET CONDIVISO · AMMINISTRAZIONE" />
+      </section>
+
+      <div class="bill-ghost rise rise-2" *ngIf="!selectedWallet">
+        <mm-guilloche class="ghost-band" tone="ink" [count]="14" [seed]="3" />
+        <mm-rosette class="ghost-rosette" preset="small" tone="ink" />
+        <span class="ghost-ico"><mm-icon name="wallet" /></span>
+        <strong>Nessun wallet selezionato</strong>
+        <span>Scegline uno dal menu qui sopra per vederne il riepilogo.</span>
+      </div>
+    </aside>
+
+    <!-- colonna destra: impostazioni -->
+    <div class="admin-main">
+
+      <section class="card idle-card rise rise-2" *ngIf="!selectedWallet">
+        <div class="card-head">
+          <div>
+            <h2>Cosa puoi fare da qui</h2>
+            <p class="sub">Come amministratore controlli le regole del gruppo</p>
+          </div>
+        </div>
+        <ul class="idle-list">
+          <li><span class="idle-ico"><mm-icon name="coins" /></span><span><strong>Budget mensile</strong>Quanto può spendere ogni membro in un mese.</span></li>
+          <li><span class="idle-ico"><mm-icon name="shield" /></span><span><strong>Limite di prelievo</strong>L'importo massimo per una singola operazione.</span></li>
+          <li><span class="idle-ico"><mm-icon name="users" /></span><span><strong>Membri</strong>Rimuovi chi non fa più parte del gruppo.</span></li>
+          <li><span class="idle-ico danger"><mm-icon name="trash" /></span><span><strong>Eliminazione</strong>Chiudi il wallet quando non serve più.</span></li>
+        </ul>
+      </section>
+
+      <section class="card rise rise-2" *ngIf="selectedWallet">
+        <div class="card-head">
+          <div>
+            <h2>Budget e limiti</h2>
+            <p class="sub">Regole valide per ogni membro del wallet</p>
+          </div>
+          <span class="head-ico"><mm-icon name="settings" /></span>
+        </div>
+
+        <div class="rules-grid">
+          <div class="field" *ngIf="selectedWallet">
+            <label for="monthlyBudget">Budget mensile (per membro)</label>
+            <div class="input-affix">
+              <span class="affix">€</span>
+              <input class="input" type="number" id="monthlyBudget" [(ngModel)]="selectedWallet.monthlyBudget" name="monthlyBudget" placeholder="Inserisci budget">
+            </div>
+          </div>
+
+          <div class="field" *ngIf="selectedWallet">
+            <label for="maxTransfer">Limite massimo prelievo (per operazione)</label>
+            <div class="input-affix">
+              <span class="affix">€</span>
+              <input
+                class="input"
+                type="number"
+                id="maxTransfer"
+                name="maxTransferLimit"
+                [(ngModel)]="selectedWallet.maxTransferLimit"
+                aria-describedby="maxTransferHint"
+                placeholder="Es. 50">
+            </div>
+            <span class="hint" id="maxTransferHint">Lascia vuoto o 0 per nessun limite.</span>
+          </div>
+        </div>
+
+        <div class="rules-foot" *ngIf="selectedWallet">
+          <button type="button" (click)="saveSettings()" class="btn btn-primary"><mm-icon name="check" /> Salva impostazioni</button>
+        </div>
+      </section>
+
+      <!-- MEMBRI -->
+      <section class="card rise rise-3" *ngIf="selectedWallet">
+        <div class="card-head">
+          <div>
+            <h2>Membri del wallet</h2>
+            <p class="sub">Le persone che condividono questo wallet</p>
+          </div>
+          <span class="badge">{{ selectedWallet.members?.length || 0 }}</span>
+        </div>
+
+        <ul class="member-list">
+          <li *ngFor="let m of selectedWallet.members" class="member" [class.is-me]="m.id === currentUserId">
+            <span class="av">{{ m.username ? m.username.charAt(0).toUpperCase() : '?' }}</span>
+            <span class="member-name">{{ m.username }}</span>
+            <span class="badge ink" *ngIf="m.id === currentUserId"><mm-icon name="crown" /> Tu, admin</span>
+            <button
+              *ngIf="m.id !== currentUserId"
+              type="button"
+              class="btn btn-ghost btn-sm remove-btn"
+              [attr.aria-label]="'Rimuovi ' + m.username + ' dal wallet'"
+              (click)="removeMember(m.id)">
+              <mm-icon name="close" /> Rimuovi
+            </button>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ELIMINA WALLET -->
+      <section class="danger-zone rise rise-4" *ngIf="selectedWallet">
+        <div class="danger-text">
+          <span class="eyebrow">Zona pericolosa</span>
+          <strong>Elimina questo wallet</strong>
+          <p>Il wallet sarà eliminato definitivamente per tutti i membri. L'operazione non si può annullare.</p>
+        </div>
+        <button type="button" class="btn btn-danger" (click)="deleteWallet()">
+          <mm-icon name="trash" /> Elimina definitivamente
+        </button>
+      </section>
+    </div>
   </form>
 </div>
-

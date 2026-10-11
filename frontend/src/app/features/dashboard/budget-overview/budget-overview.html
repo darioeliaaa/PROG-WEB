@@ -1,51 +1,62 @@
-
-<div class="budget-card glass-panel">
-  <div class="card-header">
-    <div class="glass-card">
-      <div class="header-section">
-        <h3>Dettaglio Budget</h3>
-        <p class="subtitle">Analisi categorie Entrate vs Uscite</p>
-      </div>
-
-      <div class="charts-row">
-
-        <div class="chart-wrapper">
-          <h4 class="income-title">Entrate</h4>
-          <div class="canvas-container">
-            <canvas baseChart [data]="incomeData" [options]="chartOptions" [type]="chartType"></canvas>
-          </div>
-
-          <div class="chart-wrapper">
-            <p class="total">
-              Totale:
-              <strong *ngIf="!userSettings?.privacyMode">
-                +{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
-              </strong>
-              <strong *ngIf="userSettings?.privacyMode">***</strong>
-            </p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="chart-wrapper">
-          <h4 class="expense-title">Uscite</h4>
-          <div class="canvas-container">
-            <canvas baseChart [data]="expenseData" [options]="chartOptions" [type]="chartType"></canvas>
-          </div>
-
-          <div class="chart-wrapper">
-            <p class="total">
-              Totale:
-              <strong *ngIf="!userSettings?.privacyMode">
-                -{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
-              </strong>
-              <strong *ngIf="userSettings?.privacyMode">***</strong>
-            </p>
-          </div>
-        </div>
-
-      </div>
+<section class="card budget-card">
+  <div class="card-head">
+    <div>
+      <h3>Dettaglio budget</h3>
+      <p class="sub">Entrate e uscite del mese, per categoria</p>
     </div>
+    <span class="badge" *ngIf="!userSettings?.privacyMode && datiReali"
+          [class.up]="datiReali.saldo >= 0" [class.down]="datiReali.saldo < 0">
+      Saldo mese {{ datiReali.saldo >= 0 ? '+' : '' }}{{ datiReali.saldo | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}
+    </span>
   </div>
-</div>
+
+  <div class="charts-row">
+
+    <div class="chart-col">
+      <div class="chart-title"><span class="dot in"></span> Entrate</div>
+      <div class="donut">
+        <div class="canvas-container">
+          <canvas baseChart [data]="incomeData" [options]="chartOptions" [type]="chartType"></canvas>
+        </div>
+        <div class="donut-center">
+          <span class="eyebrow">Totale</span>
+          <strong class="money pos" *ngIf="!userSettings?.privacyMode">+{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}</strong>
+          <strong class="money" *ngIf="userSettings?.privacyMode">•••</strong>
+        </div>
+      </div>
+      <ul class="legend" *ngIf="incomeData.labels?.length; else noIn">
+        <li *ngFor="let l of incomeData.labels; let i = index">
+          <span class="sw" [style.background]="$any(incomeData.datasets[0].backgroundColor)[i]"></span>
+          <span class="lg-name">{{ $any(l) | titlecase }}</span>
+          <span class="lg-val num" *ngIf="!userSettings?.privacyMode">{{ $any(incomeData.datasets[0].data[i]) | number:'1.0-0' }} €</span>
+        </li>
+      </ul>
+      <ng-template #noIn><p class="legend-empty">Nessuna entrata in questo mese.</p></ng-template>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="chart-col">
+      <div class="chart-title"><span class="dot out"></span> Uscite</div>
+      <div class="donut">
+        <div class="canvas-container">
+          <canvas baseChart [data]="expenseData" [options]="chartOptions" [type]="chartType"></canvas>
+        </div>
+        <div class="donut-center">
+          <span class="eyebrow">Totale</span>
+          <strong class="money" *ngIf="!userSettings?.privacyMode">−{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.0-0' }}</strong>
+          <strong class="money" *ngIf="userSettings?.privacyMode">•••</strong>
+        </div>
+      </div>
+      <ul class="legend" *ngIf="expenseData.labels?.length; else noOut">
+        <li *ngFor="let l of expenseData.labels; let i = index">
+          <span class="sw" [style.background]="$any(expenseData.datasets[0].backgroundColor)[i]"></span>
+          <span class="lg-name">{{ $any(l) | titlecase }}</span>
+          <span class="lg-val num" *ngIf="!userSettings?.privacyMode">{{ $any(expenseData.datasets[0].data[i]) | number:'1.0-0' }} €</span>
+        </li>
+      </ul>
+      <ng-template #noOut><p class="legend-empty">Nessuna uscita in questo mese.</p></ng-template>
+    </div>
+
+  </div>
+</section>

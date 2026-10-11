@@ -1,135 +1,173 @@
-<div class="market-home-container">
+<div class="page market-home-container">
 
-  <div *ngIf="loading && newsList.length === 0 && topStocks.length === 0" class="loader-container">
-    <div class="spinner"></div>
-    <p>Analisi dei mercati in corso...</p>
+  <header class="page-head rise">
+    <div class="titles">
+      <span class="eyebrow">Mercati · azioni, ETF e cripto</span>
+      <h1>Market</h1>
+      <p class="sub">Quello che si muove oggi, in un colpo d'occhio. Tocca un titolo per il grafico.</p>
+    </div>
+    <div class="actions">
+      <a routerLink="/portfolio" class="btn btn-ghost"><mm-icon name="briefcase" /> Il mio portafoglio</a>
+    </div>
+  </header>
+
+  <!-- nastro delle quotazioni -->
+  <div class="ticker rise rise-1" *ngIf="topStocks.length || topEtf.length || topCrypto.length" aria-hidden="true">
+    <div class="ticker-track">
+      <ng-container *ngFor="let lap of [0, 1]">
+        <span class="tick-item" *ngFor="let a of topStocks.concat(topEtf, topCrypto)">
+          <strong>{{ pulisciSimbolo(a.symbol) }}</strong>
+          <span class="num">{{ a.currentPrice | number:'1.2-2' }}</span>
+          <span class="tick-chg" [class.up]="a.changePercent >= 0" [class.down]="a.changePercent < 0">
+            {{ a.changePercent >= 0 ? '▲' : '▼' }} {{ a.changePercent | number:'1.2-2' }}%
+          </span>
+        </span>
+      </ng-container>
+    </div>
   </div>
 
-  <div *ngIf="hasError" class="error-box">
-    <div class="error-content">
-      <span class="error-icon">⚠️</span>
-      <p>Impossibile recuperare i dati di mercato.</p>
-      <button class="btn-retry" (click)="caricaDatiParalleli()">Riprova</button>
-    </div>
+  <div *ngIf="loading && newsList.length === 0 && topStocks.length === 0" class="loading-row">
+    <span class="spinner"></span> Analisi dei mercati in corso…
+  </div>
+
+  <div *ngIf="hasError" class="card error-box">
+    <div class="note err"><mm-icon name="close" /> Impossibile recuperare i dati di mercato.</div>
+    <button class="btn btn-primary" (click)="caricaDatiParalleli()">Riprova</button>
   </div>
 
   <div *ngIf="!hasError" class="content-fade-in">
 
-    <div class="visual-carousel-container" *ngIf="newsList.length > 0">
-      <div class="visual-track">
-
-        <div *ngFor="let news of newsList"
-             class="visual-news-card"
-             [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
-          <a [href]="news.url" target="_blank" class="visual-card-link">
-            <div class="visual-overlay">
-              <span class="visual-source">{{ news.source.name }}</span>
-              <h3 class="visual-title">{{ news.title }}</h3>
-            </div>
-          </a>
-        </div>
-
-        <div *ngFor="let news of newsList"
-             class="visual-news-card"
-             [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=1000&auto=format&fit=crop') + ')'">
-          <a [href]="news.url" target="_blank" class="visual-card-link">
-            <div class="card-badge">NEWS</div>
-            <div class="visual-overlay">
-              <div class="source-wrapper">
-                <span class="source-dot"></span>
-                <span class="visual-source">{{ news.source.name }}</span>
-              </div>
-              <h3 class="visual-title">{{ news.title }}</h3>
-            </div>
-          </a>
-        </div>
-
-      </div>
-    </div>
-
-    <section class="market-section">
+    <!-- notizie -->
+    <section class="market-section news-section rise rise-2" *ngIf="newsList.length > 0">
       <div class="section-header">
-        <h2>Azioni in tendenza</h2>
-        <a routerLink="/market/azioni" class="see-all-btn">Vedi tutto →</a>
+        <div>
+          <span class="eyebrow">Dai giornali finanziari</span>
+          <h2>Notizie</h2>
+        </div>
       </div>
 
-      <div *ngIf="topStocks.length === 0" style="padding: 20px; text-align: center; color: #888;">
-        <small>Caricamento azioni...</small>
-      </div>
-
-      <div class="revolut-grid" *ngIf="topStocks.length > 0">
-        <div *ngFor="let asset of topStocks"
-             class="ball-card"
-             [routerLink]="['/market/chart', asset.symbol]"
-             title="Vedi grafico di {{ pulisciSimbolo(asset.symbol) }}">
-
-          <div class="icon-wrapper">
-            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
-                 class="round-logo"
-                 alt="{{ asset.symbol }}"
-                 (error)="handleImgError($event, asset.symbol)">
-          </div>
-
-          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
-
-          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-            {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
-          </span>
+      <div class="news-rail">
+        <div class="news-track">
+          <ng-container *ngFor="let lap of [0, 1]">
+            <a *ngFor="let news of newsList"
+               class="news-card"
+               [href]="news.url"
+               target="_blank"
+               rel="noopener"
+               [attr.aria-hidden]="lap === 1 ? 'true' : null"
+               [attr.tabindex]="lap === 1 ? -1 : null"
+               [style.background-image]="'url(' + (news.urlToImage || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1000&auto=format&fit=crop') + ')'">
+              <span class="news-shade"></span>
+              <span class="news-source"><mm-icon name="news" /> {{ news.source.name }}</span>
+              <h3 class="news-title">{{ news.title }}</h3>
+            </a>
+          </ng-container>
         </div>
       </div>
     </section>
 
-    <section class="market-section">
+    <!-- azioni -->
+    <section class="market-section rise rise-3">
       <div class="section-header">
-        <h2>ETF Principali</h2>
-        <a routerLink="/market/etf" class="see-all-btn">Vedi tutto →</a>
+        <div>
+          <span class="eyebrow">Azioni</span>
+          <h2>In tendenza</h2>
+        </div>
+        <a routerLink="/market/azioni" class="btn btn-ghost btn-sm">Tutto il listino <mm-icon name="arrow-right" /></a>
       </div>
 
-      <div *ngIf="topEtf.length === 0" style="padding: 20px; text-align: center; color: #888;">
-        <small>Caricamento ETF...</small>
-      </div>
+      <div *ngIf="topStocks.length === 0" class="loading-row"><span class="spinner"></span> Caricamento azioni…</div>
 
-      <div class="revolut-grid" *ngIf="topEtf.length > 0">
-        <div *ngFor="let asset of topEtf"
-             class="ball-card"
-             [routerLink]="['/market/chart', asset.symbol]">
-          <div class="icon-wrapper">
-            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
-                 class="round-logo"
+      <div class="asset-grid" *ngIf="topStocks.length > 0">
+        <a *ngFor="let asset of topStocks"
+           class="asset-tile"
+           [routerLink]="['/market/chart', asset.symbol]"
+           title="Vedi il grafico di {{ pulisciSimbolo(asset.symbol) }}">
+          <span class="logo" [class.mono]="!asset.logoUrl">
+            <img *ngIf="asset.logoUrl" [src]="asset.logoUrl"
+                 alt="" loading="lazy"
                  (error)="handleImgError($event, asset.symbol)">
-          </div>
-          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
-          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+            <span *ngIf="!asset.logoUrl">{{ pulisciSimbolo(asset.symbol).slice(0, 4) }}</span>
+          </span>
+          <span class="tile-text">
+            <strong class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</strong>
+            <span class="tile-name">{{ asset.name }}</span>
+          </span>
+          <span class="tile-price num">{{ asset.currentPrice | number:'1.2-2' }} $</span>
+          <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
             {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
           </span>
-        </div>
+        </a>
       </div>
     </section>
 
-    <section class="market-section">
+    <!-- ETF -->
+    <section class="market-section rise rise-3">
       <div class="section-header">
-        <h2>Crypto in tendenza</h2>
-        <a routerLink="/market/crypto" class="see-all-btn">Vedi tutto →</a>
+        <div>
+          <span class="eyebrow">ETF</span>
+          <h2>I principali</h2>
+        </div>
+        <a routerLink="/market/etf" class="btn btn-ghost btn-sm">Tutto il listino <mm-icon name="arrow-right" /></a>
       </div>
 
-      <div *ngIf="topCrypto.length === 0" style="padding: 20px; text-align: center; color: #888;">
-        <small>Caricamento Crypto...</small>
-      </div>
+      <div *ngIf="topEtf.length === 0" class="loading-row"><span class="spinner"></span> Caricamento ETF…</div>
 
-      <div class="revolut-grid" *ngIf="topCrypto.length > 0">
-        <div *ngFor="let asset of topCrypto"
-             class="ball-card"
-             [routerLink]="['/market/chart', asset.symbol]">
-          <div class="icon-wrapper">
-            <img [src]="asset.logoUrl || 'https://cdn-icons-png.flaticon.com/512/777/777242.png'"
-                 class="round-logo"
+      <div class="asset-grid" *ngIf="topEtf.length > 0">
+        <a *ngFor="let asset of topEtf"
+           class="asset-tile"
+           [routerLink]="['/market/chart', asset.symbol]"
+           title="Vedi il grafico di {{ pulisciSimbolo(asset.symbol) }}">
+          <span class="logo" [class.mono]="!asset.logoUrl">
+            <img *ngIf="asset.logoUrl" [src]="asset.logoUrl"
+                 alt="" loading="lazy"
                  (error)="handleImgError($event, asset.symbol)">
-          </div>
-          <span class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</span>
-          <span class="percent-badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+            <span *ngIf="!asset.logoUrl">{{ pulisciSimbolo(asset.symbol).slice(0, 4) }}</span>
+          </span>
+          <span class="tile-text">
+            <strong class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</strong>
+            <span class="tile-name">{{ asset.name }}</span>
+          </span>
+          <span class="tile-price num">{{ asset.currentPrice | number:'1.2-2' }} $</span>
+          <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
             {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
           </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- cripto -->
+    <section class="market-section rise rise-4">
+      <div class="section-header">
+        <div>
+          <span class="eyebrow">Cripto</span>
+          <h2>In tendenza</h2>
         </div>
+        <a routerLink="/market/crypto" class="btn btn-ghost btn-sm">Tutto il listino <mm-icon name="arrow-right" /></a>
+      </div>
+
+      <div *ngIf="topCrypto.length === 0" class="loading-row"><span class="spinner"></span> Caricamento cripto…</div>
+
+      <div class="asset-grid" *ngIf="topCrypto.length > 0">
+        <a *ngFor="let asset of topCrypto"
+           class="asset-tile"
+           [routerLink]="['/market/chart', asset.symbol]"
+           title="Vedi il grafico di {{ pulisciSimbolo(asset.symbol) }}">
+          <span class="logo" [class.mono]="!asset.logoUrl">
+            <img *ngIf="asset.logoUrl" [src]="asset.logoUrl"
+                 alt="" loading="lazy"
+                 (error)="handleImgError($event, asset.symbol)">
+            <span *ngIf="!asset.logoUrl">{{ pulisciSimbolo(asset.symbol).slice(0, 4) }}</span>
+          </span>
+          <span class="tile-text">
+            <strong class="ticker-symbol">{{ pulisciSimbolo(asset.symbol) }}</strong>
+            <span class="tile-name">{{ asset.name }}</span>
+          </span>
+          <span class="tile-price num">{{ asset.currentPrice | number:'1.2-2' }} $</span>
+          <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+            {{ asset.changePercent > 0 ? '+' : '' }}{{ asset.changePercent | number:'1.2-2' }}%
+          </span>
+        </a>
       </div>
     </section>
 

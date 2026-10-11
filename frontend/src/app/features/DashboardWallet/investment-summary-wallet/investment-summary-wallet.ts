@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UI } from '../../../shared/ui';
 import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-investment-summary-wallet',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ...UI],
   templateUrl: './investment-summary-wallet.html',
   styleUrl: './investment-summary-wallet.css',
 })

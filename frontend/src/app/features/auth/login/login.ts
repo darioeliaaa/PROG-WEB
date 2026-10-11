@@ -6,12 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
 import { environment } from '../../../../environments/environment';
+import { UI } from '../../../shared/ui';
 type ViewState = 'login' | 'register' | 'register-success' | 'forgot' | 'forgot-success';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, ...UI],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })

@@ -1,84 +1,137 @@
-<div class="light-container">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+<div class="page settings-page">
 
-  <div class="layout-grid">
-    <aside class="hero-side">
-      <button class="back-link" (click)="backToDashboard()">
-        <span class="icon">←</span> Torna alla Dashboard
-      </button>
+  <div class="settings-top rise">
+    <button type="button" class="back-link" (click)="backToDashboard()">
+      <mm-icon name="arrow-left" /> Torna alla dashboard
+    </button>
+  </div>
 
-      <div class="hero-content">
-        <div class="avatar-container">
-          <span class="gear-icon">⚙️</span>
+  <div class="settings-grid">
+
+    <!-- la "banconota" delle impostazioni -->
+    <aside class="bill settings-hero rise rise-1" aria-labelledby="settings-hero-title">
+      <mm-guilloche class="bill-band" tone="iris" [count]="22" [seed]="3" />
+      <mm-rosette class="bill-rosette" preset="full" tone="iris" [spin]="true" />
+      <span class="bill-thread" aria-hidden="true"></span>
+
+      <div class="hero-top">
+        <span class="eyebrow">Pannello di controllo</span>
+        <span class="serial hero-serial">N° MM · SISTEMA</span>
+      </div>
+
+      <span class="seal" aria-hidden="true"><mm-icon name="settings" /></span>
+
+      <div class="hero-text">
+        <h1 id="settings-hero-title">Impostazioni di sistema</h1>
+        <p>Personalizza l'esperienza MoneyMind. Sicurezza e preferenze in un clic.</p>
+      </div>
+
+      <div class="hero-foot">
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="eyebrow">Valuta</span>
+            <strong>{{ systemSettings.currency }}</strong>
+          </div>
+          <div class="hero-stat">
+            <span class="eyebrow">Privacy</span>
+            <strong>{{ systemSettings.privacyMode ? 'Attiva' : 'Disattivata' }}</strong>
+          </div>
         </div>
-        <h1>Impostazioni <span class="gradient-text">Sistema</span>.</h1>
-        <p class="subtitle">Personalizza l'esperienza MoneyMind.<br>Sicurezza e preferenze in un click.</p>
 
-        <div class="status-badge" [ngClass]="isError ? 'error' : 'success'" *ngIf="message">
-          <span class="dot"></span> {{ message }}
+        <div class="hero-status" *ngIf="message" [class.err]="isError" role="status">
+          <mm-icon [name]="isError ? 'close' : 'check'" /> {{ message }}
         </div>
       </div>
+
+      <mm-microtext class="bill-micro" text="MONEYMIND · IMPOSTAZIONI · SERIE MM" />
     </aside>
 
-    <main class="form-side">
-      <div class="clean-form">
-
-        <div class="input-wrap">
-          <label>Valuta Principale</label>
-          <div class="select-wrapper">
-            <select [(ngModel)]="systemSettings.currency" [disabled]="isSaving">
-              <option value="EUR">Euro (€)</option>
-              <option value="USD">Dollar ($)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="row-settings">
-          <div class="setting-text">
-            <label>Modalità Privacy</label>
-            <p>Nasconde i saldi sensibili nella dashboard</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" [(ngModel)]="systemSettings.privacyMode" [disabled]="isSaving">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="input-wrap">
-          <label style="color: #7D7DFA;">Sicurezza Account</label>
-          <div class="token-card">
-            <div class="token-header">
-              <div class="token-info">
-                <strong>Codice di Recupero</strong>
-                <span class="small-desc">Usa questo codice per il reset password.</span>
-              </div>
-              <button type="button" class="btn-reveal" (click)="toggleToken()">
-                {{ isTokenVisible ? 'Nascondi' : 'Mostra' }}
-              </button>
-            </div>
-            <div *ngIf="isLoadingToken" class="token-loader">
-              <div class="loader-dark"></div>
-            </div>
-            <div class="token-display fade-in" *ngIf="isTokenVisible && !isLoadingToken">
-              <span class="code-text">{{ recoveryToken }}</span>
-              <span class="code-note">Custodiscilo in un luogo sicuro.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="footer-actions">
-          <button class="btn-cancel" (click)="backToDashboard()">Annulla</button>
-          <button class="btn-primary" (click)="saveSettings()" [disabled]="isSaving">
-            <span *ngIf="!isSaving">Salva Impostazioni</span>
-            <span *ngIf="isSaving" class="loader"></span>
-          </button>
+    <!-- preferenze -->
+    <section class="card settings-card rise rise-2" aria-labelledby="settings-title">
+      <div class="card-head">
+        <div>
+          <h2 id="settings-title">Preferenze e sicurezza</h2>
+          <p class="sub">Le modifiche valgono dopo il salvataggio.</p>
         </div>
       </div>
-    </main>
+
+      <div class="set-group">
+        <span class="eyebrow group-label"><span class="group-no">01</span> Preferenze</span>
+
+        <div class="set-list">
+          <div class="set-row has-select">
+            <span class="set-ico"><mm-icon name="coins" /></span>
+            <div class="set-text">
+              <label class="set-title" for="set-currency">Valuta principale</label>
+              <p class="set-desc" id="set-currency-desc">Usata per saldi, movimenti e grafici</p>
+            </div>
+            <select id="set-currency" name="currency" class="select set-select"
+                    aria-describedby="set-currency-desc"
+                    [(ngModel)]="systemSettings.currency" [disabled]="isSaving">
+              <option value="EUR">Euro (€)</option>
+              <option value="USD">Dollaro ($)</option>
+            </select>
+          </div>
+
+          <div class="set-row">
+            <span class="set-ico"><mm-icon [name]="systemSettings.privacyMode ? 'eye-off' : 'eye'" /></span>
+            <div class="set-text">
+              <label class="set-title" for="set-privacy">Modalità privacy</label>
+              <p class="set-desc" id="set-privacy-desc">Nasconde i saldi sensibili nella dashboard</p>
+            </div>
+            <span class="switch">
+              <input id="set-privacy" name="privacyMode" type="checkbox" role="switch"
+                     aria-describedby="set-privacy-desc"
+                     [(ngModel)]="systemSettings.privacyMode" [disabled]="isSaving">
+              <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <span class="eyebrow group-label"><span class="group-no">02</span> Sicurezza account</span>
+
+        <div class="set-list">
+          <div class="set-row has-action">
+            <span class="set-ico"><mm-icon name="key" /></span>
+            <div class="set-text">
+              <strong class="set-title">Codice di recupero</strong>
+              <p class="set-desc">Usalo per reimpostare la password</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="toggleToken()" [attr.aria-expanded]="isTokenVisible">
+              <mm-icon [name]="isTokenVisible ? 'eye-off' : 'eye'" /> {{ isTokenVisible ? 'Nascondi' : 'Mostra' }}
+            </button>
+          </div>
+
+          <div *ngIf="isLoadingToken" class="token-loading" role="status">
+            <span class="spinner"></span> Recupero il codice…
+          </div>
+
+          <div class="coupon" *ngIf="isTokenVisible && !isLoadingToken">
+            <mm-guilloche class="coupon-band" tone="iris" [count]="14" [seed]="4" />
+            <div class="coupon-top">
+              <span class="eyebrow">Codice personale</span>
+              <span class="serial">N° MM · RECUPERO</span>
+            </div>
+            <code class="coupon-code">{{ recoveryToken }}</code>
+            <p class="coupon-note"><mm-icon name="shield" /> Custodiscilo in un luogo sicuro.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot-status note" *ngIf="message" [class.ok]="!isError" [class.err]="isError" role="status">
+        <mm-icon [name]="isError ? 'close' : 'check'" /> {{ message }}
+      </div>
+
+      <div class="set-foot">
+        <button type="button" class="btn btn-ghost" (click)="backToDashboard()">Annulla</button>
+        <button type="button" class="btn btn-primary" (click)="saveSettings()" [disabled]="isSaving">
+          <ng-container *ngIf="!isSaving"><mm-icon name="check" /> Salva impostazioni</ng-container>
+          <ng-container *ngIf="isSaving"><span class="btn-spinner" aria-hidden="true"></span> Salvataggio…</ng-container>
+        </button>
+      </div>
+    </section>
+
   </div>
 </div>

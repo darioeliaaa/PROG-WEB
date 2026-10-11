@@ -10,11 +10,12 @@ import { Movimenti } from '../movimenti/movimenti';
 import { TransactionService } from '../../services/transaction.service';
 import { UserService } from '../../services/user.service';
 import { WalletService } from '../../services/wallet.service';
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, InvestmentSummary, BudgetOverview, YearlyHistory, Movimenti],
+  imports: [CommonModule, InvestmentSummary, BudgetOverview, YearlyHistory, Movimenti, ...UI],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

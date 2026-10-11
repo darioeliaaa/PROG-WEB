@@ -1,246 +1,191 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Accesso: a sinistra la banconota del marchio, a destra i moduli sulla carta */
+:host { display: block; min-height: 100vh; min-height: 100dvh; background: var(--paper); }
 
-:host {
-  display: block;
-  height: 100vh;
-  font-family: 'Inter', sans-serif;
-}
+.auth { position: relative; display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); min-height: 100vh; min-height: 100dvh; }
 
-.auth-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  background-color: #ffffff;
-  overflow: hidden;
-}
-
-/* --- SEZIONE BRAND (SINISTRA) --- */
-
+/* la banconota */
 .brand-side {
-  width: 45%;
-  height: 100%;
-  /* Gradiente allineato alla sidebar per non creare stacchi visivi nel brand */
-  background: linear-gradient(135deg, #8E8EFA 0%, #5454fa 100%);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  padding: 60px;
-  overflow: hidden;
-  box-sizing: border-box;
+  position: sticky; top: 14px; align-self: start;
+  display: flex; flex-direction: column;
+  height: calc(100dvh - 28px); min-height: 560px;
+  margin: 14px 0 14px 14px; padding: 36px 44px 48px;
 }
+.hero-rosette { position: absolute; z-index: -1; width: 680px; height: 680px; right: -250px; top: -170px; opacity: .9; animation: hero-in 1.6s var(--ease) both; }
+.hero-band { position: absolute; z-index: -1; left: -4%; right: -4%; bottom: -2%; height: 46%; opacity: .5; }
+.brand-side .hero-thread { right: 30px; width: 10px; }
+.hero-micro { position: absolute; left: 0; right: 0; bottom: 12px; }
+@keyframes hero-in { from { opacity: 0; transform: scale(.9) rotate(-8deg); } }
 
-/* Cerchi decorativi sfocati per dare profondità */
-.abstract-circle {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  z-index: 1;
+.brand-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--ink-soft); box-shadow: inset 0 0 0 1px var(--ink-line); }
+.brand-mark mm-rosette { width: 31px; height: 31px; }
+.brand-text { display: grid; line-height: 1.1; }
+.brand-text strong { font-family: var(--f-display); font-stretch: 125%; font-size: 1.2rem; color: #fff; }
+.brand-sub { margin-top: 4px; font-family: var(--f-mono); font-size: .58rem; letter-spacing: .16em; text-transform: uppercase; color: var(--on-ink-2); }
+.brand-serial { color: var(--on-ink); opacity: .75; margin-right: 26px; }
+
+.brand-copy { display: grid; gap: 16px; margin-top: auto; max-width: 540px; }
+.hero-title {
+  font-family: var(--f-display); font-stretch: 128%; font-weight: 700;
+  font-size: clamp(2.5rem, 3.7vw, 3.6rem); line-height: .98; letter-spacing: -.025em;
+  color: #fff; text-shadow: 0 2px 30px rgb(0 0 0 / .3);
 }
-.c1 { width: 300px; height: 300px; background: #ffffff; top: -50px; left: -50px; opacity: 0.2; }
-.c2 { width: 400px; height: 400px; background: #6464fa; bottom: -100px; right: -100px; }
-
-.brand-content {
-  position: relative;
-  z-index: 10;
-  max-width: 400px;
+.iris-text {
+  background: linear-gradient(100deg, color-mix(in srgb, var(--iris-1) 70%, white), color-mix(in srgb, var(--iris-2) 55%, white) 38%, color-mix(in srgb, var(--iris-3) 70%, white) 70%, color-mix(in srgb, var(--iris-4) 80%, white));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; text-shadow: none;
 }
+.hero-sub { max-width: 42ch; font-size: 1.04rem; color: var(--on-ink-2); }
 
-.logo {
-  font-size: 1.5rem; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; gap: 10px;
+/* la banconota piccola: rendimento del portafoglio */
+.chip {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; gap: 12px;
+  width: 300px; margin-top: 34px; padding: 16px 18px 20px;
+  border: 1px solid var(--line); border-radius: 18px;
+  background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--iris-2) 12%, transparent), transparent 60%), var(--surface);
+  color: var(--ink);
+  box-shadow: 0 34px 50px -26px rgb(0 0 0 / .7);
+  transform: rotate(-3deg); transition: transform .5s var(--ease);
 }
-.logo-icon { background: rgba(255,255,255,0.2); padding: 5px; border-radius: 8px; }
+.chip:hover { transform: translateY(-4px); }
+.chip-band { position: absolute; z-index: -1; inset: auto -6% -10% -6%; height: 70%; color: var(--up); opacity: .2; }
+.chip-rosette { position: absolute; z-index: -1; width: 150px; height: 150px; right: -48px; top: -52px; opacity: .45; }
+.chip-top { display: flex; align-items: center; gap: 12px; }
+.chip-top .serial { margin-left: auto; align-self: flex-start; }
+.chip-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--up-soft); color: var(--up); }
+.chip-text { display: grid; gap: 2px; }
+.chip-text strong { font-size: 1.45rem; line-height: 1; color: var(--up); }
+.spark { width: 100%; height: 46px; overflow: visible; }
 
-h1 {
-  font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+/* lato carta: clip e non hidden, il focus non deve far scorrere il contenitore */
+.form-side { position: relative; overflow: clip; display: flex; flex-direction: column; min-width: 0; padding: 30px clamp(20px, 4vw, 56px) 40px; }
+.form-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.paper-rosette { position: absolute; width: 520px; height: 520px; right: -230px; bottom: -230px; color: var(--ink); opacity: .06; pointer-events: none; }
+.form-wrap { position: relative; z-index: 1; width: min(430px, 100%); margin: auto; padding: 36px 0 24px; }
 
-.brand-side p {
-  font-size: 1.1rem; line-height: 1.6; opacity: 0.95; margin-bottom: 50px;
-}
+.view { display: grid; gap: 22px; }
+.view > * { animation: mm-rise .55s var(--ease) both; }
+.view > :nth-child(2) { animation-delay: .06s; }
+.view > :nth-child(3) { animation-delay: .12s; }
+.view > :nth-child(n+4) { animation-delay: .18s; }
 
-/* Glass card per l'estetica tech */
-.glass-card-decor {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 20px;
-  border-radius: 16px;
-  width: 240px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  transform: rotate(-3deg);
-  transition: transform 0.3s ease;
-}
-.glass-card-decor:hover { transform: rotate(0deg) scale(1.02); }
+.view-head { display: grid; gap: 8px; margin-bottom: 4px; }
+.view-head .eyebrow { display: inline-flex; align-items: center; gap: 10px; }
+.view-head .eyebrow::before { content: ''; width: 22px; height: 2px; border-radius: 2px; background: var(--iris); }
+.view-head h2 { font-family: var(--f-display); font-stretch: 122%; font-size: clamp(1.85rem, 2.6vw, 2.4rem); line-height: 1; letter-spacing: -.02em; }
+.view-head p { color: var(--ink-2); }
+.eyebrow-ok { color: var(--up); }
+.eyebrow-ok mm-icon { width: 14px; height: 14px; }
+.eyebrow-ok::before { display: none; }
 
-.decor-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-.decor-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;}
-.decor-text { display: flex; flex-direction: column; }
-.decor-text span { font-size: 0.85rem; opacity: 0.9; }
-.decor-text strong { font-size: 1.1rem; color: #2bffbf; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.chart-line { height: 4px; width: 60%; background: rgba(255,255,255,0.4); border-radius: 2px; }
+.form { display: grid; gap: 18px; }
+.control { position: relative; }
+.control .ico { position: absolute; z-index: 1; left: 15px; top: 50%; translate: 0 -50%; width: 17px; height: 17px; color: var(--ink-3); pointer-events: none; transition: color .2s; }
+.control .input { min-height: 50px; padding-left: 44px; }
+.control:focus-within .ico { color: var(--ink); }
+.control:has(.error-border) .ico { color: var(--down); }
+.input.error-border { animation: shake .4s cubic-bezier(.36, .07, .19, .97) both; }
+.code-input { font-family: var(--f-mono); font-size: .9rem; letter-spacing: .2em; text-transform: uppercase; }
 
-/* --- SEZIONE FORM (DESTRA) --- */
-
-.form-side {
-  width: 55%;
-  height: 100%;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.back-link {
-  position: absolute; top: 40px; right: 40px;
-  display: flex; align-items: center; gap: 8px;
-  color: #64748b; font-weight: 500; cursor: pointer; text-decoration: none; transition: 0.2s;
-}
-.back-link:hover { color: #7D7DFA; }
-
-.form-wrapper {
-  width: 100%;
-  max-width: 420px;
-  padding: 20px;
-}
-
-/* Animazione per rendere fluido il passaggio tra login e registrazione */
-.fade-in { animation: fadeIn 0.4s ease-out forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.header-text { margin-bottom: 30px; }
-.header-text h2 { font-size: 2rem; font-weight: 700; color: #1e293b; margin: 0 0 8px 0; }
-.header-text p { color: #64748b; margin: 0; }
-
-.input-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
-.input-group label { font-size: 0.9rem; font-weight: 600; color: #334155; }
-
-input {
-  width: 100%; height: 48px;
-  padding: 0 15px; border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  background-color: #f8fafc;
-  font-size: 1rem; color: #1e293b; outline: none; transition: all 0.2s;
-  box-sizing: border-box;
-}
-input:focus {
-  background-color: white;
-  border-color: #7D7DFA;
-  box-shadow: 0 0 0 4px rgba(125, 125, 250, 0.15);
-}
-
-.extras { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 0.9rem; }
-.checkbox-container { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569; }
-.forgot-link { color: #7D7DFA; font-weight: 600; cursor: pointer; text-decoration: none; }
-.forgot-link:hover { text-decoration: underline; color: #6464fa; }
-
-/* Bottoni principali: usare sempre il viola #7D7DFA */
-.btn-primary {
-  width: 100%; height: 50px;
-  background-color: #7D7DFA;
-  color: white;
-  border: none; border-radius: 10px;
-  font-size: 1rem; font-weight: 600;
-  cursor: pointer; transition: background 0.2s, transform 0.1s;
-  box-shadow: 0 4px 15px rgba(125, 125, 250, 0.4);
-}
-.btn-primary:hover { background-color: #6464fa; transform: translateY(-1px); }
-
-.btn-register { background-color: #1e293b; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3); }
-.btn-register:hover { background-color: #0f172a; }
-
-.divider { text-align: center; margin: 25px 0; position: relative; }
-.divider::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #e2e8f0; }
-.divider span { background: white; padding: 0 10px; color: #94a3b8; font-size: 0.85rem; position: relative; }
-
-.social-row { display: flex; gap: 15px; margin-bottom: 30px; }
-.social-btn {
-  flex: 1; height: 45px;
-  background: white; border: 1px solid #e2e8f0; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-weight: 600; color: #475569; cursor: pointer; transition: 0.2s;
-}
-.social-btn:hover { background-color: #f8fafc; border-color: #cbd5e1; }
-.social-btn img { width: 20px; height: 20px; }
-
-.switch-text { text-align: center; font-size: 0.95rem; color: #475569; }
-.switch-text a { color: #7D7DFA; font-weight: 700; cursor: pointer; text-decoration: none; margin-left: 5px; }
-.switch-text a:hover { text-decoration: underline; }
-
-.success-box { margin-top: 15px; padding: 10px; background: #dcfce7; color: #166534; border-radius: 8px; text-align: center; font-weight: 500; border: 1px solid #bbf7d0; }
-.error-box { margin-top: 15px; padding: 10px; background: #fee2e2; color: #991b1b; border-radius: 8px; text-align: center; font-weight: 500; border: 1px solid #fecaca; }
-
-/* --- GESTIONE ERRORI E SUGGERIMENTI --- */
-
-/* Stile per i campi che falliscono la validazione */
-.error-border {
-  border-color: #ef4444 !important;
-  background-color: #fef2f2 !important;
-  color: #991b1b !important;
-  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-.field-error-msg {
-  font-size: 0.8rem;
-  color: #ef4444;
-  margin-top: 6px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.suggestions-box {
-  margin-top: 8px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.chips-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-/* Chip cliccabili per suggerire username disponibili */
+.field-help { display: grid; gap: 10px; }
+.field-error { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; font-size: .84rem; font-weight: 600; color: var(--down); }
+.err-mark { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: var(--down); color: var(--surface); font-size: .7rem; font-weight: 800; line-height: 1; }
+.suggestions { display: grid; gap: 8px; padding: 12px 14px; border: 1px dashed var(--line-2); border-radius: var(--r-sm); background: var(--surface-2); font-size: .82rem; color: var(--ink-2); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .suggestion-chip {
-  background-color: #f0f0ff;
-  color: #7D7DFA;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #dcdcfc;
-  transition: all 0.2s ease;
-  user-select: none;
+  min-height: 30px; padding: 0 12px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--ink);
+  font-family: var(--f-mono); font-size: .72rem;
+  cursor: pointer; transition: .2s var(--ease);
 }
+.suggestion-chip:hover { background: var(--ink); color: var(--on-ink); border-color: var(--ink); transform: translateY(-1px); }
 
-.suggestion-chip:hover {
-  background-color: #7D7DFA;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(125, 125, 250, 0.3);
+.extras { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: -2px 0 4px; }
+.check { display: inline-flex; align-items: center; gap: 9px; color: var(--ink-2); font-size: .88rem; font-weight: 500; cursor: pointer; }
+.check input { width: 17px; height: 17px; margin: 0; accent-color: var(--ink); cursor: pointer; }
+.btn-link { font-size: .88rem; cursor: pointer; }
+.field-error .btn-link, .switch .btn-link { font-size: inherit; }
+
+.divider { display: flex; align-items: center; gap: 14px; color: var(--ink-3); font-size: .82rem; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.social-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.social-btn { min-height: 46px; }
+.social-btn img { width: 18px; height: 18px; }
+
+.switch { text-align: center; color: var(--ink-2); font-size: .9rem; }
+.cancel { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.cancel mm-icon { width: 15px; height: 15px; }
+
+/* codice di recupero: un tagliando da banconota, con le tacche ai lati */
+.coupon {
+  display: grid; gap: 14px; padding: 20px 26px 30px;
+  mask: radial-gradient(circle 11px at left 50%, transparent 98%, black) left / 51% 100% no-repeat,
+        radial-gradient(circle 11px at right 50%, transparent 98%, black) right / 51% 100% no-repeat;
 }
-
-/* Feedback visivo se l'utente sbaglia qualcosa */
-@keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+.coupon-rosette { position: absolute; z-index: -1; width: 190px; height: 190px; right: -60px; top: -70px; opacity: .7; }
+.coupon-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.coupon .serial, .coupon-hint { color: var(--on-ink-2); }
+.coupon-code {
+  padding: 16px 12px;
+  border: 1px dashed rgb(255 255 255 / .3); border-radius: 14px;
+  background: rgb(0 0 0 / .2);
+  font-family: var(--f-mono); font-size: clamp(1.6rem, 6vw, 2.3rem); font-weight: 500;
+  letter-spacing: .3em; text-indent: .3em; text-align: center;
+  color: #fff; overflow-wrap: anywhere;
+  user-select: all; -webkit-user-select: all; cursor: text;
 }
+.coupon-code::selection { background: color-mix(in srgb, var(--iris-2) 60%, transparent); }
+.coupon-hint { display: flex; align-items: center; gap: 8px; font-size: .8rem; }
+.coupon-hint mm-icon { width: 15px; height: 15px; }
+.coupon-micro { position: absolute; left: 0; right: 0; bottom: 9px; }
 
+/* password aggiornata */
+.view-done, .view-done .view-head { justify-items: center; text-align: center; }
+.done-art { position: relative; display: grid; place-items: center; width: 128px; height: 128px; }
+.done-art mm-rosette { position: absolute; inset: 0; }
+.done-tick { position: relative; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: var(--up); color: #fff; box-shadow: 0 14px 26px -12px var(--up); animation: mm-pop .5s .15s var(--ease) both; }
+.done-tick mm-icon { width: 28px; height: 28px; }
+.view-done .note { text-align: left; }
+
+@keyframes shake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+@media (max-width: 1100px) {
+  .brand-side { padding: 30px 32px 44px; }
+  .hero-rosette { width: 560px; height: 560px; right: -240px; }
+  .brand-serial, .top-serial { display: none; }
+}
+@media (max-height: 700px) and (min-width: 901px) { .chip { display: none; } }
+
+/* tablet e telefono: la banconota diventa una fascia in alto, il ritorno sta nella fascia */
 @media (max-width: 900px) {
-  .auth-container { flex-direction: column; }
-  .brand-side { display: none; }
-  .form-side { width: 100%; }
+  .auth { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .brand-side { position: relative; top: 0; height: auto; min-height: 0; margin: 10px 10px 0; padding: 20px 22px 34px; border-radius: 22px; }
+  .hero-rosette { width: clamp(380px, 56vw, 480px); height: clamp(380px, 56vw, 480px); right: -150px; top: -140px; opacity: .75; }
+  .hero-band { height: 70%; opacity: .42; }
+  .brand-side .hero-thread { right: 26px; width: 8px; }
+  .brand-copy { margin-top: 30px; gap: 10px; }
+  .hero-title { font-size: clamp(1.9rem, 6.4vw, 2.8rem); max-width: 16ch; }
+  .chip, .paper-rosette { display: none; }
+  .form-side { position: static; overflow: visible; padding: 0 20px 40px; }
+  .form-top { position: absolute; top: 20px; right: 20px; z-index: 2; }
+  .back-link {
+    display: grid; place-items: center;
+    width: 40px; height: 40px; border-radius: 13px;
+    background: var(--ink-soft); color: var(--on-ink);
+    box-shadow: inset 0 0 0 1px var(--ink-line), 0 8px 18px -8px rgb(0 0 0 / .6);
+  }
+  .back-link:hover { color: #fff; box-shadow: inset 0 0 0 1px var(--on-ink-2); }
+  .back-link mm-icon { width: 18px; height: 18px; }
+  .back-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .form-wrap { margin: 0 auto; padding: clamp(28px, 6vw, 52px) 0 8px; }
+}
+@media (max-width: 560px) {
+  .hero-sub { display: none; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 13px; }
+  .brand-mark mm-rosette { width: 28px; height: 28px; }
+  .brand-text strong { font-size: 1.1rem; }
+  .coupon { padding: 18px 20px 28px; }
 }

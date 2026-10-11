@@ -1,89 +1,111 @@
-<div class="about-page">
+<div class="page about-page">
 
-  <section class="hero-section">
-    <div class="container hero-grid">
+  <!-- apertura -->
+  <section class="hero-section rise" aria-labelledby="about-title">
+    <mm-guilloche class="hero-band" tone="ink" [count]="20" [seed]="3" />
 
-      <div class="text-column">
-        <div class="pill-badge">MONEYMIND VISION</div>
+    <div class="text-column">
+      <span class="eyebrow pill-badge"><span class="pill-dot" aria-hidden="true"></span>MoneyMind vision</span>
 
-        <h1>La chiarezza genera <span class="highlight-text">Potere.</span></h1>
+      <h1 id="about-title">La chiarezza genera <span class="highlight-text">potere.</span></h1>
 
-        <p class="lead">
-          MoneyMind semplifica la gestione del tuo patrimonio.
-          Un ecosistema avanzato che filtra il rumore dei mercati per offrirti solo ciò che conta.
-          Riprendi il controllo delle tue finanze con strumenti professionali, ma semplici da usare.
-        </p>
+      <p class="lead">
+        MoneyMind semplifica la gestione del tuo patrimonio.
+        Un ecosistema avanzato che filtra il rumore dei mercati per offrirti solo ciò che conta.
+        Riprendi il controllo delle tue finanze con strumenti professionali, ma semplici da usare.
+      </p>
 
-        <div class="stats-row">
-          <div class="stat-item"><strong>5k+</strong><span>Utenti</span></div>
-          <div class="divider"></div>
-          <div class="stat-item"><strong>€15M</strong><span>Gestiti</span></div>
-          <div class="divider"></div>
-          <div class="stat-item"><strong>24/7</strong><span>Monitoraggio</span></div>
-        </div>
+      <div class="stats-row">
+        <div class="stat-item"><strong>5k+</strong><span>Utenti</span></div>
+        <div class="stat-item"><strong>€15M</strong><span>Gestiti</span></div>
+        <div class="stat-item"><strong>24/7</strong><span>Monitoraggio</span></div>
       </div>
-
-      <div class="visual-column">
-        <div class="glow-bg"></div>
-        <div class="cards-stack">
-          <div class="widget-card glass-effect" *ngFor="let item of heroWidgets; let i = index" [style.animation-delay]="i * 0.2 + 's'">
-            <div class="icon-box">{{ item.icon }}</div>
-            <div class="widget-content">
-              <span class="widget-label">{{ item.label }}</span>
-              <div class="widget-value" [ngClass]="item.colorClass">{{ item.value }}</div>
-              <span class="widget-desc">{{ item.desc }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </section>
 
-  <section class="bento-section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Perché MoneyMind?</h2>
-        <p>Tecnologia avanzata al servizio della tua tranquillità.</p>
-      </div>
-
-      <div class="bento-grid">
-        <div class="bento-card" *ngFor="let feat of features" [ngClass]="feat.class">
-          <div class="bento-icon">{{ feat.icon }}</div>
-          <div class="bento-text">
-            <h3>{{ feat.title }}</h3>
-            <p>{{ feat.desc }}</p>
+    <div class="visual-column">
+      <mm-rosette class="hero-rosette" preset="full" tone="iris" [spin]="true" />
+      <div class="cards-stack">
+        <div class="widget-card" *ngFor="let item of heroWidgets; let i = index" [style.animation-delay]="i * 0.2 + 's'">
+          <span class="icon-box" [ngClass]="item.colorClass"><mm-icon [name]="widgetIcons[i]" /></span>
+          <div class="widget-content">
+            <span class="widget-label">{{ item.label }}</span>
+            <div class="widget-value" [ngClass]="item.colorClass">{{ item.value }}</div>
+            <span class="widget-desc">{{ item.desc }}</span>
           </div>
         </div>
       </div>
     </div>
+
+    <mm-microtext class="hero-micro" text="MONEYMIND · LA CHIAREZZA GENERA POTERE" />
   </section>
 
-  <section class="team-section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Il Team</h2>
-        <p>Sviluppatori e analisti uniti da un unico obiettivo: la tua libertà finanziaria.</p>
-      </div>
+  <!-- perché moneymind -->
+  <section class="about-section rise rise-2" aria-labelledby="why-title">
+    <div class="section-header">
+      <span class="eyebrow">Il metodo</span>
+      <h2 id="why-title">Perché MoneyMind?</h2>
+      <p>Tecnologia avanzata al servizio della tua tranquillità.</p>
+    </div>
 
-      <div class="team-grid">
-        <div class="team-card" *ngFor="let member of team">
-          <div class="avatar-circle">
-            <img [src]="member.img" [alt]="member.name">
-          </div>
-          <h4>{{ member.name }}</h4>
-          <span class="role-badge">{{ member.role }}</span>
+    <div class="bento-grid">
+      <article class="bento-card" *ngFor="let feat of features; let i = index" [ngClass]="feat.class" [class.bill]="feat.class === 'bento-large'">
+        <ng-container *ngIf="feat.class === 'bento-large'">
+          <mm-guilloche class="bill-band" tone="iris" [count]="22" [seed]="2" />
+          <mm-rosette class="bill-rosette" preset="full" tone="iris" [spin]="true" />
+          <span class="bill-thread" aria-hidden="true"></span>
+          <mm-microtext class="bill-micro" text="MONEYMIND · SERIE MM · PERCHÉ MONEYMIND" />
+        </ng-container>
+        <mm-guilloche *ngIf="feat.class === 'bento-medium'" class="tile-band" tone="ink" [count]="14" [seed]="i" />
+
+        <div class="bento-top">
+          <span class="bento-icon"><mm-icon [name]="featureIcons[i]" /></span>
+          <span class="serial">N° 0{{ i + 1 }}</span>
         </div>
-      </div>
+        <div class="bento-text">
+          <h3>{{ feat.title }}</h3>
+          <p>{{ feat.desc }}</p>
+        </div>
+      </article>
     </div>
   </section>
 
-  <section class="cta-section">
-    <div class="cta-card">
-      <h2>Unisciti al viaggio.</h2>
+  <!-- il team -->
+  <section class="about-section rise rise-3" aria-labelledby="team-title">
+    <div class="section-header">
+      <span class="eyebrow">Le persone</span>
+      <h2 id="team-title">Il team</h2>
+      <p>Sviluppatori e analisti uniti da un unico obiettivo: la tua libertà finanziaria.</p>
+    </div>
+
+    <div class="team-grid">
+      <article class="card team-card" *ngFor="let member of team; let i = index">
+        <span class="serial team-serial">N° MM-0{{ i + 1 }}</span>
+        <div class="avatar-circle">
+          <mm-rosette class="avatar-frame" preset="small" tone="ink" />
+          <img [src]="member.img" [alt]="member.name">
+        </div>
+        <h3>{{ member.name }}</h3>
+        <span class="badge role-badge">{{ member.role }}</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- invito -->
+  <section class="bill cta-card rise rise-4" aria-labelledby="cta-title">
+    <mm-guilloche class="bill-band" tone="iris" [count]="24" [seed]="4" />
+    <mm-rosette class="bill-rosette cta-rosette" preset="full" tone="iris" [spin]="true" />
+    <span class="bill-thread" aria-hidden="true"></span>
+
+    <div class="cta-text">
+      <span class="eyebrow">Il prossimo passo</span>
+      <h2 id="cta-title">Unisciti al viaggio.</h2>
       <p>Unisci oggi stesso tecnologia e semplicità per far crescere il tuo patrimonio.</p>
-      <button routerLink="/dashboard" routerLinkActive="active" class="btn-glow">Accedi alla Dashboard</button>
     </div>
+    <button routerLink="/dashboard" routerLinkActive="active" class="btn btn-lg btn-glow">
+      Accedi alla dashboard <mm-icon name="arrow-right" />
+    </button>
+
+    <mm-microtext class="bill-micro" text="MONEYMIND · SERIE MM · UNISCITI AL VIAGGIO" />
   </section>
 
 </div>

@@ -6,13 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { MarketService, MarketAsset } from '../market.service';
 import { UserService } from '../../../services/user.service';
 import { PortfolioService } from '../../../services/portfolio.service';
+import { UI } from '../../../shared/ui';
 
 declare const TradingView: any;
 
 @Component({
   selector: 'app-stock-chart',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ...UI],
   templateUrl: './stock-chart.html',
   styleUrl: './stock-chart.css'
 })
@@ -71,6 +72,7 @@ export class StockChart implements OnInit, AfterViewInit {
       const found = assets.find(a => a.symbol === fullSymbol);
       if (found) {
         this.selectedAsset = found;
+        this.cd.markForCheck();   // senza zone.js la vista non si accorge da sola della risposta
       } else {
         console.warn("Asset non trovato nel market list, impossibile tradare con prezzo esatto.");
       }
@@ -87,6 +89,7 @@ export class StockChart implements OnInit, AfterViewInit {
           data.assets.forEach(asset => {
             this.myPortfolioAssets.set(asset.symbol, asset.quantity);
           });
+          this.cd.markForCheck();
         }
       }
     });
@@ -229,7 +232,7 @@ export class StockChart implements OnInit, AfterViewInit {
         "theme": "light",
         "style": "1",
         "locale": "it",
-        "toolbar_bg": "#f1f3f6",
+        "toolbar_bg": "#FBFCFA",
         "enable_publishing": false,
         "allow_symbol_change": true,
         "container_id": "tradingview_chart",
@@ -237,16 +240,17 @@ export class StockChart implements OnInit, AfterViewInit {
         "details": true,
         "hotlist": true,
         "calendar": true,
+        // colori della palette di MoneyMind
         "overrides": {
-          "paneProperties.background": "#ffffff",
-          "paneProperties.vertGridProperties.color": "rgba(101, 101, 248, 0.05)",
-          "paneProperties.horzGridProperties.color": "rgba(101, 101, 248, 0.05)",
-          "mainSeriesProperties.candleStyle.upColor": "#2ecc71",
-          "mainSeriesProperties.candleStyle.downColor": "#e74c3c",
-          "mainSeriesProperties.candleStyle.wickUpColor": "#2ecc71",
-          "mainSeriesProperties.candleStyle.wickDownColor": "#e74c3c",
-          "mainSeriesProperties.candleStyle.borderUpColor": "#2ecc71",
-          "mainSeriesProperties.candleStyle.borderDownColor": "#e74c3c"
+          "paneProperties.background": "#FBFCFA",
+          "paneProperties.vertGridProperties.color": "rgba(16, 35, 31, 0.05)",
+          "paneProperties.horzGridProperties.color": "rgba(16, 35, 31, 0.05)",
+          "mainSeriesProperties.candleStyle.upColor": "#0C8458",
+          "mainSeriesProperties.candleStyle.downColor": "#C23A3A",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#0C8458",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#C23A3A",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#0C8458",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#C23A3A"
         }
       });
     }

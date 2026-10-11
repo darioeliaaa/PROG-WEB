@@ -2,11 +2,12 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MarketService, MarketAsset } from '../market.service';
+import { UI } from '../../../shared/ui';
 
 @Component({
   selector: 'app-market-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ...UI],
   templateUrl: './market-home.html',
   styleUrls: ['./market-home.css']
 })
@@ -153,7 +154,7 @@ export class MarketHomeComponent implements OnInit {
         title: 'Fed annuncia tassi invariati: mercati in lieve rialzo',
         url: '#',
         source: { name: 'Il Sole 24 Ore' },
-        urlToImage: 'https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&q=80&w=1000'
+        urlToImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=1000'
       },
       {
         title: 'Bitcoin supera una nuova resistenza tecnica',

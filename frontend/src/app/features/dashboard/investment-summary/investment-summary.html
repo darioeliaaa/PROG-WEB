@@ -1,54 +1,62 @@
-<div class="glass-card summary-card">
-  <div class="info-group">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <h3>Saldo Totale</h3>
-      <button *ngIf="userSettings?.privacyMode"
-              (click)="togglePeek()"
-              class="peek-toggle-btn"
-              [title]="peekBalance ? 'Nascondi dati' : 'Mostra dati'">
-        <i class="fa" [ngClass]="peekBalance ? 'fa-eye-slash' : 'fa-eye'"></i>
-      </button>
-    </div>
+<div class="bill summary-bill">
+  <mm-guilloche class="bill-band" tone="iris" [count]="22" [seed]="1" />
+  <mm-rosette class="bill-rosette" preset="full" tone="iris" [spin]="true" />
+  <span class="bill-thread" aria-hidden="true"></span>
 
-    <div class="balance-amount" [class.negative-balance]="saldoAttuale < 0">
-      <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-        {{ saldoAttuale | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}      </ng-container>
-
-      <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">
-        ••••••
-      </ng-container>
-    </div>
-
-    <div class="stats-row" style="margin-top: 15px; display: flex; gap: 15px;">
-      <span class="performance-badge positive">
-        <i class="fa fa-arrow-up"></i>
-        <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-          {{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
-        </ng-container>
-        <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
-        <small> Tot. Entrate</small>
-      </span>
-
-      <span class="performance-badge negative">
-        <i class="fa fa-arrow-down"></i>
-        <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
-          {{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
-        </ng-container>
-        <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
-        <small> Tot. Uscite</small>
-      </span>
-    </div>
+  <div class="bill-top">
+    <span class="eyebrow">Saldo totale</span>
+    <button *ngIf="userSettings?.privacyMode"
+            (click)="togglePeek()"
+            class="peek-toggle-btn"
+            [title]="peekBalance ? 'Nascondi dati' : 'Mostra dati'"
+            [attr.aria-label]="peekBalance ? 'Nascondi dati' : 'Mostra dati'">
+      <mm-icon [name]="peekBalance ? 'eye-off' : 'eye'" />
+    </button>
+    <span class="serial bill-serial">N° MM {{ currentDate | date:'MM·yyyy' }}</span>
   </div>
 
-  <div class="mini-chart">
-    <div *ngFor="let item of trendData"
-         class="bar-wrapper"
-         [title]="(userSettings?.privacyMode && !peekBalance) ? 'Dato Protetto' : (item.label + ': ' + (item.value | currency: (userSettings?.currency || 'EUR')))">
-      <div class="bar"
-           [style.background-color]="item.value >= 0 ? '#6366f1' : '#ef4444'"
-           [class.active]="item.isCurrent"
-           [style.height.%]="item.heightPercent">
+  <div class="balance-amount money" [class.negative-balance]="saldoAttuale < 0">
+    <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">
+      {{ saldoAttuale | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}
+    </ng-container>
+    <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">••••••</ng-container>
+  </div>
+
+  <div class="bill-foot">
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-ico in"><mm-icon name="arrow-down" /></span>
+        <span class="stat-text">
+          <span class="eyebrow">Entrate totali</span>
+          <strong class="num">
+            <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">{{ totaleEntrate | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}</ng-container>
+            <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
+          </strong>
+        </span>
+      </div>
+      <div class="stat">
+        <span class="stat-ico out"><mm-icon name="arrow-up" /></span>
+        <span class="stat-text">
+          <span class="eyebrow">Uscite totali</span>
+          <strong class="num">
+            <ng-container *ngIf="!userSettings?.privacyMode || peekBalance">{{ totaleUscite | currency: (userSettings?.currency || 'EUR') : 'symbol' : '1.2-2' }}</ng-container>
+            <ng-container *ngIf="userSettings?.privacyMode && !peekBalance">•••</ng-container>
+          </strong>
+        </span>
+      </div>
+    </div>
+
+    <div class="mini-chart" aria-label="Saldo degli ultimi sei mesi">
+      <div *ngFor="let item of trendData"
+           class="bar-wrapper"
+           [title]="(userSettings?.privacyMode && !peekBalance) ? 'Dato protetto' : (item.label + ': ' + (item.value | currency: (userSettings?.currency || 'EUR')))">
+        <div class="bar-slot">
+          <div class="bar" [class.active]="item.isCurrent" [class.neg]="item.value < 0" [style.height.%]="item.heightPercent"></div>
+        </div>
+        <span class="bar-label">{{ item.label }}</span>
       </div>
     </div>
   </div>
+
+  <mm-microtext class="bill-micro" text="MONEYMIND · SERIE MM · SALDO DEL CONTO" />
 </div>

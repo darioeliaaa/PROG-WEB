@@ -1,86 +1,36 @@
-.glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  /* Fondamentale: permette alla card di restringersi senza rompere il flex */
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.header-section {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-h3 { margin: 0; color: #333; }
-.subtitle { margin: 5px 0 0; color: #777; font-size: 0.9rem; }
+:host { display: block; }
 
 .charts-row {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 20px;
-  padding: 0 10px;
-  width: 100%;
-
-  /* Gestione spazio interno per i grafici */
-  min-width: 0;
-  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 22px;
 }
+.divider { background: var(--line); }
 
-.chart-wrapper {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
+.chart-col { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 14px; min-width: 0; }
+.canvas-container canvas { max-width: 100%; }
+.chart-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .92rem; }
+.dot { width: 9px; height: 9px; border-radius: 50%; }
+.dot.in { background: var(--up); }
+.dot.out { background: var(--down); }
+
+.donut { position: relative; height: 210px; }
+.canvas-container { position: relative; height: 100%; }
+.donut-center {
+  position: absolute; inset: 0;
+  display: grid; place-content: center; justify-items: center; gap: 2px;
+  pointer-events: none; text-align: center;
 }
+.donut-center strong { font-size: 1.25rem; }
 
-.income-title { color: #27ae60; margin-bottom: 10px; white-space: nowrap; }
-.expense-title { color: #c0392b; margin-bottom: 10px; white-space: nowrap; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.legend li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 9px; font-size: .86rem; }
+.sw { width: 10px; height: 10px; border-radius: 3px; }
+.lg-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+.lg-val { font-weight: 700; }
+.legend-empty { color: var(--ink-3); font-size: .86rem; text-align: center; padding: 6px 0; }
 
-.canvas-container {
-  position: relative;
-  height: 250px;
-  width: 100%;
-  max-width: 300px;
-
-  /* Centratura perfetta del grafico */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.total {
-  margin-top: 15px;
-  font-size: 0.95rem;
-  color: #555;
-  text-align: center;
-}
-
-/* Divisore verticale: si adatta all'altezza massima del parent */
-.divider {
-  width: 1px;
-  background-color: #eee;
-  align-self: stretch;
-  margin: 0 10px;
-  flex-shrink: 0;
-}
-
-/* Logica Mobile: impila i grafici e nasconde il divisore */
-@media (max-width: 768px) {
-  .charts-row {
-    flex-direction: column;
-    gap: 40px;
-  }
-  .divider { display: none; }
-  .canvas-container { height: 220px; }
-
-  .chart-wrapper { min-width: auto; width: 100%; }
+@media (max-width: 560px) {
+  .charts-row { grid-template-columns: minmax(0, 1fr); }
+  .divider { height: 1px; }
 }

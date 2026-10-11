@@ -1,122 +1,61 @@
+/* La card del saldo è una "banconota": base in styles.css (.bill), qui il contenuto */
+:host { display: block; }
 
-.summary-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgb(125, 125, 250));
-  border-radius: 24px;
-  padding: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 10px 30px rgba(142, 197, 252, 0.4);
-  color: #333;
-  min-height: 140px;
+.summary-bill {
+  display: grid;
+  gap: 14px;
+  padding: 26px 28px 30px;
+  min-height: 300px;
 }
 
-/* Bottone per mostrare/nascondere il saldo (occhio all'allineamento) */
+.bill-top { display: flex; align-items: center; gap: 10px; }
+.bill-serial { margin-left: auto; color: var(--on-ink-2); }
+
 .peek-toggle-btn {
-  background: transparent;
-  border: none;
-  color: #000000;
+  display: grid; place-items: center;
+  width: 30px; height: 30px;
+  border: 1px solid var(--ink-line); border-radius: 9px;
+  background: rgb(255 255 255 / .05); color: var(--on-ink);
   cursor: pointer;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  opacity: 0.6;
-  vertical-align: middle;
-  margin-left: 8px;
 }
+.peek-toggle-btn mm-icon { width: 16px; height: 16px; }
+.peek-toggle-btn:hover { background: rgb(255 255 255 / .12); }
 
-.peek-toggle-btn:hover {
-  opacity: 1;
-  color: #000;
-  transform: scale(1.1);
-}
-
-.peek-toggle-btn i {
-  display: block !important;
-  visibility: visible !important;
-}
-
-.peek-toggle-btn:focus {
-  outline: none;
-}
-
-.info-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-h3 {
-  margin: 0;
-  font-size: 1rem;
-  color: #555;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Tipografia del saldo principale */
 .balance-amount {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #2c3e50;
-  margin: 5px 0;
-  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 24px rgb(0 0 0 / .25);
 }
+.balance-amount.negative-balance { color: #FFB4A8; }
 
-.performance-badge {
-  display: inline-block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #444;
+.bill-foot {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 18px 28px;
+  margin-top: auto;
 }
+.stats-row { display: flex; flex-wrap: wrap; gap: 12px 26px; }
+.stat { display: flex; align-items: center; gap: 10px; }
+.stat-ico { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; }
+.stat-ico mm-icon { width: 17px; height: 17px; }
+.stat-ico.in { background: rgb(79 209 160 / .16); color: #6EE0B3; }
+.stat-ico.out { background: rgb(255 140 125 / .15); color: #FF9D8F; }
+.stat-text { display: grid; gap: 2px; }
+.stat-text strong { font-size: 1rem; color: var(--on-ink); }
 
-.performance-badge small {
-  font-weight: 400;
-  opacity: 0.7;
-}
-
-/* --- SEZIONE MINI CHART --- */
-
-/* Allineamento barre in basso per simulare un grafico di crescita */
-.mini-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  height: 60px;
-  opacity: 1;
-  padding-bottom: 5px;
-}
-
-.bar-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-  width: 10px;
-  cursor: pointer;
-}
-
+/* saldo degli ultimi sei mesi */
+.mini-chart { display: flex; align-items: flex-end; gap: 8px; height: 84px; }
+.bar-wrapper { display: grid; justify-items: center; gap: 6px; width: 22px; height: 100%; grid-template-rows: 1fr auto; }
+.bar-slot { display: flex; align-items: flex-end; width: 100%; height: 100%; }
 .bar {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  transition: height 0.5s ease-out;
-  min-height: 2px;
+  min-height: 3px;
+  border-radius: 6px 6px 3px 3px;
+  background: rgb(232 238 233 / .28);
+  transition: height .7s var(--ease);
 }
+.bar.active { background: var(--iris); box-shadow: 0 0 18px rgb(74 91 212 / .5); }
+.bar.neg { background: rgb(255 140 125 / .6); }
+.bar-label { font-family: var(--f-mono); font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: var(--on-ink-2); }
 
-/* Stile per evidenziare la barra corrente o selezionata */
-.bar.active {
-  background-color: rgba(64, 0, 255, 0.4);
-  box-shadow: 0 0 8px rgb(101, 101, 248);
-}
-
-/* Feedback visivo al passaggio del mouse sulle singole barre */
-.bar-wrapper:hover .bar {
-  background-color: #ffffff;
-  opacity: 1;
-}
+.bill-micro { position: absolute; left: 0; right: 0; bottom: 9px; }

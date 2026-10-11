@@ -11,6 +11,7 @@ import { MarketService, MarketAsset } from '../market.service';
 import { UserService } from '../../../services/user.service';
 
 import { PortfolioService } from '../../../services/portfolio.service';
+import { UI } from '../../../shared/ui';
 
 @Component({
 
@@ -18,7 +19,7 @@ import { PortfolioService } from '../../../services/portfolio.service';
 
   standalone: true,
 
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ...UI],
 
   templateUrl: './asset-list.html',
 

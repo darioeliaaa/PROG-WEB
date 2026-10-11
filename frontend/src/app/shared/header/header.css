@@ -1,243 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
-/* =========================================
-   1. LAYOUT GENERALE
-   ========================================= */
 .top-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 70px;
-  padding: 0 30px;
-
-  background: linear-gradient(90deg, #7D7DFA 0%, #8E8EFA 100%);
-
-  font-family: 'Inter', sans-serif;
-  position: relative;
-  z-index: 500;
-  color: white;
-
-  box-shadow: 0 4px 20px rgba(125, 125, 250, 0.15);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 16px;
+  height: 76px;
+  padding: 0 clamp(16px, 3vw, 36px);
 }
 
-.spacer { width: 40px; }
+.mobile-brand { display: none; }
 
-/* =========================================
-   2. TOGGLE MENU
-   ========================================= */
-.toggle-container {
-  display: flex;
-  background-color: rgba(0, 0, 0, 0.08);
+/* interruttore tra le due metà dell'app */
+.section-switch {
+  display: inline-flex;
+  gap: 4px;
   padding: 4px;
-  border-radius: 12px;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-1);
 }
-
 .toggle-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 18px;
+  border-radius: 999px;
+  color: var(--ink-2);
+  font-weight: 600; font-size: .9rem;
   text-decoration: none;
-  padding: 8px 24px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  transition: background-color .25s, color .25s;
 }
+.toggle-btn mm-icon { width: 17px; height: 17px; }
+.toggle-btn:hover { color: var(--ink); background: var(--surface-2); }
+.toggle-btn.active { background: var(--ink); color: var(--on-ink); }
 
-.toggle-btn:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.toggle-btn.active {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #7D7DFA;
-  font-weight: 700;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  backdrop-filter: blur(4px);
-}
-
-/* =========================================
-   3. PROFILO UTENTE
-   ========================================= */
-.user-profile {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 120px;
-}
-
-.login-btn {
-  background-color: rgba(255,255,255,0.2);
-  color: white;
-  padding: 8px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.3);
-  transition: all 0.2s;
-}
-.login-btn:hover { background-color: rgba(255,255,255,0.3); }
+.user-profile { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.login-btn mm-icon { width: 16px; height: 16px; }
 
 .logged-user-container { position: relative; }
-
-.avatar-circle-btn {
-  width: 40px; height: 40px;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+.avatar-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid rgba(255,255,255,0.3);
+  transition: border-color .2s;
 }
-
-.avatar-circle-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+.avatar-btn:hover { border-color: var(--ink-3); }
+.avatar-initial {
+  display: grid; place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--ink); color: var(--on-ink);
+  font-family: var(--f-display); font-stretch: 120%; font-weight: 700; font-size: .95rem;
 }
+.avatar-chevron { width: 16px; height: 16px; color: var(--ink-3); transition: transform .25s var(--ease); }
+.avatar-chevron.open { transform: rotate(180deg); }
 
-.avatar-circle-btn svg { width: 20px; height: 20px; }
-.avatar-circle-btn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-
-/* =========================================
-   4. MENU A TENDINA
-   ========================================= */
+.menu-veil { position: fixed; inset: 0; z-index: 10; }
 .dropdown-menu {
-  position: absolute;
-  top: 55px; right: 0; width: 180px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 11;
+  width: 250px;
   padding: 8px;
-  z-index: 1000;
-  animation: slideDown 0.2s ease-out forwards;
-  transform-origin: top right;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 50px -24px rgb(10 22 19 / .45);
+  animation: mm-rise .25s var(--ease) both;
 }
-
-@keyframes slideDown {
-  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.menu-header {
-  padding: 8px 12px; font-size: 0.75rem; text-transform: uppercase;
-  color: #94a3b8; font-weight: 700; letter-spacing: 0.5px;
-}
-
+.menu-header { display: grid; gap: 4px; padding: 10px 12px 12px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.menu-header strong { font-size: .88rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
 .dropdown-menu a {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px;
-  color: #334155;
-  text-decoration: none; font-size: 0.9rem; font-weight: 500;
-  border-radius: 8px; cursor: pointer; transition: all 0.2s;
-}
-
-.dropdown-menu a:hover {
-  background-color: #f8fafc;
-  color: #7D7DFA;
-}
-
-.menu-divider { height: 1px; background-color: #f1f5f9; margin: 6px 0; }
-.logout-text { color: #ef4444 !important; }
-.logout-text:hover { background-color: #fef2f2 !important; }
-
-.logged-user-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.notification-badge-top {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 20px;
-  height: 20px;
-  background-color: #7D7DFA;
-  border: 2px solid white;
-  border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  z-index: 5;
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 500; font-size: .92rem;
+  text-decoration: none;
   cursor: pointer;
-  padding: 0;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+.dropdown-menu a mm-icon { width: 17px; height: 17px; color: var(--ink-3); }
+.dropdown-menu a:hover { background: var(--surface-2); }
+.menu-divider { height: 1px; margin: 6px 4px; background: var(--line); }
+.dropdown-menu .logout-text { color: var(--down); }
+.dropdown-menu .logout-text mm-icon { color: var(--down); }
 
-.pulse-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid #7D7DFA;
-  animation: pulse-ring-animation 2s infinite;
+@media (max-width: 760px) {
+  .top-bar { height: 64px; gap: 10px; }
+  .mobile-brand {
+    display: grid; place-items: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 12px; background: var(--ink);
+  }
+  .mobile-brand mm-rosette { width: 28px; height: 28px; }
+  .toggle-btn { height: 36px; padding: 0 12px; font-size: .82rem; }
+  .toggle-btn mm-icon { display: none; }
+  .avatar-chevron { display: none; }
+  .avatar-btn { padding: 3px; }
 }
-
-@keyframes pulse-ring-animation {
-  0% { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-
-/* =========================================
-   5. BOTTONE NOTIFICHE
-   ========================================= */
-.notification-btn-side {
-  margin-right: 12px;
-  width: 40px;
-  height: 40px;
-
-  background-color: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0;
-  outline: none;
-}
-
-.notification-btn-side i {
-  font-size: 1.1rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-.notification-btn-side:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.notification-btn-side:active {
-  transform: translateY(0);
-}
-
-.notification-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 10px;
-  height: 10px;
-  background-color: #ef4444;
-  border: 2px solid #8E8EFA;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
-}
-
-.active-notif {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  color: #7D7DFA !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+@media (max-width: 400px) {
+  .toggle-btn span { font-size: .78rem; }
+  .toggle-btn { padding: 0 10px; }
 }

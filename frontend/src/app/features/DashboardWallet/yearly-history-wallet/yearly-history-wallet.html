@@ -1,7 +1,9 @@
-<div class="glass-card">
-  <div class="header-section">
-    <h3>Andamento annuale</h3>
-    <p class="subtitle">Confronto Entrate vs Uscite</p>
+<section class="card yearly-card">
+  <div class="card-head">
+    <div>
+      <h3>Andamento annuale</h3>
+      <p class="sub">Entrate e uscite mese per mese, {{ currentDate | date:'yyyy' }}</p>
+    </div>
   </div>
 
   <div class="chart-container">
@@ -11,5 +13,4 @@
             [type]="barChartType">
     </canvas>
   </div>
-</div>
-
+</section>

@@ -1,157 +1,158 @@
-<div class="market-container">
+<div class="page market-container">
 
-  <header class="market-header">
-    <h2>Listino: {{ currentType === 'STOCK' ? 'Azioni' : currentType | titlecase }}</h2>
+  <header class="page-head rise">
+    <div class="titles">
+      <a routerLink="/market" class="back-link"><mm-icon name="arrow-left" /> Market</a>
+      <span class="eyebrow">Listino · {{ assets.length }} titoli</span>
+      <h1>{{ currentType === 'STOCK' ? 'Azioni' : (currentType === 'CRYPTO' ? 'Cripto' : currentType) }}</h1>
+      <p class="sub">Prezzo, variazione del giorno e forbice tra minimo e massimo. Tocca un titolo per aprire il grafico.</p>
+    </div>
   </header>
 
-  <div *ngIf="loading" class="loading-state">
-    <div class="spinner"></div> Caricamento dati di mercato...
-  </div>
+  <div *ngIf="loading" class="loading-row"><span class="spinner"></span> Caricamento dati di mercato…</div>
 
-  <div class="tv-list" *ngIf="!loading && assets.length > 0">
+  <section class="card list-card rise rise-1" *ngIf="!loading && assets.length > 0">
 
     <div class="tv-row header-row">
-      <div class="col-symbol">Asset</div>
+      <div class="col-symbol">Titolo</div>
       <div class="col-price">Prezzo</div>
-      <div class="col-change">Var %</div>
-      <div class="col-stats mobile-hide">Statistiche 24h</div>
-      <div class="col-market mobile-hide">Fondamentali</div>
-      <div class="col-action">Azioni</div>
+      <div class="col-change">Var. giorno</div>
+      <div class="col-range mobile-hide">Minimo · massimo</div>
+      <div class="col-market mobile-hide">Capitalizzazione</div>
+      <div class="col-action"></div>
     </div>
 
     <div *ngFor="let asset of assets" class="tv-row item-row">
 
-      <div class="col-symbol" [routerLink]="['/market/chart', asset.symbol]" title="Clicca per il grafico">
-
-        <img [src]="asset.logoUrl || 'assets/icons/default-asset.png'"
-             class="small-logo"
-             alt="logo"
-             (error)="handleImgError($event, asset.symbol)">
-
-        <div class="symbol-info">
+      <a class="col-symbol" [routerLink]="['/market/chart', asset.symbol]" title="Apri il grafico di {{ pulisciSimbolo(asset.symbol) }}">
+        <span class="logo" [class.mono]="!asset.logoUrl">
+          <img *ngIf="asset.logoUrl" [src]="asset.logoUrl"
+               alt=""
+               loading="lazy"
+               (error)="handleImgError($event, asset.symbol)">
+          <span *ngIf="!asset.logoUrl">{{ pulisciSimbolo(asset.symbol).slice(0, 4) }}</span>
+        </span>
+        <span class="symbol-info">
           <span class="ticker">{{ pulisciSimbolo(asset.symbol) }}</span>
           <span class="full-name">{{ asset.name }}</span>
-          <span class="industry-badge" *ngIf="asset.industry">{{ asset.industry }}</span>
-        </div>
-      </div>
+        </span>
+        <span class="industry-badge mobile-hide" *ngIf="asset.industry">{{ asset.industry }}</span>
+      </a>
 
       <div class="col-price">
-        <span class="main-price">{{ asset.currentPrice | currency: (asset.currency || 'USD') }}</span>
+        <span class="main-price num">{{ asset.currentPrice | currency: (asset.currency || 'USD') : 'symbol-narrow' }}</span>
       </div>
 
       <div class="col-change">
-        <div class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
-          {{ asset.changePercent > 0 ? '▲' : '▼' }} {{ asset.changePercent | number:'1.2-2' }}%
-        </div>
+        <span class="badge" [class.up]="asset.changePercent >= 0" [class.down]="asset.changePercent < 0">
+          {{ asset.changePercent >= 0 ? '▲' : '▼' }} {{ asset.changePercent | number:'1.2-2' }}%
+        </span>
       </div>
 
-      <div class="col-stats mobile-hide">
-        <div class="stat-row"><span>High:</span> <strong>{{ asset.highPrice | number:'1.2-2' }}</strong></div>
-        <div class="stat-row"><span>Low:</span> <strong>{{ asset.lowPrice | number:'1.2-2' }}</strong></div>
+      <div class="col-range mobile-hide">
+        <div class="range">
+          <span class="range-track">
+            <span class="range-dot"
+                  [style.--pos]="((asset.highPrice > asset.lowPrice) ? ((asset.currentPrice - asset.lowPrice) / (asset.highPrice - asset.lowPrice) * 100) : 50) + '%'"
+                  [class.up]="asset.changePercent >= 0"></span>
+          </span>
+          <span class="range-labels num">
+            <span>{{ asset.lowPrice | number:'1.2-2' }}</span>
+            <span>{{ asset.highPrice | number:'1.2-2' }}</span>
+          </span>
+        </div>
       </div>
 
       <div class="col-market mobile-hide">
-        <div class="stat-row" *ngIf="asset.marketCap">
-          <span>Mkt Cap:</span> <strong>{{ asset.marketCap | number }} M</strong>
-        </div>
+        <span class="num" *ngIf="asset.marketCap">{{ asset.marketCap | number }} M</span>
+        <span class="muted" *ngIf="!asset.marketCap">—</span>
       </div>
 
       <div class="col-action">
-        <button class="btn-trade" (click)="openTradePanel(asset)">Trade</button>
+        <button class="btn btn-primary btn-sm" (click)="openTradePanel(asset)">Trade</button>
       </div>
     </div>
+  </section>
+
+</div>
+
+<div class="modal-backdrop" *ngIf="isTradeModalOpen" (click)="closeTradePanel()">
+  <div class="modal trade-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="trade-title">
+
+    <div class="trade-head">
+      <mm-guilloche class="trade-band" tone="iris" [count]="16" [seed]="2" />
+      <div class="trade-id">
+        <span class="eyebrow">Ordine simulato</span>
+        <h3 id="trade-title">{{ pulisciSimbolo(selectedAsset?.symbol) }}</h3>
+        <span class="trade-name">{{ selectedAsset?.name }}</span>
+      </div>
+      <div class="trade-hold">
+        <span class="eyebrow">Possedute</span>
+        <strong class="num">{{ getMyQuantity(selectedAsset?.symbol) | number:'1.0-4' }}</strong>
+      </div>
+      <button class="btn-icon trade-close" (click)="closeTradePanel()" aria-label="Chiudi"><mm-icon name="close" /></button>
+    </div>
+
+    <div class="modal-body">
+      <div class="seg trade-seg" role="group" aria-label="Tipo di ordine">
+        <button type="button" class="up" [class.active]="tradeAction === 'BUY'" (click)="setAction('BUY')">
+          <mm-icon name="trend-up" /> Acquista
+        </button>
+        <button type="button" class="down" [class.active]="tradeAction === 'SELL'" (click)="setAction('SELL')">
+          <mm-icon name="trend-down" /> Vendi
+        </button>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Quantità da {{ tradeAction === 'BUY' ? 'acquistare' : 'vendere' }}</span>
+        <div class="amount" [class.up]="tradeAction === 'BUY'" [class.down]="tradeAction === 'SELL'">
+          <input type="number"
+                 [(ngModel)]="tradeQuantity"
+                 (input)="onQuantityChange()"
+                 placeholder="0" min="0"
+                 aria-label="Quantità">
+        </div>
+      </div>
+
+      <div class="trade-row">
+        <span>Prezzo di mercato</span>
+        <strong class="num">{{ selectedAsset?.currentPrice | currency:'USD':'symbol-narrow' }}</strong>
+      </div>
+
+      <div class="field">
+        <label for="trade-amount">Controvalore stimato</label>
+        <div class="input-affix">
+          <span class="affix">€</span>
+          <input id="trade-amount" class="input" type="number"
+                 [(ngModel)]="tradeAmount"
+                 (input)="onAmountChange()"
+                 placeholder="0,00">
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button type="button" (click)="closeTradePanel()" class="btn btn-ghost btn-lg">Annulla</button>
+        <button type="button" class="btn btn-lg" [class.btn-buy]="tradeAction === 'BUY'" [class.btn-sell]="tradeAction === 'SELL'"
+                (click)="confirmTrade()"
+                [disabled]="isProcessing || !tradeQuantity || tradeQuantity <= 0">
+          <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'acquisto' : 'vendita' }}</span>
+          <span *ngIf="isProcessing">Esecuzione…</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<div class="trade-modal-backdrop" *ngIf="isTradeModalOpen">
-  <div class="trade-modal">
-
-    <div class="stylish-header">
-      <div class="header-left">
-        <h2>{{ pulisciSimbolo(selectedAsset?.symbol) }}</h2>
-        <span class="asset-name-small">{{ selectedAsset?.name }}</span>
-      </div>
-      <div class="holding-badge">
-        Possedute: {{ getMyQuantity(selectedAsset?.symbol) | number:'1.0-4' }}
-      </div>
+<div class="modal-backdrop" *ngIf="showLoginModal" (click)="closeLoginModal()">
+  <div class="lock-card" (click)="$event.stopPropagation()">
+    <button class="btn-icon close" (click)="closeLoginModal()" aria-label="Chiudi"><mm-icon name="close" /></button>
+    <div class="lock-art">
+      <mm-rosette preset="small" tone="iris" />
+      <span class="lock-icon"><mm-icon name="lock" /></span>
     </div>
-
-    <div class="toggle-buttons">
-      <button type="button" class="btn-toggle income"
-              [class.active]="tradeAction === 'BUY'"
-              (click)="setAction('BUY')">
-        <span>▲</span> Acquista
-      </button>
-      <button type="button" class="btn-toggle expense"
-              [class.active]="tradeAction === 'SELL'"
-              (click)="setAction('SELL')">
-        <span>▼</span> Vendi
-      </button>
-    </div>
-
-    <div class="center-input-section">
-      <label>Quantità da {{ tradeAction === 'BUY' ? 'Acquistare' : 'Vendere' }}</label>
-      <div class="amount-wrapper">
-        <input type="number"
-               class="big-input"
-               [ngClass]="{'text-green': tradeAction === 'BUY', 'text-red': tradeAction === 'SELL'}"
-               [(ngModel)]="tradeQuantity"
-               (input)="onQuantityChange()"
-               placeholder="0" min="0">
-      </div>
-    </div>
-
-    <div class="info-row">
-      <span>Prezzo di Mercato</span>
-      <span class="bold-text">{{ selectedAsset?.currentPrice | currency:'USD' }}</span>
-    </div>
-
-    <div class="form-group">
-      <label>Controvalore Stimato (€)</label>
-      <div class="amount-wrapper small-wrapper">
-        <input type="number"
-               class="big-input small-input"
-               [(ngModel)]="tradeAmount"
-               (input)="onAmountChange()"
-               placeholder="0.00">
-        <span class="currency-suffix">€</span>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="button" (click)="closeTradePanel()" class="btn-secondary">Annulla</button>
-      <button type="button" class="btn-primary"
-              (click)="confirmTrade()"
-              [disabled]="isProcessing || !tradeQuantity || tradeQuantity <= 0">
-        <span *ngIf="!isProcessing">Conferma {{ tradeAction === 'BUY' ? 'Acquisto' : 'Vendita' }}</span>
-        <span *ngIf="isProcessing">Esecuzione...</span>
-      </button>
-    </div>
-
-  </div>
-
-</div>
-<div class="trade-modal-backdrop" *ngIf="showLoginModal">
-  <div class="login-prompt-card stylish-lock-card">
-
-    <button class="close-icon-btn" (click)="closeLoginModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <div class="lock-icon-circle">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        <path d="M9 12l2 2 4-4"></path>
-      </svg>
-    </div>
-
-    <h3>Trading Bloccato</h3>
-    <p>Per effettuare operazioni di trading e gestire il tuo portafoglio è necessario autenticarsi.</p>
-
-    <button class="btn-auth-lock" (click)="goToLogin()">
-      Accedi ora
-    </button>
+    <h3>Trading bloccato</h3>
+    <p>Per comprare e vendere titoli e gestire il tuo portafoglio devi prima accedere.</p>
+    <button class="btn btn-primary btn-lg" (click)="goToLogin()">Accedi ora</button>
   </div>
 </div>

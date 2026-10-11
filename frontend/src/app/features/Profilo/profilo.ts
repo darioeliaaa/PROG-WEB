@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { finalize } from 'rxjs/operators'; // <--- FONDAMENTALE per gestire la fine dei caricamenti
+import { UI } from '../../shared/ui';
 
 @Component({
   selector: 'app-profilo',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ...UI],
   templateUrl: './profilo.html',
   styleUrls: ['./profilo.css']
 })

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { PortfolioService, PortfolioOverview } from '../../../services/portfolio.service';
 import { UserService } from '../../../services/user.service';
 import { MarketService } from '../../market/market.service';
+import { UI } from '../../../shared/ui';
 
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
@@ -13,7 +14,7 @@ import { Chart, registerables } from 'chart.js';
 @Component({
   selector: 'app-my-portfolio',
   standalone: true,
-  imports: [CommonModule, RouterModule, BaseChartDirective, FormsModule],
+  imports: [CommonModule, RouterModule, BaseChartDirective, FormsModule, ...UI],
   templateUrl: './my-portfolio.html',
   styleUrls: ['./my-portfolio.css']
 })
@@ -28,24 +29,25 @@ export class MyPortfolioComponent implements OnInit {
   tradeQuantity: number | null = null;
   tradeAmount: number | null = null;
   isProcessing = false;
-  public pieChartOptions: ChartConfiguration['options'] = {
+  public pieChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'right', labels: { color: '#475569' } }
-    }
+    cutout: '70%',
+    layout: { padding: 6 },
+    // la legenda è nel template, con percentuali e importi
+    plugins: { legend: { display: false } }
   };
-  public pieChartType: ChartType = 'doughnut';
+  public pieChartType = 'doughnut' as const;
   public pieChartData: ChartData<'doughnut'> = { labels: [], datasets: [] };
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      x: { ticks: { color: '#64748b' }, grid: { display: false } },
-      y: { ticks: { color: '#64748b' }, beginAtZero: true }
+      x: { border: { display: false }, grid: { display: false } },
+      y: { beginAtZero: true, border: { display: false }, grid: { color: '#E3E8E2' }, ticks: { maxTicksLimit: 5 } }
     },
-    plugins: { legend: { display: true } }
+    plugins: { legend: { display: true, position: 'top', align: 'end' } }
   };
   public barChartType: ChartType = 'bar';
   public barChartData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -112,11 +114,13 @@ export class MyPortfolioComponent implements OnInit {
       datasets: [{
         data: [...values],
         backgroundColor: [
-          '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-          '#8b5cf6', '#ec4899', '#6366f1', '#cbd5e1'
+          '#2F6DB5', '#1E9C8E', '#D9822F', '#C4524C',
+          '#7B5BC2', '#B8911F', '#3B9563', '#A9B4AF'
         ],
-        hoverOffset: 4,
-        borderWidth: 0
+        hoverOffset: 6,
+        borderColor: '#FBFCFA',
+        borderWidth: 3,
+        borderRadius: 6
       }]
     };
 
@@ -130,16 +134,18 @@ export class MyPortfolioComponent implements OnInit {
         {
           data: [...investito],
           label: 'Investito (€)',
-          backgroundColor: '#94a3b8',
-          borderRadius: 4,
-          barPercentage: 0.6
+          backgroundColor: '#C3CCC2',
+          borderRadius: 6,
+          barPercentage: 0.7,
+          maxBarThickness: 26
         },
         {
           data: [...attuale],
           label: 'Valore Attuale (€)',
-          backgroundColor: '#3b82f6',
-          borderRadius: 4,
-          barPercentage: 0.6
+          backgroundColor: '#3F50C8',
+          borderRadius: 6,
+          barPercentage: 0.7,
+          maxBarThickness: 26
         }
       ]
     };

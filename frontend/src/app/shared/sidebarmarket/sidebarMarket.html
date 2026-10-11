@@ -1,74 +1,54 @@
-<div class="sidebar">
+<aside class="sidenav">
 
-  <div class="logo-section">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 3v18h18"/>
-        <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-      </svg>
-    </div>
-    <div class="brand-container">
-      <h1 class="brand-name">MoneyMind</h1>
-      <span class="market-badge">MARKET</span>
-    </div>
-  </div>
+  <a routerLink="/market" class="brand" aria-label="MoneyMind Market, vai alla home del market">
+    <span class="brand-mark"><mm-rosette preset="mark" tone="iris" /></span>
+    <span class="brand-text">
+      <strong>MoneyMind</strong>
+      <span class="brand-sub">Market</span>
+    </span>
+  </a>
 
-  <nav class="nav-menu">
+  <nav class="side-nav" aria-label="Investimenti">
+    <span class="side-label">Mercati</span>
 
     <a class="nav-item parent-item"
        routerLink="/market"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{exact: true}"
        (click)="toggleMarket()">
-
-      <div class="icon-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      </div>
-
+      <mm-icon name="home" />
       <span class="link-text">Home Market</span>
-
-      <div class="arrow-icon" [class.rotated]="isMarketOpen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </div>
+      <span class="arrow-icon" [class.rotated]="isMarketOpen"><mm-icon name="chevron-down" /></span>
     </a>
 
-    <div class="sub-menu-container" *ngIf="isMarketOpen">
+    <div class="sub-menu" *ngIf="isMarketOpen">
       <a routerLink="/market/azioni" routerLinkActive="active" class="nav-item sub-item">
-        <span class="dot">•</span>
-        <span class="sub-text">Azioni</span>
+        <mm-icon name="chart" class="sub-icon" />
+        <span class="link-text">Azioni</span>
       </a>
-
       <a routerLink="/market/etf" routerLinkActive="active" class="nav-item sub-item">
-        <span class="dot">•</span>
-        <span class="sub-text">ETF</span>
+        <mm-icon name="globe" class="sub-icon" />
+        <span class="link-text">ETF</span>
       </a>
-
       <a routerLink="/market/crypto" routerLinkActive="active" class="nav-item sub-item">
-        <span class="dot">•</span>
-        <span class="sub-text">Cripto</span>
+        <mm-icon name="coins" class="sub-icon" />
+        <span class="link-text">Cripto</span>
       </a>
     </div>
 
-    <div class="menu-divider"></div>
+    <span class="side-label">Il tuo capitale</span>
 
     <a routerLink="/portfolio" routerLinkActive="active" class="nav-item">
-
-      <div class="icon-box">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-        </svg>
-      </div>
-
+      <mm-icon name="briefcase" />
       <span class="link-text">Portafoglio</span>
     </a>
-
   </nav>
 
+  <div class="side-foot">
+    <div class="side-seal" aria-hidden="true">
+      <mm-guilloche tone="iris" [count]="16" [seed]="4" />
+      <mm-microtext text="MONEYMIND MARKET · SERIE MM" />
+    </div>
+  </div>
 
-</div>
+</aside>

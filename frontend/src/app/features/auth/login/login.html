@@ -1,169 +1,256 @@
-<div class="auth-container">
+<div class="auth">
 
-  <div class="brand-side">
-    <div class="brand-content">
-      <div class="logo"><span class="logo-icon">💰</span> MoneyMind</div>
-      <h1>Prendi il controllo<br>delle tue finanze.</h1>
-      <p>Gestisci investimenti, traccia le spese e pianifica il futuro con la dashboard finanziaria n.1 in Italia.</p>
-      <div class="glass-card-decor">
-        <div class="decor-row">
-          <div class="decor-icon">📈</div>
-          <div class="decor-text"><span>Portfolio</span><strong>+24.5%</strong></div>
-        </div>
-        <div class="chart-line"></div>
-      </div>
-    </div>
-    <div class="abstract-circle c1"></div>
-    <div class="abstract-circle c2"></div>
-  </div>
+  <!-- marchio: una banconota a tutta altezza -->
+  <aside class="bill brand-side">
+    <mm-rosette class="hero-rosette" preset="full" tone="iris" [spin]="true" />
+    <mm-guilloche class="hero-band" tone="iris" [count]="26" [seed]="3" />
+    <span class="bill-thread hero-thread" aria-hidden="true"></span>
+    <mm-microtext class="hero-micro" text="MONEYMIND · ACCESSO SICURO · SERIE MM" />
 
-  <div class="form-side">
-    <a (click)="tornaIndietro()" class="back-link">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      Torna alla Dashboard
-    </a>
-
-    <div class="form-wrapper fade-in" *ngIf="currentView === 'login'">
-      <div class="header-text">
-        <h2>Bentornato! 👋</h2>
-        <p>Inserisci i tuoi dati per accedere.</p>
+    <div class="brand-top">
+      <div class="brand">
+        <span class="brand-mark"><mm-rosette preset="mark" tone="iris" /></span>
+        <span class="brand-text">
+          <strong>MoneyMind</strong>
+          <span class="brand-sub">Gestione finanze</span>
+        </span>
       </div>
-      <form (ngSubmit)="onLogin()">
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" [(ngModel)]="loginObj.email" name="email" placeholder="nome@esempio.com" required>
-        </div>
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password" [(ngModel)]="loginObj.password" name="password" placeholder="••••••••" required>
-        </div>
-        <div class="extras">
-          <label class="checkbox-container"><input type="checkbox"> Ricordami</label>
-          <a class="forgot-link" (click)="showForgotPassword()">Password dimenticata?</a>
-        </div>
-        <button type="submit" class="btn-primary">Accedi</button>
-      </form>
-      <div class="divider"><span>oppure continua con</span></div>
-      <div class="social-row">
-        <button class="social-btn"><img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"> Google</button>
-        <button class="social-btn"><img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="FB"> Facebook</button>
-      </div>
-      <p class="switch-text">Non hai un account? <a (click)="toggleMode()">Registrati gratis</a></p>
+      <span class="serial brand-serial">N° MM 000·001</span>
     </div>
 
-    <div class="form-wrapper fade-in" *ngIf="currentView === 'register'">
-      <div class="header-text">
-        <h2>Crea Account 🚀</h2>
-        <p>Inizia il tuo viaggio finanziario oggi.</p>
-      </div>
+    <div class="brand-copy">
+      <span class="eyebrow">Serie MM · Accesso</span>
+      <h1 class="hero-title">Prendi il controllo delle tue <span class="iris-text">finanze.</span></h1>
+      <p class="hero-sub">Gestisci investimenti, traccia le spese e pianifica il futuro con la dashboard finanziaria n.1 in Italia.</p>
+    </div>
 
-      <form (ngSubmit)="onRegister()">
-        <div class="input-group">
-          <label>Nome Utente</label>
-          <input type="text" [(ngModel)]="registerObj.username" name="regUser" placeholder="Il tuo nome" required [class.error-border]="fieldErrors.username">
-          <div *ngIf="fieldErrors.username">
-            <div class="field-error-msg"><span>⚠️ Username già in uso.</span></div>
-            <div class="suggestions-box">
-              Prova uno di questi:
-              <div class="chips-container">
-                <span class="suggestion-chip" *ngFor="let suggestion of suggestedUsernames" (click)="selectSuggestion(suggestion)">{{ suggestion }}</span>
+    <div class="chip" aria-hidden="true">
+      <mm-guilloche class="chip-band" tone="ink" [count]="14" [seed]="4" />
+      <mm-rosette class="chip-rosette" preset="small" tone="iris" />
+      <div class="chip-top">
+        <span class="chip-ico"><mm-icon name="trend-up" /></span>
+        <span class="chip-text">
+          <span class="eyebrow">Portfolio</span>
+          <strong class="money">+24,5%</strong>
+        </span>
+        <span class="serial">12 mesi</span>
+      </div>
+      <svg class="spark" viewBox="0 0 200 52" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="mm-spark-line" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="var(--iris-1)" /><stop offset=".4" stop-color="var(--iris-2)" /><stop offset=".72" stop-color="var(--iris-3)" /><stop offset="1" stop-color="var(--iris-4)" />
+          </linearGradient>
+          <linearGradient id="mm-spark-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--iris-2)" stop-opacity=".16" /><stop offset="1" stop-color="var(--iris-2)" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path fill="url(#mm-spark-fill)" d="M0 44 L16 46 L30 38 L44 41 L58 33 L72 36 L86 28 L100 31 L114 23 L128 27 L142 18 L156 21 L170 13 L184 15 L198 6 L198 52 L0 52 Z" />
+        <path fill="none" stroke="url(#mm-spark-line)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" d="M0 44 L16 46 L30 38 L44 41 L58 33 L72 36 L86 28 L100 31 L114 23 L128 27 L142 18 L156 21 L170 13 L184 15 L198 6" />
+        <circle cx="198" cy="6" r="3.5" fill="var(--surface)" stroke="var(--iris-4)" stroke-width="2" vector-effect="non-scaling-stroke" />
+      </svg>
+    </div>
+  </aside>
+
+  <!-- moduli: accesso, registrazione, recupero -->
+  <main class="form-side">
+    <div class="form-top">
+      <button type="button" class="back-link" (click)="tornaIndietro()">
+        <mm-icon name="arrow-left" /><span class="back-text">Torna alla dashboard</span>
+      </button>
+      <span class="serial top-serial">N° MM · Area personale</span>
+    </div>
+
+    <mm-rosette class="paper-rosette" preset="full" tone="ink" />
+
+    <div class="form-wrap">
+
+      <!-- accesso -->
+      <section class="view" *ngIf="currentView === 'login'">
+        <header class="view-head">
+          <span class="eyebrow">Accesso</span>
+          <h2>Bentornato</h2>
+          <p>Inserisci i tuoi dati per accedere.</p>
+        </header>
+
+        <form class="form" (ngSubmit)="onLogin()">
+          <div class="field">
+            <label for="login-email">Email</label>
+            <div class="control">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m3.5 7 8.5 6 8.5-6" /></svg>
+              <input id="login-email" class="input" type="email" [(ngModel)]="loginObj.email" name="email" placeholder="nome@esempio.com" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <div class="control">
+              <mm-icon class="ico" name="lock" />
+              <input id="login-password" class="input" type="password" [(ngModel)]="loginObj.password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+          </div>
+          <div class="extras">
+            <label class="check" for="login-remember"><input id="login-remember" type="checkbox"> Ricordami</label>
+            <button type="button" class="btn-link" (click)="showForgotPassword()">Password dimenticata?</button>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Accedi <mm-icon name="arrow-right" /></button>
+        </form>
+
+        <div class="divider"><span>oppure continua con</span></div>
+        <div class="social-row">
+          <button type="button" class="btn btn-ghost social-btn"><img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" width="18" height="18"> Google</button>
+          <button type="button" class="btn btn-ghost social-btn"><img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="" width="18" height="18"> Facebook</button>
+        </div>
+        <p class="switch">Non hai un account? <button type="button" class="btn-link" (click)="toggleMode()">Registrati gratis</button></p>
+      </section>
+
+      <!-- registrazione -->
+      <section class="view" *ngIf="currentView === 'register'">
+        <header class="view-head">
+          <span class="eyebrow">Nuovo conto</span>
+          <h2>Crea il tuo account</h2>
+          <p>Inizia oggi il tuo percorso finanziario.</p>
+        </header>
+
+        <form class="form" (ngSubmit)="onRegister()">
+          <div class="field">
+            <label for="reg-user">Nome utente</label>
+            <div class="control">
+              <mm-icon class="ico" name="user" />
+              <input id="reg-user" class="input" type="text" [(ngModel)]="registerObj.username" name="regUser" placeholder="Il tuo nome" autocomplete="username" required [class.error-border]="fieldErrors.username">
+            </div>
+            <div *ngIf="fieldErrors.username" class="field-help">
+              <p class="field-error" role="alert"><span class="err-mark" aria-hidden="true">!</span> Nome utente già in uso.</p>
+              <div class="suggestions">
+                <span>Prova uno di questi:</span>
+                <div class="chips">
+                  <button type="button" class="suggestion-chip" *ngFor="let suggestion of suggestedUsernames" (click)="selectSuggestion(suggestion)">{{ suggestion }}</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" [(ngModel)]="registerObj.email" name="regEmail" placeholder="nome@esempio.com" required [class.error-border]="fieldErrors.email">
-          <div *ngIf="fieldErrors.email" class="field-error-msg">
-            <span>⚠️ Email già registrata. <a (click)="goToLoginWithEmail()" class="login-link-smart">Vuoi accedere?</a></span>
+          <div class="field">
+            <label for="reg-email">Email</label>
+            <div class="control">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m3.5 7 8.5 6 8.5-6" /></svg>
+              <input id="reg-email" class="input" type="email" [(ngModel)]="registerObj.email" name="regEmail" placeholder="nome@esempio.com" autocomplete="email" required [class.error-border]="fieldErrors.email">
+            </div>
+            <p *ngIf="fieldErrors.email" class="field-error" role="alert">
+              <span class="err-mark" aria-hidden="true">!</span> Email già registrata.
+              <button type="button" class="btn-link" (click)="goToLoginWithEmail()">Vuoi accedere?</button>
+            </p>
           </div>
-        </div>
-
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password"
-                 [(ngModel)]="registerObj.password"
-                 (input)="checkPasswordStrength(registerObj.password)"
-                 name="regPass"
-                 placeholder="Crea una password forte"
-                 required
-                 [class.error-border]="passwordError">
-
-          <div *ngIf="passwordError" class="field-error-msg">
-            <span>⚠️ {{ passwordError }}</span>
+          <div class="field">
+            <label for="reg-pass">Password</label>
+            <div class="control">
+              <mm-icon class="ico" name="lock" />
+              <input id="reg-pass" class="input" type="password"
+                     [(ngModel)]="registerObj.password"
+                     (input)="checkPasswordStrength(registerObj.password)"
+                     name="regPass"
+                     placeholder="Crea una password forte"
+                     autocomplete="new-password"
+                     required
+                     [class.error-border]="passwordError">
+            </div>
+            <p *ngIf="passwordError" class="field-error" role="alert"><span class="err-mark" aria-hidden="true">!</span> {{ passwordError }}</p>
+            <p *ngIf="!passwordError" class="hint">Almeno 8 caratteri, con una maiuscola e un numero.</p>
           </div>
-        </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Crea account <mm-icon name="arrow-right" /></button>
+        </form>
 
-        <button type="submit" class="btn-primary btn-register">Crea Account</button>
-      </form>
-      <p class="switch-text">Hai già un account? <a (click)="toggleMode()">Accedi qui</a></p>
-    </div>
+        <p class="switch">Hai già un account? <button type="button" class="btn-link" (click)="toggleMode()">Accedi qui</button></p>
+      </section>
 
-    <div class="form-wrapper fade-in" *ngIf="currentView === 'register-success'">
-      <div class="header-text">
-        <h2>🎉 Account Creato!</h2>
-        <p style="color: #e65100; font-weight: bold;">⚠️ ATTENZIONE: SALVA QUESTO CODICE</p>
-      </div>
-      <div style="background: #fff8e1; border: 2px dashed #ffa000; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 25px;">
-        <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #555;">
-          Questo è il tuo <strong>Codice di Recupero</strong>.<br>
-          È l'UNICO modo per resettare la password se la dimentichi.
-        </p>
-        <div style="font-size: 2em; font-weight: 800; letter-spacing: 3px; color: #333; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; user-select: all; margin-top: 10px;">
-          {{ generatedRecoveryCode }}
-        </div>
-        <p style="margin-top: 10px; font-size: 0.8em; color: #777;">(Copia e incolla in un posto sicuro)</p>
-      </div>
-      <button (click)="finishRegistration()" class="btn-primary">Ho salvato il codice, vai al Login</button>
-    </div>
+      <!-- registrazione riuscita: il codice di recupero -->
+      <section class="view" *ngIf="currentView === 'register-success'">
+        <header class="view-head">
+          <span class="eyebrow eyebrow-ok"><mm-icon name="check" /> Conto attivato</span>
+          <h2>Account creato</h2>
+          <p>Prima di continuare, salva questo codice in un posto sicuro.</p>
+        </header>
 
-    <div class="form-wrapper fade-in" *ngIf="currentView === 'forgot'">
-      <div class="header-text">
-        <h2>Recupero Account 🔐</h2>
-        <p>Inserisci il codice ricevuto alla registrazione.</p>
-      </div>
-      <form (ngSubmit)="onResetPassword()">
-        <div class="input-group">
-          <label>La tua Email</label>
-          <input type="email" [(ngModel)]="forgotObj.email" name="forgotEmail" placeholder="nome@esempio.com" required>
-        </div>
-        <div class="input-group">
-          <label>Codice di Recupero</label>
-          <input type="text" [(ngModel)]="forgotObj.code" name="token" placeholder="Es. A1B2C3" required style="text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">
-        </div>
-
-        <div class="input-group">
-          <label>Nuova Password</label>
-          <input type="password"
-                 [(ngModel)]="forgotObj.newPassword"
-                 (input)="checkPasswordStrength(forgotObj.newPassword)"
-                 name="newPass"
-                 placeholder="Nuova password forte"
-                 required
-                 [class.error-border]="passwordError">
-
-          <div *ngIf="passwordError" class="field-error-msg">
-            <span>⚠️ {{ passwordError }}</span>
+        <div class="bill coupon">
+          <mm-guilloche class="bill-band" tone="iris" [count]="20" [seed]="2" />
+          <mm-rosette class="coupon-rosette" preset="small" tone="iris" />
+          <div class="coupon-top">
+            <span class="eyebrow">Codice di recupero</span>
+            <span class="serial">N° MM · R</span>
           </div>
+          <div class="coupon-code" aria-label="Codice di recupero">{{ generatedRecoveryCode }}</div>
+          <span class="coupon-hint"><mm-icon name="key" /> Selezionalo, copialo e conservalo al sicuro.</span>
+          <mm-microtext class="coupon-micro" text="MONEYMIND · CODICE DI RECUPERO · PERSONALE" />
         </div>
 
-        <button type="submit" class="btn-primary">Reimposta Password</button>
-      </form>
-      <p class="switch-text"><a (click)="backToLogin()">Annulla</a></p>
-    </div>
+        <div class="note warn">
+          <mm-icon name="shield" />
+          <span>Attenzione: è l'<strong>unico modo</strong> per reimpostare la password se la dimentichi.</span>
+        </div>
 
-    <div class="form-wrapper fade-in" *ngIf="currentView === 'forgot-success'">
-      <div class="header-text" style="margin-bottom: 30px;">
-        <div style="font-size: 4em; margin-bottom: 10px;">✅</div>
-        <h2 style="color: #2e7d32;">Password Aggiornata!</h2>
-        <p>Il tuo account è al sicuro.</p>
-      </div>
-      <div style="background: #e8f5e9; border: 1px solid #c8e6c9; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; color: #2e7d32;">
-        La password è stata modificata con successo.<br>
-        Ora puoi accedere con le nuove credenziali.
-      </div>
-      <button (click)="backToLogin()" class="btn-primary">Vai al Login</button>
-    </div>
+        <button type="button" class="btn btn-primary btn-lg btn-block" (click)="finishRegistration()">Ho salvato il codice, vai all'accesso</button>
+      </section>
 
-  </div>
+      <!-- password dimenticata -->
+      <section class="view" *ngIf="currentView === 'forgot'">
+        <header class="view-head">
+          <span class="eyebrow">Recupero</span>
+          <h2>Recupera l'account</h2>
+          <p>Inserisci il codice di recupero ricevuto alla registrazione.</p>
+        </header>
+
+        <form class="form" (ngSubmit)="onResetPassword()">
+          <div class="field">
+            <label for="forgot-email">La tua email</label>
+            <div class="control">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m3.5 7 8.5 6 8.5-6" /></svg>
+              <input id="forgot-email" class="input" type="email" [(ngModel)]="forgotObj.email" name="forgotEmail" placeholder="nome@esempio.com" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="forgot-code">Codice di recupero</label>
+            <div class="control">
+              <mm-icon class="ico" name="key" />
+              <input id="forgot-code" class="input code-input" type="text" [(ngModel)]="forgotObj.code" name="token" placeholder="Es. A1B2C3" autocomplete="off" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="forgot-pass">Nuova password</label>
+            <div class="control">
+              <mm-icon class="ico" name="lock" />
+              <input id="forgot-pass" class="input" type="password"
+                     [(ngModel)]="forgotObj.newPassword"
+                     (input)="checkPasswordStrength(forgotObj.newPassword)"
+                     name="newPass"
+                     placeholder="Nuova password forte"
+                     autocomplete="new-password"
+                     required
+                     [class.error-border]="passwordError">
+            </div>
+            <p *ngIf="passwordError" class="field-error" role="alert"><span class="err-mark" aria-hidden="true">!</span> {{ passwordError }}</p>
+            <p *ngIf="!passwordError" class="hint">Almeno 8 caratteri, con una maiuscola e un numero.</p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Reimposta password</button>
+        </form>
+
+        <p class="switch"><button type="button" class="btn-link cancel" (click)="backToLogin()"><mm-icon name="arrow-left" /> Annulla</button></p>
+      </section>
+
+      <!-- password aggiornata -->
+      <section class="view view-done" *ngIf="currentView === 'forgot-success'">
+        <div class="done-art">
+          <mm-rosette preset="small" tone="iris" [spin]="true" />
+          <span class="done-tick"><mm-icon name="check" /></span>
+        </div>
+        <header class="view-head">
+          <span class="eyebrow">Recupero completato</span>
+          <h2>Password aggiornata</h2>
+          <p>Il tuo account è al sicuro.</p>
+        </header>
+        <div class="note ok">
+          <mm-icon name="shield" />
+          <span>La password è stata modificata con successo. Ora puoi accedere con le nuove credenziali.</span>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg btn-block" (click)="backToLogin()">Vai all'accesso <mm-icon name="arrow-right" /></button>
+      </section>
+
+    </div>
+  </main>
 </div>
